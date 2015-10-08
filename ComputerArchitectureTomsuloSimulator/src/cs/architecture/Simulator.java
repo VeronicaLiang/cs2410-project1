@@ -37,4 +37,5 @@ public class Simulator {
 		renamingBuffer = ROB.getInstance();
 		scoreboard = Scoreboard.getInstance();
 	}
+	
 }
