@@ -22,6 +22,7 @@ public class Simulator {
 	RegisterFile registerFile;
 	ROB renamingBuffer;
 	Scoreboard scoreboard;
+	boolean finishedFlag = true;
 	public Simulator(){
 		buUnit = BU.getInstance();
 		bus = Bus.getInstance();
@@ -38,4 +39,10 @@ public class Simulator {
 		scoreboard = Scoreboard.getInstance();
 	}
 	
+	public void startSimulation(){
+		finishedFlag = false;
+		while(finishedFlag){//Clock cycles loop
+			
+		}
+	}
 }
