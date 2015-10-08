@@ -11,18 +11,20 @@ package cs.architecture;
 public class Simulator {
 	BU buUnit;// BU unit instance;
 	Bus bus;//Bus unit instance;
-	FPU fpuUnit;
-	InstructionQueue instructionQueue;
-	INT0 int0Unit;
-	INT1 int1Unit;
-	IssueQueue issueQueue;
-	LoadStore loadStoreUnit;
-	MULT multUnit;
-	PC pc;
-	RegisterFile registerFile;
-	ROB renamingBuffer;
-	Scoreboard scoreboard;
-	boolean finishedFlag = true;
+	FPU fpuUnit;// FPU unit instance;
+	InstructionQueue instructionQueue;// Instruction queue unit instance;
+	INT0 int0Unit;//INT0 unit instance
+	INT1 int1Unit;//INT1 unit instance
+	IssueQueue issueQueue;//Issuing queue instance
+	LoadStore loadStoreUnit;// Load and store unit instance
+	MULT multUnit;// MULT unit instance
+	PC pc;//PC instance
+	RegisterFile registerFile;//Register file instance
+	ROB renamingBuffer;//ROB instance
+	Scoreboard scoreboard;//scoreboard instance
+	
+	boolean finishedFlag = true;//flag for whether this simulation comes to its end.
+	
 	public Simulator(){
 		buUnit = BU.getInstance();
 		bus = Bus.getInstance();
@@ -38,7 +40,9 @@ public class Simulator {
 		renamingBuffer = ROB.getInstance();
 		scoreboard = Scoreboard.getInstance();
 	}
-	
+	/*
+	 * Start this simulation with a loop representing clock cycles.
+	 */
 	public void startSimulation(){
 		finishedFlag = false;
 		while(finishedFlag){//Clock cycles loop
