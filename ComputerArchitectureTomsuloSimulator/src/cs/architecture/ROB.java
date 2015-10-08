@@ -9,9 +9,11 @@ package cs.architecture;
  * 
  */
 public class ROB {
-	private ROB instance;
+	private static ROB instance;
 	private ROB (){}
-	public ROB getInstance(){
+	public static ROB getInstance(){
+		if(instance==null)
+			instance = new ROB();
 		return instance;
 	}
 }

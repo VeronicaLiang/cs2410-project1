@@ -8,9 +8,11 @@ package cs.architecture;
  * InstructionQueue, the queue hold all the instructions.
  */
 public class InstructionQueue {
-	private InstructionQueue instance;
+	private static InstructionQueue instance;
 	private InstructionQueue(){}
-	public InstructionQueue getInstance(){
+	public static InstructionQueue getInstance(){
+		if(instance==null)
+			instance = new InstructionQueue();
 		return instance;
 	}
 }

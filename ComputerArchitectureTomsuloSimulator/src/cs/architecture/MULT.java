@@ -11,9 +11,12 @@ package cs.architecture;
  * 
  */
 public class MULT {
-	private MULT instance;
+	private static MULT instance;
 	private MULT (){}
-	public MULT getInstance(){
+	public static MULT getInstance(){
+		if(instance==null){
+			instance = new MULT();
+		}
 		return instance;
 	}
 }

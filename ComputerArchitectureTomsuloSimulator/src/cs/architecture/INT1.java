@@ -10,9 +10,11 @@ package cs.architecture;
  * 
  */
 public class INT1 {
-	private INT1 instance;
+	private static INT1 instance;
 	private INT1 (){}
-	public INT1 getIntance(){
+	public static INT1 getInstance(){
+		if(instance==null)
+			instance = new INT1();
 		return instance;
 	}
 }

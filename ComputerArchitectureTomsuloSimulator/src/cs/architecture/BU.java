@@ -11,9 +11,11 @@ package cs.architecture;
  * BU: Branch Unit, used to 
  */
 public class BU {
-	private BU instance;
+	private static BU instance;
 	private BU (){}
-	public BU getInstance(){
+	public static BU getInstance(){
+		if(instance==null)
+			instance = new BU();
 		return instance;
 	}
 }

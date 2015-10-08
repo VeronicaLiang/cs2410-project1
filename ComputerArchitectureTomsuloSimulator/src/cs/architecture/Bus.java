@@ -9,9 +9,11 @@ package cs.architecture;
  * 
  */
 public class Bus {
-	private Bus instance;
+	private static Bus instance;
 	private Bus(){}
-	public Bus getInstance(){
+	public static Bus getInstance(){
+		if(instance==null)
+			instance = new Bus();
 		return instance;
 	}
 }

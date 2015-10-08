@@ -11,9 +11,11 @@ package cs.architecture;
  * FPU:    Float Point Unit
  */
 public class FPU {
-	private FPU instance;
+	private static FPU instance;
 	private FPU (){}
-	public FPU getInstance(){
+	public static FPU getInstance(){
+		if(instance==null)
+			instance = new FPU();
 		return instance;
 	}
 }

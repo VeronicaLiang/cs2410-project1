@@ -8,12 +8,14 @@ package cs.architecture;
  * PCInstance, PC.
  * 
  */
-public class PCInstance {
-	PCInstance instance;
-	private PCInstance(){
+public class PC {
+	static PC instance;
+	private PC(){
 		
 	}
-	public PCInstance getInstance(){
+	public static PC getInstance(){
+		if(instance==null)
+			instance = new PC();
 		return instance;
 	}
 }

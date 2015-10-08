@@ -9,9 +9,12 @@ package cs.architecture;
  * 
  */
 public class IssueQueue {
-	private IssueQueue instance;
+	private static IssueQueue instance;
 	private IssueQueue (){}
-	public IssueQueue getInstance(){
+	public static IssueQueue getInstance(){
+		if(instance==null){
+			instance = new IssueQueue();
+		}
 		return instance;
 	}
 }

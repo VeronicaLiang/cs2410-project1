@@ -9,5 +9,11 @@ package cs.architecture;
  * 
  */
 public class Scoreboard {
-
+	private static Scoreboard instance;
+	private Scoreboard(){}
+	public static Scoreboard getInstance(){
+		if(instance==null)
+			instance = new Scoreboard();
+		return instance;
+	}
 }

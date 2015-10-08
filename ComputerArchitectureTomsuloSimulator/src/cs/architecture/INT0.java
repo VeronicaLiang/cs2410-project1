@@ -10,9 +10,11 @@ package cs.architecture;
  * 
  */
 public class INT0 {
-	private INT0 instance;
+	private static INT0 instance;
 	private INT0 (){}
-	public INT0 getInstance(){
+	public static INT0 getInstance(){
+		if(instance==null)
+			instance = new INT0();
 		return instance;
 	}
 }

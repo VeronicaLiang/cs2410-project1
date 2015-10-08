@@ -9,9 +9,11 @@ package cs.architecture;
  * Register File container, used to hold all the registers
  */
 public class RegisterFile{
-	private RegisterFile instance;
+	private static RegisterFile instance;
 	private RegisterFile(){}
-	public RegisterFile getInstance(){
+	public static RegisterFile getInstance(){
+		if(instance==null)
+			instance = new RegisterFile();
 		return instance;
 	}
 }

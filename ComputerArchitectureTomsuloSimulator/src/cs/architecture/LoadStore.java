@@ -11,9 +11,11 @@ package cs.architecture;
  * 
  */
 public class LoadStore {
-	private LoadStore instance;
+	private static LoadStore instance;
 	private LoadStore (){}
-	public LoadStore getInstance(){
+	public static LoadStore getInstance(){
+		if(instance==null)
+			instance = new LoadStore();
 		return instance;
 	}
 }
