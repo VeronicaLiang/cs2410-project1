@@ -1,7 +1,10 @@
 package cs.architecture;
 
 import java.io.*;
+import java.util.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * @author Computer Architecture Simulator Project Group
@@ -31,7 +34,7 @@ public class Simulator {
 	
 	boolean finishedFlag = true;//flag for whether this simulation comes to its end.
 	
-	public Simulator(String instructionFile){
+	public Simulator(String instructionFile, Memory main){
 		//Initiate all the units
 		buUnit = BU.getInstance();
 		bus = Bus.getInstance();
@@ -53,7 +56,6 @@ public class Simulator {
 			FileReader filereader = new FileReader (instructionFile);
 			BufferedReader bufferedreader = new BufferedReader (filereader);
 			boolean flag = false; // indicate when the data is start loading
-			Memory main = new Memory();
 			while ((line = bufferedreader.readLine()) != null){
 				if(flag){
 					main.loadData(line);
@@ -68,27 +70,67 @@ public class Simulator {
 				}
 			}
 		
-			System.out.println(main.getData().size());
+//			System.out.println(main.getData().size());
 			bufferedreader.close();
 		}
 		catch (FileNotFoundException ex){
-			System.out.println("Unable to open file '" + inputFile + "'");
+			System.out.println("Unable to open file '" + instructionFile + "'");
 		}
 		catch (IOException ex){
-			System.out.println("Error reading file '" + inputFile + "'");
+			System.out.println("Error reading file '" + instructionFile + "'");
 		}
 		
 	}
 	/*
 	 * Start this simulation with a loop representing clock cycles.
 	 */
-	public void startSimulation(){
+	public void startSimulation(Memory main, int NF, int NQ){
+		
 		finishedFlag = false;
-		while(finishedFlag){//Clock cycles loop
+		int clock_cycle = 0;
+		int pc = 0; //initialize the program counter 
+		BranchTargetBuffer BTBuffer = new BranchTargetBuffer();
+		LinkedList<Instructions> FQueue = new LinkedList<Instructions>(); // Fetched Instructions Queue
+
+		while(!finishedFlag){//Clock cycles loop
+			
+			/**
+			 * If the instruction queue is not full, and there are instructions not finished,
+			 * Fetch instructions. 
+			 * In one clock cycle, the maximum number of fetching is NF. 
+			 */
+			int fetched = 0;
+			while((FQueue.size() <= NQ) && (fetched < 4) &&(pc < main.getInstrs().size())){
+				main.getInstrs().get(pc).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
+				FQueue.add(main.getInstrs().get(pc));
+				if(BTBuffer.Getbuffer()[pc][0] != -1){
+					pc = BTBuffer.Getbuffer()[pc][0]; // if there is an entry in BTBuffer, use the predicted pc, otherwise, pc ++
+				}else{
+					pc++;
+				}
+				fetched++;
+			}
+
+			
+			/**
+			 * Decode the instruction
+			 * If the instruction is not a branch, but find in BTBuffer, need to deleted the following instructions in the iqueue, and refetch. 
+			 */
+//			while(the DQueue size not exceed )
+//			if(the instruction is not a branch, but have entry in BTBuffer){
+//				
+//			}
+			
+			
 			issue();
 			readOperands();
 			execute();
 			writeResult();
+			
+			clock_cycle ++;
+			if(pc >= main.getInstrs().size()){
+				finishedFlag = true;
+			}
 		}
 		//Destroying all the resources. TODO
 	}
@@ -143,10 +185,16 @@ public class Simulator {
     public void writeResult(){
     	
     }
+    
 	public static void main(String args[]) throws IOException{
 		String inputFile = args[0];
-		Simulator simulator = new Simulator();
-		simulator.startSimulation();
+		int NF = Integer.parseInt(args[1]); // The maximum number of instructions can be fetched in one cycle
+		int NQ = Integer.parseInt(args[2]); // The length of the instruction queue
+		Memory main = new Memory(); // store memory data 
+		
+		Simulator simulator = new Simulator(inputFile, main);
+		
+		simulator.startSimulation(main, NF, NQ);
 	}
 	
 	

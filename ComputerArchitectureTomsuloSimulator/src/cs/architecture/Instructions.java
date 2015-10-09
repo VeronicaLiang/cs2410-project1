@@ -6,6 +6,7 @@ public class Instructions {
 	String rt;
 	String rd;
 	String opco;
+	int pc;
 	
 	public Instructions loadInstrs(String line){
 		String[] records = line.split("\\t+");
@@ -33,5 +34,9 @@ public class Instructions {
 		}
 		
 		return instr;
+	}
+	
+	public void UpdatePC (int pc_value){
+		pc = pc_value;
 	}
 }
