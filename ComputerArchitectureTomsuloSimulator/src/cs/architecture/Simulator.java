@@ -1,4 +1,7 @@
 package cs.architecture;
+
+import java.io.*;
+
 /**
  * @author Computer Architecture Simulator Project Group
  *
@@ -49,4 +52,40 @@ public class Simulator {
 			
 		}
 	}
+	
+	public static void main(String args[]) throws IOException{
+		String inputFile = args[0];
+		// Reading the benchmark files
+		String line = null;
+		try {
+			FileReader filereader = new FileReader (inputFile);
+			BufferedReader bufferedreader = new BufferedReader (filereader);
+			boolean flag = false; // indicate when the data is start loading
+			Memory main = new Memory();
+			while ((line = bufferedreader.readLine()) != null){
+				if(flag){
+					main.loadData(line);
+				}else{
+					if(line.contains("DATA")){
+						flag = true;
+					}else{
+						Instructions instr = new Instructions();
+						instr = instr.loadInstrs(line);
+						main.loadInstruction(instr);
+					}
+				}
+			}
+		
+			System.out.println(main.getData().size());
+			bufferedreader.close();
+		}
+		catch (FileNotFoundException ex){
+			System.out.println("Unable to open file '" + inputFile + "'");
+		}
+		catch (IOException ex){
+			System.out.println("Error reading file '" + inputFile + "'");
+		}
+	}
+	
+	
 }

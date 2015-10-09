@@ -18,4 +18,8 @@ public class PC {
 			instance = new PC();
 		return instance;
 	}
+	
+	void set(int newValue){
+		// set up the Program counter value
+	}
 }
