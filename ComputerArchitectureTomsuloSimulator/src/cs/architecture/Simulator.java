@@ -84,13 +84,14 @@ public class Simulator {
 	/*
 	 * Start this simulation with a loop representing clock cycles.
 	 */
-	public void startSimulation(Memory main, int NF, int NQ){
+	public void startSimulation(Memory main, int NF, int NQ, int NI, int ND){
 		
 		finishedFlag = false;
 		int clock_cycle = 0;
 		int pc = 0; //initialize the program counter 
 		BranchTargetBuffer BTBuffer = new BranchTargetBuffer();
 		LinkedList<Instructions> FQueue = new LinkedList<Instructions>(); // Fetched Instructions Queue
+		LinkedList<Instructions> DQueue = new LinkedList<Instructions>(); // Decoded Instructions Queue (actually, the decode is not needed, only check for branch)
 
 		while(!finishedFlag){//Clock cycles loop
 			
@@ -100,11 +101,11 @@ public class Simulator {
 			 * In one clock cycle, the maximum number of fetching is NF. 
 			 */
 			int fetched = 0;
-			while((FQueue.size() <= NQ) && (fetched < 4) &&(pc < main.getInstrs().size())){
+			while((FQueue.size() <= NQ) && (fetched < NF) &&(pc < main.getInstrs().size())){
 				main.getInstrs().get(pc).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
 				FQueue.add(main.getInstrs().get(pc));
 				if(BTBuffer.Getbuffer()[pc][0] != -1){
-					pc = BTBuffer.Getbuffer()[pc][0]; // if there is an entry in BTBuffer, use the predicted pc, otherwise, pc ++
+					pc = BTBuffer.Getbuffer()[pc%32][0]; // if there is an entry in BTBuffer, use the predicted pc, otherwise, pc ++
 				}else{
 					pc++;
 				}
@@ -116,10 +117,23 @@ public class Simulator {
 			 * Decode the instruction
 			 * If the instruction is not a branch, but find in BTBuffer, need to deleted the following instructions in the iqueue, and refetch. 
 			 */
-//			while(the DQueue size not exceed )
-//			if(the instruction is not a branch, but have entry in BTBuffer){
-//				
-//			}
+			int decoded = 0;
+			while((DQueue.size() <= NI) && (decoded < ND)&&(!FQueue.isEmpty()) ){
+				Instructions next = FQueue.poll();
+				DQueue.add(next);
+				if ((next.opco != "BEQZ") &&(next.opco != "BNEZ")&&(next.opco != "BEQ")&&(BTBuffer.Getbuffer()[next.pc%32][0] != -1)){
+					// If the instruction is not a branch, but has entry in BTBuffer
+					FQueue.clear();
+					pc = next.pc++;
+					if(BTBuffer.Getbuffer()[next.pc%32][1] == 0) {
+						BTBuffer.Getbuffer()[next.pc%32][1] = 1; // allow the first time is wrong
+					}else{
+						// reset the entry
+						BTBuffer.Getbuffer()[next.pc%32][0] = -1;
+						BTBuffer.Getbuffer()[next.pc%32][1] = 0;
+					}
+				}
+			}
 			
 			
 			issue();
@@ -190,11 +204,13 @@ public class Simulator {
 		String inputFile = args[0];
 		int NF = Integer.parseInt(args[1]); // The maximum number of instructions can be fetched in one cycle
 		int NQ = Integer.parseInt(args[2]); // The length of the instruction queue
+		int NI =  Integer.parseInt(args[3]); // The maximum number of instructions can be decoded in one cycle
+		int ND = Integer.parseInt(args[4]); // The length of the Decoded instruction queue
 		Memory main = new Memory(); // store memory data 
 		
 		Simulator simulator = new Simulator(inputFile, main);
 		
-		simulator.startSimulation(main, NF, NQ);
+		simulator.startSimulation(main, NF, NQ, NI, ND);
 	}
 	
 	
