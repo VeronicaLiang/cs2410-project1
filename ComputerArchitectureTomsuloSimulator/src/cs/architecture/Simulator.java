@@ -1,3 +1,4 @@
+
 package cs.architecture;
 
 import java.io.*;
@@ -25,14 +26,18 @@ public class Simulator {
 	IssueQueue issueQueue;//Issuing queue instance
 	LoadStore loadStoreUnit;// Load and store unit instance
 	MULT multUnit;// MULT unit instance
-	PC pc;//PC instance
-	RegisterFile registerFile;//Register file instance
 	ROB renamingBuffer;//ROB instance
-	Scoreboard scoreboard;//scoreboard instance
 	
-	ArrayList<String> instructionList = new ArrayList<String>();
+	
 	
 	boolean finishedFlag = true;//flag for whether this simulation comes to its end.
+	int NF ; // The maximum number of instructions can be fetched in one cycle
+	int NQ ; // The length of the instruction queue
+	int NI ; // The maximum number of instructions can be decoded in one cycle
+	int ND ; // The length of the Decoded instruction queue
+	int NW = 4;//The maximum number of instructions can be issued every clock cycle to reservation stations. 
+	
+	int pc = 0;
 	
 	public Simulator(String instructionFile, Memory main){
 		//Initiate all the units
@@ -45,10 +50,8 @@ public class Simulator {
 		issueQueue = IssueQueue.getInstance();
 		loadStoreUnit = LoadStore.getInstance();
 		multUnit = MULT.getInstance();
-		pc = PC.getInstance();
-		registerFile = RegisterFile.getInstance();
 		renamingBuffer = ROB.getInstance();
-		scoreboard = Scoreboard.getInstance();
+		
 		
 //		fetch all the instruction from instruction file.
 		String line = null;
@@ -60,13 +63,13 @@ public class Simulator {
 				if(flag){
 					main.loadData(line);
 				}else{
-					if(line.contains("DATA")){
-						flag = true;
-					}else{
-						Instructions instr = new Instructions();
-						instr = instr.loadInstrs(line);
-						main.loadInstruction(instr);
-					}
+//					if(line.contains("DATA")){ TODO
+//						flag = true;
+//					}else{
+//						Instructions instr = new Instructions();
+//						instr = instr.loadInstrs(line);
+//						main.loadInstruction(instr);
+//					}
 				}
 			}
 		
@@ -85,14 +88,19 @@ public class Simulator {
 	 * Start this simulation with a loop representing clock cycles.
 	 */
 	public void startSimulation(Memory main, int NF, int NQ, int NI, int ND){
+		this.NF = NF;
+		this.NQ = NQ;
+		this.NI = NI;
+		this.ND = ND;
 		
 		finishedFlag = false;
 		int clock_cycle = 0;
 		int pc = 0; //initialize the program counter 
 		BranchTargetBuffer BTBuffer = new BranchTargetBuffer();
-		LinkedList<Instructions> FQueue = new LinkedList<Instructions>(); // Fetched Instructions Queue
-		LinkedList<Instructions> DQueue = new LinkedList<Instructions>(); // Decoded Instructions Queue (actually, the decode is not needed, only check for branch)
-
+		LinkedList<Instruction> FQueue = new LinkedList<Instruction>(); // Fetched Instructions Queue
+		ArrayList<Instruction> DQueue = new ArrayList<Instruction>(); // Decoded Instructions Queue (actually, the decode is not needed, only check for branch)
+		
+		
 		while(!finishedFlag){//Clock cycles loop
 			
 			/**
@@ -119,7 +127,7 @@ public class Simulator {
 			 */
 			int decoded = 0;
 			while((DQueue.size() <= NI) && (decoded < ND)&&(!FQueue.isEmpty()) ){
-				Instructions next = FQueue.poll();
+				Instruction next = FQueue.poll();
 				DQueue.add(next);
 				if ((next.opco != "BEQZ") &&(next.opco != "BNEZ")&&(next.opco != "BEQ")&&(BTBuffer.Getbuffer()[next.pc%32][0] != -1)){
 					// If the instruction is not a branch, but has entry in BTBuffer
@@ -136,7 +144,7 @@ public class Simulator {
 			}
 			
 			
-			issue();
+			issue(DQueue);
 			readOperands();
 			execute();
 			writeResult();
@@ -162,10 +170,33 @@ public class Simulator {
        multiple instructions, it stalls when the queue fills.
 
 	 */
-	public void issue(){
-		//check the functional unit for the instruction is free or not.
-		//check not other active instruction has the same destination register.
-		//the scoreboard issues the instruction to the functional unit and updates its internal data structural.
+	public void issue(ArrayList<Instruction> DQueue){
+		for(int i=0;i<this.NW;i++){//Check no more than NW instructions in the instructions waiting queue
+			if(DQueue.size()>this.pc){//if instructions waiting queue has an instruction which its index in the queue is 'pc'.
+				Instruction intruction = DQueue.get(this.pc);
+				//check the functional unit for the instruction is free or not.
+				String unit = Const.unitsForInstruction.get(intruction.opco);
+				Station station = Const.reservationStations.get(unit);
+				if(station.Busy){//If the functional unit for the instruction is not free, issue no instruction.
+					break;
+				}else{
+					//Check that not other active instruction has the same destination register.
+					boolean isAvailable = true;
+					if(unit.equals(Const.Unit.INT0)||unit.equals(Const.Unit.INT1)){
+						Const.integerRegistersStatus.get();//TODO TODO
+					}else{
+						Const.floatRegistersStatus.get();
+					}
+					String unit = Const.registersStatus.get();
+					//the scoreboard issues the instruction to the functional unit and updates its internal data structural.
+					station.name = unit;//TODO whether use the unit's name??????
+					
+				}
+				
+			}
+		}
+		
+		
 		
 		
 	}

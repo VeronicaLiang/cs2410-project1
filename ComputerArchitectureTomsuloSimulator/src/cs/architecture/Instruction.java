@@ -1,6 +1,6 @@
 package cs.architecture;
 
-public class Instructions {
+public class Instruction {
 	String note;
 	String rs;
 	String rt;
@@ -8,9 +8,9 @@ public class Instructions {
 	String opco;
 	int pc;
 	
-	public Instructions loadInstrs(String line){
+	public Instruction loadInstrs(String line){
 		String[] records = line.split("\\t+");
-		Instructions instr = new Instructions();
+		Instruction instr = new Instruction();
 		instr.note = records[0];
 		instr.opco = records[1];
 		String[] tmp = records[2].split(",\\s+");

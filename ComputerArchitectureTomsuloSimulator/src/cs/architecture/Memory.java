@@ -3,14 +3,14 @@ package cs.architecture;
 import java.util.*;
 
 public class Memory {
-	private static List<Instructions> instrs = new ArrayList<Instructions>(); // the array's index is for pc
+	private static List<Instruction> instrs = new ArrayList<Instruction>(); // the array's index is for pc
 	private static Hashtable data = new Hashtable(); 
 	
-	public void loadInstruction(Instructions newInstr){
+	public void loadInstruction(Instruction newInstr){
 		instrs.add(newInstr);
 	}
 	
-	public List<Instructions> getInstrs(){
+	public List<Instruction> getInstrs(){
 		return instrs;
 	}
 	
