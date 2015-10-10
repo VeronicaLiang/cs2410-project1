@@ -71,48 +71,48 @@ public class Const {
 	/*
 	 * Integer Register Status Table
 	 */
-	public static HashMap<Const.Register,Integer> integerRegistersStatus = new HashMap<Const.Register,Integer>();
+	public static HashMap<Const.Register,Const.Unit> integerRegistersStatus = new HashMap<Const.Register,Const.Unit>();
 	static{
-		integerRegistersStatus.put(Register.F0,0);
-		integerRegistersStatus.put(Register.F1,0);
-		integerRegistersStatus.put(Register.F2,0);
-		integerRegistersStatus.put(Register.F3,0);
-		integerRegistersStatus.put(Register.F4,0);
-		integerRegistersStatus.put(Register.F5,0);
-		integerRegistersStatus.put(Register.F6,0);
-		integerRegistersStatus.put(Register.F7,0);
-		integerRegistersStatus.put(Register.F8,0);
-		integerRegistersStatus.put(Register.F9,0);
-		integerRegistersStatus.put(Register.F10,0);
-		integerRegistersStatus.put(Register.F11,0);
-		integerRegistersStatus.put(Register.F12,0);
-		integerRegistersStatus.put(Register.F13,0);
-		integerRegistersStatus.put(Register.F14,0);
-		integerRegistersStatus.put(Register.F15,0);
+		integerRegistersStatus.put(Register.F0,null);
+		integerRegistersStatus.put(Register.F1,null);
+		integerRegistersStatus.put(Register.F2,null);
+		integerRegistersStatus.put(Register.F3,null);
+		integerRegistersStatus.put(Register.F4,null);
+		integerRegistersStatus.put(Register.F5,null);
+		integerRegistersStatus.put(Register.F6,null);
+		integerRegistersStatus.put(Register.F7,null);
+		integerRegistersStatus.put(Register.F8,null);
+		integerRegistersStatus.put(Register.F9,null);
+		integerRegistersStatus.put(Register.F10,null);
+		integerRegistersStatus.put(Register.F11,null);
+		integerRegistersStatus.put(Register.F12,null);
+		integerRegistersStatus.put(Register.F13,null);
+		integerRegistersStatus.put(Register.F14,null);
+		integerRegistersStatus.put(Register.F15,null);
 		
-		integerRegistersStatus.put(Register.F16,0);
-		integerRegistersStatus.put(Register.F17,0);
-		integerRegistersStatus.put(Register.F18,0);
-		integerRegistersStatus.put(Register.F19,0);
-		integerRegistersStatus.put(Register.F20,0);
-		integerRegistersStatus.put(Register.F21,0);
-		integerRegistersStatus.put(Register.F22,0);
-		integerRegistersStatus.put(Register.F23,0);
-		integerRegistersStatus.put(Register.F24,0);
-		integerRegistersStatus.put(Register.F25,0);
-		integerRegistersStatus.put(Register.F26,0);
-		integerRegistersStatus.put(Register.F27,0);
-		integerRegistersStatus.put(Register.F28,0);
-		integerRegistersStatus.put(Register.F29,0);
-		integerRegistersStatus.put(Register.F30,0);
-		integerRegistersStatus.put(Register.F31,0);
-		integerRegistersStatus.put(Register.F32,0);
+		integerRegistersStatus.put(Register.F16,null);
+		integerRegistersStatus.put(Register.F17,null);
+		integerRegistersStatus.put(Register.F18,null);
+		integerRegistersStatus.put(Register.F19,null);
+		integerRegistersStatus.put(Register.F20,null);
+		integerRegistersStatus.put(Register.F21,null);
+		integerRegistersStatus.put(Register.F22,null);
+		integerRegistersStatus.put(Register.F23,null);
+		integerRegistersStatus.put(Register.F24,null);
+		integerRegistersStatus.put(Register.F25,null);
+		integerRegistersStatus.put(Register.F26,null);
+		integerRegistersStatus.put(Register.F27,null);
+		integerRegistersStatus.put(Register.F28,null);
+		integerRegistersStatus.put(Register.F29,null);
+		integerRegistersStatus.put(Register.F30,null);
+		integerRegistersStatus.put(Register.F31,null);
+		integerRegistersStatus.put(Register.F32,null);
 	}
 	
 	/*
 	 * Float Register Status Table
 	 */
-	public static HashMap<Const.Register,Float> floatRegistersStatus = new HashMap<Const.Register,Float>();
+	public static HashMap<Const.Register,Const.Unit> floatRegistersStatus = new HashMap<Const.Register,Const.Unit>();
 	static{
 		integerRegistersStatus.put(Register.F0,null);
 		integerRegistersStatus.put(Register.F1,null);

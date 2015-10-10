@@ -183,13 +183,35 @@ public class Simulator {
 					//Check that not other active instruction has the same destination register.
 					boolean isAvailable = true;
 					if(unit.equals(Const.Unit.INT0)||unit.equals(Const.Unit.INT1)){
-						Const.integerRegistersStatus.get();//TODO TODO
+						String rsState = Const.integerRegistersStatus.get(instruction.rs);
+						String rtState = Const.integerRegistersStatus.get(instruction.rt);
+						String rdState = Const.integerRegistersStatus.get(instruction.rd);
+						if((rsState==null) && (rsState==null) && (rdState==null)){//Three registers are not occupied
+							//the scoreboard issues the instruction to the functional unit and updates its internal data structural.
+							station.name = unit;//TODO whether use the unit's name??????
+							station.Busy = true;
+							staion.op = intruction.opco;
+							station.Qj = instruction.Qj;//TODO To check the Qj instruction's state
+							station.Qk = instruction.Qj;//TODO To check the Qj instruction's state
+						}else{
+							break;
+						}
 					}else{
-						Const.floatRegistersStatus.get();
+						String rsState = Const.floatRegistersStatus.get(instruction.rs);
+						String rtState = Const.floatRegistersStatus.get(instruction.rt);
+						String rdState = Const.floatRegistersStatus.get(instruction.rd);
+						if((rsState==null) && (rsState==null) && (rdState==null)){//Three registers are not occupied
+							//the scoreboard issues the instruction to the functional unit and updates its internal data structural.
+							station.name = unit;//TODO whether use the unit's name??????
+							station.Busy = true;
+							staion.op = intruction.opco;
+							station.Qj = instruction.Qj;//TODO To check the Qj instruction's state
+							station.Qk = instruction.Qj;//TODO To check the Qj instruction's state
+						}else{
+							break;
+						}
 					}
-					String unit = Const.registersStatus.get();
-					//the scoreboard issues the instruction to the functional unit and updates its internal data structural.
-					station.name = unit;//TODO whether use the unit's name??????
+					
 					
 				}
 				

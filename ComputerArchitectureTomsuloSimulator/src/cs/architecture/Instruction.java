@@ -6,6 +6,13 @@ public class Instruction {
 	String rt;
 	String rd;
 	String opco;
+	/*
+	 * Qj, Qk—The reservation stations that will produce the corresponding source
+       operand; a value of zero indicates that the source operand is already available
+       in Vj or Vk, or is unnecessary.
+	 */
+	String Qj, Qk;
+	
 	int pc;
 	
 	public Instruction loadInstrs(String line){
