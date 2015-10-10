@@ -73,7 +73,7 @@ public class Const {
 		String name;
 		float floatValue;
 		int intValue;
-		String busy;
+		boolean busy;
 		int Reorder;
 	}
 	public class IntegerRegister{
@@ -236,5 +236,7 @@ public class Const {
 	public static java.util.ArrayList<ROBItem> ROB = new java.util.ArrayList<ROBItem>();
 	public class ROBItem{
 		boolean ready = false;
+		float floatValue;
+		int intValue;
 	}
 }

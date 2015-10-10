@@ -33,7 +33,16 @@ public class FPU {
 		for(int i = 13;i<=17;i++){
 			Station station = Const.reservationStations.get(i+"");
 			if((!station.busy) && (Const.ROB.size()<Simulator.NR)){
-				
+				Register register;
+				if(rs.contains("F")){
+					register = Const.floatRegistersStatus.get(rs);
+				}else{
+					register = Const.integerRegistersStatus.get(rs);
+				}
+				int reorder = register.Reorder;
+				if(Const.ROB.get(reorder).ready){
+					station.Qj
+				}
 			}
 		}
 		
