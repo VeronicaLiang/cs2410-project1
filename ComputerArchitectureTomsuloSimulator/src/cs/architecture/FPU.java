@@ -123,6 +123,29 @@ public class FPU {
 		//change the result to long bits
 		ReservationStation[input].result = Double.doubleToLongBits(result);
 	}
-	
+	public void execute(){
+		for(int i = 13;i<=17;i++){
+			Station station = Const.reservationStations.get(i+"");
+			if((station.latency>0) && (station.latency<latency)){
+				station.latency = station.latency +1;
+			}else{
+				if(station.latency==latency){
+					//TODO update data
+				}else{
+					//TODO Check whenther all the operands are available.
+					if(station.op.equals("ADD.D")){
+						//TODO
+					}else if(station.op.equals("SUB.D")){
+						//TODO 
+					}else if(station.op.equals("MUL.D")){
+						//TODO
+					}else if(station.op.equals("DIV.D")){
+						//TODO
+					}
+				}
+				
+			}
+		}
+	}
 	
 }
