@@ -70,90 +70,169 @@ public class Const {
 	}
 	
 	public class Register{
-		public static String F0,F1, F2, F3, F4, F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15
-		,F16,F17, F18, F19, F20, F21,F22,F23,F24,F25,F26,F27,F28,F29,F30,F31,F32;
+		String name;
+		float floatValue;
+		int intValue;
+		String busy;
+		int Reorder;
 	}
-	/*
-	 * Integer Register Status Table
-	 */
-	public static HashMap<String,String> integerRegistersStatus = new HashMap<String,String>();
-	static{
-		integerRegistersStatus.put(Register.F0,null);
-		integerRegistersStatus.put(Register.F1,null);
-		integerRegistersStatus.put(Register.F2,null);
-		integerRegistersStatus.put(Register.F3,null);
-		integerRegistersStatus.put(Register.F4,null);
-		integerRegistersStatus.put(Register.F5,null);
-		integerRegistersStatus.put(Register.F6,null);
-		integerRegistersStatus.put(Register.F7,null);
-		integerRegistersStatus.put(Register.F8,null);
-		integerRegistersStatus.put(Register.F9,null);
-		integerRegistersStatus.put(Register.F10,null);
-		integerRegistersStatus.put(Register.F11,null);
-		integerRegistersStatus.put(Register.F12,null);
-		integerRegistersStatus.put(Register.F13,null);
-		integerRegistersStatus.put(Register.F14,null);
-		integerRegistersStatus.put(Register.F15,null);
-		
-		integerRegistersStatus.put(Register.F16,null);
-		integerRegistersStatus.put(Register.F17,null);
-		integerRegistersStatus.put(Register.F18,null);
-		integerRegistersStatus.put(Register.F19,null);
-		integerRegistersStatus.put(Register.F20,null);
-		integerRegistersStatus.put(Register.F21,null);
-		integerRegistersStatus.put(Register.F22,null);
-		integerRegistersStatus.put(Register.F23,null);
-		integerRegistersStatus.put(Register.F24,null);
-		integerRegistersStatus.put(Register.F25,null);
-		integerRegistersStatus.put(Register.F26,null);
-		integerRegistersStatus.put(Register.F27,null);
-		integerRegistersStatus.put(Register.F28,null);
-		integerRegistersStatus.put(Register.F29,null);
-		integerRegistersStatus.put(Register.F30,null);
-		integerRegistersStatus.put(Register.F31,null);
-		integerRegistersStatus.put(Register.F32,null);
+	public class IntegerRegister{
+		public static String R0 = "R0",R1 = "R1", R2 = "R2", R3 = "R3", R4 = "R4", R5 = "R5",R6 = "R6",R7 = "R7",R8 = "R8"
+				,R9 = "R9",R10 = "R10",R11 = "R11",R12 = "R12",R13 = "R13",R14 = "R14",R15 = "R15",R16 = "R16",R17 = "R17"
+				, R18 = "R18", R19 = "R19", R20 = "R20", R21 = "R21",R22 = "R22",R23 = "R23",R24 = "R24",R25 = "R25"
+				,R26 = "R26",R27 = "R27",R28 = "R28",R29 = "R29",R30 = "R30",R31 = "R31";
 	}
 	
 	/*
+	 * Integer Register Status Table
+	 */
+	public static HashMap<String,Register> integerRegistersStatus = new HashMap<String,Register>();
+	static{
+		Register register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R0,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R1,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R2,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R3,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R4,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R5,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R6,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R7,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R8,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R9,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R10,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R11,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R12,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R13,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R14,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R15,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R16,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R17,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R18,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R19,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R20,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R21,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R22,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R23,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R24,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R25,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R26,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R27,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R28,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R29,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R30,register);
+		register = new Register();
+		integerRegistersStatus.put(IntegerRegister.R31,register);
+		
+	}
+	
+	public class FloatRegister{
+		public static String F0 = "F0",F1 = "F1", F2 = "F2", F3 = "F3", F4 = "F4", F5 = "F5",F6 = "F6",F7 = "F7",F8 = "F8"
+				,F9 = "F9",F10 = "F10",F11 = "F11",F12 = "F12",F13 = "F13",F14 = "F14",F15 = "F15",F16 = "F16",F17 = "F17"
+				, F18 = "F18", F19 = "F19", F20 = "F20", F21 = "F21",F22 = "F22",F23 = "F23",F24 = "F24",F25 = "F25"
+				,F26 = "F26",F27 = "F27",F28 = "F28",F29 = "F29",F30 = "F30",F31 = "F31";
+	}
+	/*
 	 * Float Register Status Table
 	 */
-	public static HashMap<String,String> floatRegistersStatus = new HashMap<String,String>();
+	public static HashMap<String,Register> floatRegistersStatus = new HashMap<String,Register>();
 	static{
-		integerRegistersStatus.put(Register.F0,null);
-		integerRegistersStatus.put(Register.F1,null);
-		integerRegistersStatus.put(Register.F2,null);
-		integerRegistersStatus.put(Register.F3,null);
-		integerRegistersStatus.put(Register.F4,null);
-		integerRegistersStatus.put(Register.F5,null);
-		integerRegistersStatus.put(Register.F6,null);
-		integerRegistersStatus.put(Register.F7,null);
-		integerRegistersStatus.put(Register.F8,null);
-		integerRegistersStatus.put(Register.F9,null);
-		integerRegistersStatus.put(Register.F10,null);
-		integerRegistersStatus.put(Register.F11,null);
-		integerRegistersStatus.put(Register.F12,null);
-		integerRegistersStatus.put(Register.F13,null);
-		integerRegistersStatus.put(Register.F14,null);
-		integerRegistersStatus.put(Register.F15,null);
+		Register register = new Register();
+		floatRegistersStatus.put(FloatRegister.F0,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F1,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F2,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F3,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F4,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F5,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F6,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F7,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F8,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F9,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F10,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F11,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F12,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F13,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F14,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F15,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F16,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F17,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F18,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F19,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F20,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F21,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F22,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F23,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F24,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F25,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F26,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F27,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F28,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F29,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F30,register);
+		register = new Register();
+		floatRegistersStatus.put(FloatRegister.F31,register);
 		
-		integerRegistersStatus.put(Register.F16,null);
-		integerRegistersStatus.put(Register.F17,null);
-		integerRegistersStatus.put(Register.F18,null);
-		integerRegistersStatus.put(Register.F19,null);
-		integerRegistersStatus.put(Register.F20,null);
-		integerRegistersStatus.put(Register.F21,null);
-		integerRegistersStatus.put(Register.F22,null);
-		integerRegistersStatus.put(Register.F23,null);
-		integerRegistersStatus.put(Register.F24,null);
-		integerRegistersStatus.put(Register.F25,null);
-		integerRegistersStatus.put(Register.F26,null);
-		integerRegistersStatus.put(Register.F27,null);
-		integerRegistersStatus.put(Register.F28,null);
-		integerRegistersStatus.put(Register.F29,null);
-		integerRegistersStatus.put(Register.F30,null);
-		integerRegistersStatus.put(Register.F31,null);
-		integerRegistersStatus.put(Register.F32,null);
 	}
+	static int NR = 16;
 	public static java.util.ArrayList<ROBItem> ROB = new java.util.ArrayList<ROBItem>();
 	public class ROBItem{
 		boolean ready = false;
