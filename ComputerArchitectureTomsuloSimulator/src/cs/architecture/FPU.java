@@ -23,12 +23,11 @@ public class FPU {
 	/*
 	 * Reservation Stations Table.
 	 * Station 1 to 4 are INT0&INT1 stations.
-	   Station 5 and 6 are INT0&INT1 stations.
+	   Station 5 and 6 are MULT stations.
 	   Station 7 to 12 are Load/Store  stations.
 	   Station 13 to 17 are FPU  stations.
-	   Station 18 and 19 are FPU  stations.
+	   Station 18 and 19 are BU  stations.
 	 */
-	
 	public boolean insertInstruction(String opco, String rs, String rt, String rd){
 		for(int i = 13;i<=17;i++){
 			Station station = Const.reservationStations.get(i+"");
@@ -41,7 +40,7 @@ public class FPU {
 				}
 				int reorder = register.Reorder;
 				if(Const.ROB.get(reorder).ready){
-					station.Qj
+					if(station.Op==Const.){}
 				}
 			}
 		}
@@ -103,5 +102,21 @@ public class FPU {
 		
 		//change the result to long bits
 		ReservationStation[input].result = Double.doubleToLongBits(result);
+	}
+	
+	public void execute(){
+		for(int i = 13;i<=17;i++){
+			Station station = Const.reservationStations.get(i+"");
+			//TODO Check whenther all the operands are available.
+			if(station.op.equals("ADD.D")){
+				//TODO
+			}else if(station.op.equals("SUB.D")){
+				//TODO 
+			}else if(station.op.equals("MUL.D")){
+				//TODO
+			}else if(station.op.equals("DIV.D")){
+				//TODO
+			}
+		}
 	}
 }

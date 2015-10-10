@@ -54,10 +54,10 @@ public class Const {
 	/*
 	 * Reservation Stations Table.
 	 * Station 1 to 4 are INT0&INT1 stations.
-	   Station 5 and 6 are INT0&INT1 stations.
+	   Station 5 and 6 are MULT stations.
 	   Station 7 to 12 are Load/Store  stations.
 	   Station 13 to 17 are FPU  stations.
-	   Station 18 and 19 are FPU  stations.
+	   Station 18 and 19 are BU  stations.
 	 */
 	public static HashMap<String,Station> reservationStations = new HashMap<String,Station>();
 	static {

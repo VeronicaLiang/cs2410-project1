@@ -250,8 +250,10 @@ public class Simulator {
        cycles in the MIPS FP pipeline.
 	 */
     public void execute(){
-		//Iterate resvervation stations table, and execute every station
-    	
+		//Iterate resvervation stations table, and execute every station.
+    	fpuUnit.execute();
+    	int0Unit.execute();
+    	buUnit.execute();
 	}
     /*
      * Once the scoreboard is aware that the functional unit has completed
