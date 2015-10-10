@@ -1,4 +1,7 @@
 package cs.architecture;
+
+import cs.architecture.Const.Register;
+
 /**
  * @author Computer Architecture Simulator Project Group
  *
@@ -33,16 +36,27 @@ public class FPU {
 		for(int i = 13;i<=17;i++){
 			Station station = Const.reservationStations.get(i+"");
 			if((!station.Busy) && (Const.ROB.size()< Simulator.NR)){
+				int h;
+				Register register;
 				if (rs.contains("R")){
-					Const.integerRegistersStatus.get(rs);
+					register = Const.integerRegistersStatus.get(rs);
 				}else{
-					Const.floatRegistersStatus.get(rs);
-				}
-				if(Register.busy){
-					
+					register = Const.floatRegistersStatus.get(rs);
 				}
 				
-			}
+				if(register.busy){
+					h = register.Reorder;
+					if(Const.ROB.get(h).ready){
+						if (rs.contains("R")){
+							Const.reservationStations.get(i+"").Vj = Const.ROB.get(h).intValue;
+						}else{
+							Const.reservationStations.get(i+"").Vj = Const.ROB.get(h).floatValue;
+						}
+						
+					}
+				}
+					
+				}
 		}
 		
 //		for(int i=0;i<ReservationStationNumber;i++){

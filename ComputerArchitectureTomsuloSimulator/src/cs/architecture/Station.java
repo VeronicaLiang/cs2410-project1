@@ -52,7 +52,7 @@ public class Station {
        fields or the Q field is valid for each operand. For loads, the Vk field is used
        to hold the offset field.
 	 */
-	String Vj, Vk;
+	float Vj, Vk;
 	
 	/*
 	 * A—Used to hold information for the memory address calculation for a load
