@@ -1,4 +1,3 @@
-
 package cs.architecture;
 
 import java.io.*;
@@ -20,7 +19,6 @@ public class Simulator {
 	BU buUnit;// BU unit instance;
 	Bus bus;//Bus unit instance;
 	FPU fpuUnit;// FPU unit instance;
-	InstructionQueue instructionQueue;// Instruction queue unit instance;
 	INT0 int0Unit;//INT0 unit instance
 	INT1 int1Unit;//INT1 unit instance
 	IssueQueue issueQueue;//Issuing queue instance
@@ -36,15 +34,15 @@ public class Simulator {
 	int NI ; // The maximum number of instructions can be decoded in one cycle
 	int ND ; // The length of the Decoded instruction queue
 	int NW = 4;//The maximum number of instructions can be issued every clock cycle to reservation stations. 
+	static int NR = 16;
 	
-	int pc = 0;
+//	int pc = 0;
 	
 	public Simulator(String instructionFile, Memory main){
 		//Initiate all the units
 		buUnit = BU.getInstance();
 		bus = Bus.getInstance();
 		fpuUnit = FPU.getInstance();
-		instructionQueue = InstructionQueue.getInstance();
 		int0Unit = INT0.getInstance();
 		int1Unit = INT1.getInstance();
 		issueQueue = IssueQueue.getInstance();
@@ -63,13 +61,13 @@ public class Simulator {
 				if(flag){
 					main.loadData(line);
 				}else{
-//					if(line.contains("DATA")){ TODO
-//						flag = true;
-//					}else{
-//						Instructions instr = new Instructions();
-//						instr = instr.loadInstrs(line);
-//						main.loadInstruction(instr);
-//					}
+					if(line.contains("DATA")){
+						flag = true;
+					}else{
+						Instructions instr = new Instructions();
+						instr = instr.loadInstrs(line);
+						main.loadInstruction(instr);
+					}
 				}
 			}
 		
@@ -109,7 +107,7 @@ public class Simulator {
 			 * In one clock cycle, the maximum number of fetching is NF. 
 			 */
 			int fetched = 0;
-			while((FQueue.size() <= NQ) && (fetched < NF) &&(pc < main.getInstrs().size())){
+			while((FQueue.size() < NQ) && (fetched < NF) &&(pc < main.getInstrs().size())){
 				main.getInstrs().get(pc).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
 				FQueue.add(main.getInstrs().get(pc));
 				if(BTBuffer.Getbuffer()[pc][0] != -1){
@@ -233,7 +231,8 @@ public class Simulator {
        pipeline.
 	 */
 	public void readOperands(){
-		
+		//Iterate resvervation stations table, and read all the operands for every station
+//		Const.reservationStations;
 	}
 	/*
 	 * The functional unit begins execution upon receiving operands.
@@ -242,7 +241,8 @@ public class Simulator {
        cycles in the MIPS FP pipeline.
 	 */
     public void execute(){
-		
+		//Iterate resvervation stations table, and execute every station
+    	
 	}
     /*
      * Once the scoreboard is aware that the functional unit has completed

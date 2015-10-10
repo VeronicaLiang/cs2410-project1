@@ -11,6 +11,7 @@ package cs.architecture;
  * FPU:    Float Point Unit
  */
 public class FPU {
+	
 	private static FPU instance;
 	private FPU (){}
 	public static FPU getInstance(){
@@ -19,50 +20,64 @@ public class FPU {
 		return instance;
 	}
 	
+	/*
+	 * Reservation Stations Table.
+	 * Station 1 to 4 are INT0&INT1 stations.
+	   Station 5 and 6 are INT0&INT1 stations.
+	   Station 7 to 12 are Load/Store  stations.
+	   Station 13 to 17 are FPU  stations.
+	   Station 18 and 19 are FPU  stations.
+	 */
 	
 	public boolean insertInstruction(String opco, int rs, int rt, int rd){
-
-		for(int i=0;i<ReservationStationNumber;i++){
-			if((!ReservationStation[i].busy)&&(ROB.size < max)){
-				if(RegisterStatus[rs].busy){
-					//Update Status table
-					h = RegisterStatus[rs].Reorder;
-					if(ROB[h].Ready){
-						ReservationStation[i].Vj = ROB[h].Value;
-						ReservationStation[i].Qj = 0;
-					}else{
-						ReservationStation[i].Qj = h;
-					}
-					
-				}else{
-					ReservationStation[i].Vj = Regs[rs];
-					ReservationStation[i].Qj = 0;
-				}
+		for(int i = 13;i<=17;i++){
+			Station station = Const.reservationStations.get(i+"");
+			if((!statiom.busy) && (Const.ROB.size()<Simulator.NR)){
 				
-				if(RegisterStatus[rt].busy){
-					//Update Status table
-					h = RegisterStatus[rt].Reorder;
-					if(ROB[h].Ready){
-						ReservationStation[i].Vk = ROB[h].Value;
-						ReservationStation[i].Qk = 0;
-					}else{
-						ReservationStation[i].Qk = h;
-					}
-					
-				}else{
-					ReservationStation[i].Vk = Regs[rt];
-					ReservationStation[i].Qk = 0;
-				}
-				
-				
-				ReservationStation[i].busy = true;
-				ReservationStation[i].dest = b;
-				ROB[b].Instruction = opco;
-				ROB[b].Dest = rd;
-				ROB[b].Ready = false;
-				return true;
 			}
 		}
+		
+//		for(int i=0;i<ReservationStationNumber;i++){
+//			if((!ReservationStation[i].busy)&&(ROB.size < max)){
+//				if(RegisterStatus[rs].busy){
+//					//Update Status table
+//					h = RegisterStatus[rs].Reorder;
+//					if(ROB[h].Ready){
+//						ReservationStation[i].Vj = ROB[h].Value;
+//						ReservationStation[i].Qj = 0;
+//					}else{
+//						ReservationStation[i].Qj = h;
+//					}
+//					
+//				}else{
+//					ReservationStation[i].Vj = Regs[rs];
+//					ReservationStation[i].Qj = 0;
+//				}
+//				
+//				if(RegisterStatus[rt].busy){
+//					//Update Status table
+//					h = RegisterStatus[rt].Reorder;
+//					if(ROB[h].Ready){
+//						ReservationStation[i].Vk = ROB[h].Value;
+//						ReservationStation[i].Qk = 0;
+//					}else{
+//						ReservationStation[i].Qk = h;
+//					}
+//					
+//				}else{
+//					ReservationStation[i].Vk = Regs[rt];
+//					ReservationStation[i].Qk = 0;
+//				}
+//				
+//				
+//				ReservationStation[i].busy = true;
+//				ReservationStation[i].dest = b;
+//				ROB[b].Instruction = opco;
+//				ROB[b].Dest = rd;
+//				ROB[b].Ready = false;
+//				return true;
+//			}
+//		}
 		// the issue is not successful, needs to stall for one cycle.
 		return false;
 	}

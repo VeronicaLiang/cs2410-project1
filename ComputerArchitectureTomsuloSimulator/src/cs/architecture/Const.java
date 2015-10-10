@@ -11,8 +11,8 @@ import java.util.HashMap;
  * Const, stores constant variables
  */
 public class Const {
-	public static enum Unit{
-		INT0, INT1, MULT, LoadStore, FPU, BU;
+	public class Unit{
+		public static String INT0 = "INT0", INT1 = "INT1", MULT = "MULT", LoadStore = "LoadStore", FPU = "FPU", BU = "BU";
 	}
 //	public static enum OPCODE{
 //		AND, ANDI, OR, ORI, SLT, SLTI,DADD,DADDI,DSUB//INT0,INT1
@@ -24,7 +24,7 @@ public class Const {
 	/*
 	 * Table of instructions executing on what units.
 	 */
-	public static HashMap<String,Const.Unit> unitsForInstruction = new HashMap<String,Const.Unit>();
+	public static HashMap<String,String> unitsForInstruction = new HashMap<String,String>();
 	static{
 		unitsForInstruction.put("AND",Unit.INT0);
 		unitsForInstruction.put("ANDI",Unit.INT0);
@@ -53,25 +53,30 @@ public class Const {
 	}
 	/*
 	 * Reservation Stations Table.
+	 * Station 1 to 4 are INT0&INT1 stations.
+	   Station 5 and 6 are INT0&INT1 stations.
+	   Station 7 to 12 are Load/Store  stations.
+	   Station 13 to 17 are FPU  stations.
+	   Station 18 and 19 are FPU  stations.
 	 */
-	public static HashMap<Const.Unit,Station> reservationStations = new HashMap<Const.Unit,Station>();
+	public static HashMap<String,Station> reservationStations = new HashMap<String,Station>();
 	static {
-		reservationStations.put(Const.Unit.INT0,new Station());
-		reservationStations.put(Const.Unit.INT1,new Station());
-		reservationStations.put(Const.Unit.MULT,new Station());
-		reservationStations.put(Const.Unit.LoadStore,new Station());
-		reservationStations.put(Const.Unit.FPU,new Station());
-		reservationStations.put(Const.Unit.BU,new Station());
+		Station station;
+		for(int i = 1;i<=19;i++){
+			station = new Station();
+			station.name = i+"";
+			reservationStations.put(station.name ,station);
+		}
 	}
 	
-	public static enum Register{
-		F0,F1, F2, F3, F4, F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15
+	public class Register{
+		public static String F0,F1, F2, F3, F4, F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15
 		,F16,F17, F18, F19, F20, F21,F22,F23,F24,F25,F26,F27,F28,F29,F30,F31,F32;
 	}
 	/*
 	 * Integer Register Status Table
 	 */
-	public static HashMap<Const.Register,Const.Unit> integerRegistersStatus = new HashMap<Const.Register,Const.Unit>();
+	public static HashMap<String,String> integerRegistersStatus = new HashMap<String,String>();
 	static{
 		integerRegistersStatus.put(Register.F0,null);
 		integerRegistersStatus.put(Register.F1,null);
@@ -112,7 +117,7 @@ public class Const {
 	/*
 	 * Float Register Status Table
 	 */
-	public static HashMap<Const.Register,Const.Unit> floatRegistersStatus = new HashMap<Const.Register,Const.Unit>();
+	public static HashMap<String,String> floatRegistersStatus = new HashMap<String,String>();
 	static{
 		integerRegistersStatus.put(Register.F0,null);
 		integerRegistersStatus.put(Register.F1,null);
@@ -148,5 +153,9 @@ public class Const {
 		integerRegistersStatus.put(Register.F30,null);
 		integerRegistersStatus.put(Register.F31,null);
 		integerRegistersStatus.put(Register.F32,null);
+	}
+	public static java.util.ArrayList<ROBItem> ROB = new java.util.ArrayList<ROBItem>();
+	public class ROBItem{
+		boolean ready = false;
 	}
 }
