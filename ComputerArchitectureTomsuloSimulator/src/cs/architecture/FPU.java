@@ -52,54 +52,60 @@ public class FPU {
 						}else{
 							Const.reservationStations.get(i+"").Vj = Const.ROB.get(h).floatValue;
 						}
-						
+						Const.reservationStations.get(i+"").Qj = 0;
+					}else{
+						Const.reservationStations.get(i+"").Qj = h;
 					}
+				}else{
+					if (rs.contains("R")){
+						Const.reservationStations.get(i+"").Vj = register.intValue ;
+					}else{
+						Const.reservationStations.get(i+"").Vj = register.floatValue ;
+					}
+					Const.reservationStations.get(i+"").Qj = 0;
 				}
-					
+				
+				// The same update for rt 
+				if (rt.contains("R")){
+					register = Const.integerRegistersStatus.get(rt);
+				}else{
+					register = Const.floatRegistersStatus.get(rt);
 				}
+				
+				if(register.busy){
+					h = register.Reorder;
+					if(Const.ROB.get(h).ready){
+						if (rt.contains("R")){
+							Const.reservationStations.get(i+"").Vk = Const.ROB.get(h).intValue;
+						}else{
+							Const.reservationStations.get(i+"").Vk = Const.ROB.get(h).floatValue;
+						}
+						Const.reservationStations.get(i+"").Qk = 0;
+					}else{
+						Const.reservationStations.get(i+"").Qk = h;
+					}
+				}else{
+					if (rt.contains("R")){
+						Const.reservationStations.get(i+"").Vk = register.intValue ;
+					}else{
+						Const.reservationStations.get(i+"").Vk = register.floatValue ;
+					}
+					Const.reservationStations.get(i+"").Qk = 0;
+				}
+				Const.reservationStations.get(i+"").Busy = true;
+				// The number of the ROB entry allocated for the result is also sent to the reservation station.
+				int ROB_nbr = Const.ROB.size();
+				Const.reservationStations.get(i+"").Dest = ROB_nbr;
+				if (rd.contains("R")){
+					Const.integerRegistersStatus.get(rd).Reorder = ROB_nbr;
+				}else{
+					Const.floatRegistersStatus.get(rd).Reorder = ROB_nbr;
+				}
+				Const.ROB.get(h).ready = false;
+				return true;
+			}
 		}
 		
-//		for(int i=0;i<ReservationStationNumber;i++){
-//			if((!ReservationStation[i].busy)&&(ROB.size < max)){
-//				if(RegisterStatus[rs].busy){
-//					//Update Status table
-//					h = RegisterStatus[rs].Reorder;
-//					if(ROB[h].Ready){
-//						ReservationStation[i].Vj = ROB[h].Value;
-//						ReservationStation[i].Qj = 0;
-//					}else{
-//						ReservationStation[i].Qj = h;
-//					}
-//					
-//				}else{
-//					ReservationStation[i].Vj = Regs[rs];
-//					ReservationStation[i].Qj = 0;
-//				}
-//				
-//				if(RegisterStatus[rt].busy){
-//					//Update Status table
-//					h = RegisterStatus[rt].Reorder;
-//					if(ROB[h].Ready){
-//						ReservationStation[i].Vk = ROB[h].Value;
-//						ReservationStation[i].Qk = 0;
-//					}else{
-//						ReservationStation[i].Qk = h;
-//					}
-//					
-//				}else{
-//					ReservationStation[i].Vk = Regs[rt];
-//					ReservationStation[i].Qk = 0;
-//				}
-//				
-//				
-//				ReservationStation[i].busy = true;
-//				ReservationStation[i].dest = b;
-//				ROB[b].Instruction = opco;
-//				ROB[b].Dest = rd;
-//				ROB[b].Ready = false;
-//				return true;
-//			}
-//		}
 		// the issue is not successful, needs to stall for one cycle.
 		return false;
 	}

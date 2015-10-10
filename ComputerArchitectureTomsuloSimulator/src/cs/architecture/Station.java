@@ -45,7 +45,7 @@ public class Station {
        operand; a value of zero indicates that the source operand is already available
        in Vj or Vk, or is unnecessary.
 	 */
-	String Qj, Qk;
+	int Qj, Qk;
 	
 	/*
 	 * Vj, Vk—The value of the source operands. Note that only one of the V
@@ -74,4 +74,9 @@ public class Station {
        meaning that the value is simply the register contents.
 	 */
 	String Qi;
+	
+	/*
+	 * records the destination register's reorder number, if exists 
+	 */
+	int Dest;
 }
