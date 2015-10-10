@@ -34,7 +34,7 @@ public class Simulator {
 	int NI ; // The maximum number of instructions can be decoded in one cycle
 	int ND ; // The length of the Decoded instruction queue
 	int NW = 4;//The maximum number of instructions can be issued every clock cycle to reservation stations. 
-	static int NR = 16;
+	
 	
 //	int pc = 0;
 	
