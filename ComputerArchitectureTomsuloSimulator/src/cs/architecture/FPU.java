@@ -29,10 +29,10 @@ public class FPU {
 	   Station 18 and 19 are FPU  stations.
 	 */
 	
-	public boolean insertInstruction(String opco, int rs, int rt, int rd){
+	public boolean insertInstruction(String opco, String rs, String rt, String rd){
 		for(int i = 13;i<=17;i++){
 			Station station = Const.reservationStations.get(i+"");
-			if((!statiom.busy) && (Const.ROB.size()<Simulator.NR)){
+			if((!station.busy) && (Const.ROB.size()<Simulator.NR)){
 				
 			}
 		}
@@ -82,7 +82,7 @@ public class FPU {
 		return false;
 	}
 	
-	void computeResult(int input){
+	public void computeResult(int input){
 		//change the long bits to double to calculate the result
 		double rs = Double.longBitsToDouble(ReservationStation[input].Vj);
 		double rt = Double.longBitsToDouble(ReservationStation[input].Vk);
