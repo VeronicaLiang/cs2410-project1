@@ -32,7 +32,15 @@ public class FPU {
 	public boolean insertInstruction(String opco, String rs, String rt, String rd){
 		for(int i = 13;i<=17;i++){
 			Station station = Const.reservationStations.get(i+"");
-			if((!station.busy) && (Const.ROB.size()<Simulator.NR)){
+			if((!station.Busy) && (Const.ROB.size()< Simulator.NR)){
+				if (rs.contains("R")){
+					Const.integerRegistersStatus.get(rs);
+				}else{
+					Const.floatRegistersStatus.get(rs);
+				}
+				if(Register.busy){
+					
+				}
 				
 			}
 		}

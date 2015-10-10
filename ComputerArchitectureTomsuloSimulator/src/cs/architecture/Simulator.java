@@ -35,7 +35,6 @@ public class Simulator {
 	int ND ; // The length of the Decoded instruction queue
 	int NW = 4;//The maximum number of instructions can be issued every clock cycle to reservation stations. 
 	
-	
 //	int pc = 0;
 	
 	public Simulator(String instructionFile, Memory main){
