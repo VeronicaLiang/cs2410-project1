@@ -45,14 +45,14 @@ public class Station {
        operand; a value of zero indicates that the source operand is already available
        in Vj or Vk, or is unnecessary.
 	 */
-	String Qj, Qk;
+	int Qj, Qk;
 	
 	/*
 	 * Vj, Vk—The value of the source operands. Note that only one of the V
        fields or the Q field is valid for each operand. For loads, the Vk field is used
        to hold the offset field.
 	 */
-	String Vj, Vk;
+	float Vj, Vk;
 	
 	/*
 	 * A—Used to hold information for the memory address calculation for a load
@@ -74,4 +74,11 @@ public class Station {
        meaning that the value is simply the register contents.
 	 */
 	String Qi;
+	
+	/*
+	 * records the destination register's reorder number, if exists 
+	 */
+	int Dest;
+	
+	int latency = 0;
 }

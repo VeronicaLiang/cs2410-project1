@@ -35,7 +35,6 @@ public class Simulator {
 	int ND ; // The length of the Decoded instruction queue
 	int NW = 4;//The maximum number of instructions can be issued every clock cycle to reservation stations. 
 	
-	
 //	int pc = 0;
 	
 	public Simulator(String instructionFile, Memory main){
@@ -183,49 +182,8 @@ public class Simulator {
 				};
 			}
 			
-//			if(DQueue.size()>this.pc){//if instructions waiting queue has an instruction which its index in the queue is 'pc'.
-//				Instruction intruction = DQueue.get(this.pc);
-//				//check the functional unit for the instruction is free or not.
-//				String unit = Const.unitsForInstruction.get(intruction.opco);
-//				Station station = Const.reservationStations.get(unit);
-//				if(station.Busy){//If the functional unit for the instruction is not free, issue no instruction.
-//					break;
-//				}else{
-//					//Check that not other active instruction has the same destination register.
-//					boolean isAvailable = true;
-//					if(unit.equals(Const.Unit.INT0)||unit.equals(Const.Unit.INT1)){
-//						String rsState = Const.integerRegistersStatus.get(instruction.rs);
-//						String rtState = Const.integerRegistersStatus.get(instruction.rt);
-//						String rdState = Const.integerRegistersStatus.get(instruction.rd);
-//						if((rsState==null) && (rsState==null) && (rdState==null)){//Three registers are not occupied
-//							//the scoreboard issues the instruction to the functional unit and updates its internal data structural.
-//							station.name = unit;//TODO whether use the unit's name??????
-//							station.Busy = true;
-//							staion.op = intruction.opco;
-//							station.Qj = instruction.Qj;//TODO To check the Qj instruction's state
-//							station.Qk = instruction.Qj;//TODO To check the Qj instruction's state
-//						}else{
-//							break;
-//						}
-//					}else{
-//						String rsState = Const.floatRegistersStatus.get(instruction.rs);
-//						String rtState = Const.floatRegistersStatus.get(instruction.rt);
-//						String rdState = Const.floatRegistersStatus.get(instruction.rd);
-//						if((rsState==null) && (rsState==null) && (rdState==null)){//Three registers are not occupied
-//							//the scoreboard issues the instruction to the functional unit and updates its internal data structural.
-//							station.name = unit;//TODO whether use the unit's name??????
-//							station.Busy = true;
-//							staion.op = intruction.opco;
-//							station.Qj = instruction.Qj;//TODO To check the Qj instruction's state
-//							station.Qk = instruction.Qj;//TODO To check the Qj instruction's state
-//						}else{
-//							break;
-//						}
-//					}
-//				}
-//				
-			}
 		}
+      }
 
 	
 	
