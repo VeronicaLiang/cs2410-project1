@@ -73,4 +73,6 @@ public class Station {
 	int latency = 0;
 	
 	float result;
+	
+	int loadFlag = 0;
 }
