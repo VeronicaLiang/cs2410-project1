@@ -1,5 +1,5 @@
-package cs.architecture;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public class Const {
 	public class Unit{
-		public static String INT0 = "INT0", INT1 = "INT1", MULT = "MULT", LoadStore = "LoadStore", FPU = "FPU", BU = "BU";
+		public static final String INT0 = "INT0", INT1 = "INT1", MULT = "MULT", LoadStore = "LoadStore", FPU = "FPU", BU = "BU";
 	}
 //	public static enum OPCODE{
 //		AND, ANDI, OR, ORI, SLT, SLTI,DADD,DADDI,DSUB//INT0,INT1
@@ -24,7 +24,7 @@ public class Const {
 	/*
 	 * Table of instructions executing on what units.
 	 */
-	public static HashMap<String,String> unitsForInstruction = new HashMap<String,String>();
+	public static HashMap unitsForInstruction = new HashMap();
 	static{
 		unitsForInstruction.put("AND",Unit.INT0);
 		unitsForInstruction.put("ANDI",Unit.INT0);
@@ -59,7 +59,7 @@ public class Const {
 	   Station 13 to 17 are FPU  stations.
 	   Station 18 and 19 are BU  stations.
 	 */
-	public static HashMap<String,Station> reservationStations = new HashMap<String,Station>();
+	public static HashMap reservationStations = new HashMap();
 	static {
 		Station station;
 		for(int i = 1;i<=19;i++){
@@ -69,14 +69,9 @@ public class Const {
 		}
 	}
 	
-	public class Register{
-		String name;
-		float value;
-		boolean busy;
-		int Reorder;
-	}
+	
 	public class IntegerRegister{
-		public static String R0 = "R0",R1 = "R1", R2 = "R2", R3 = "R3", R4 = "R4", R5 = "R5",R6 = "R6",R7 = "R7",R8 = "R8"
+		public static final String R0 = "R0",R1 = "R1", R2 = "R2", R3 = "R3", R4 = "R4", R5 = "R5",R6 = "R6",R7 = "R7",R8 = "R8"
 				,R9 = "R9",R10 = "R10",R11 = "R11",R12 = "R12",R13 = "R13",R14 = "R14",R15 = "R15",R16 = "R16",R17 = "R17"
 				, R18 = "R18", R19 = "R19", R20 = "R20", R21 = "R21",R22 = "R22",R23 = "R23",R24 = "R24",R25 = "R25"
 				,R26 = "R26",R27 = "R27",R28 = "R28",R29 = "R29",R30 = "R30",R31 = "R31";
@@ -85,8 +80,11 @@ public class Const {
 	/*
 	 * Integer Register Status Table
 	 */
-	public static HashMap<String,Register> integerRegistersStatus = new HashMap<String,Register>();
-	static{
+	public static HashMap integerRegistersStatus = new HashMap();
+    static{
+    	initiateIntegerRegistersStatus();
+	}
+	public static void initiateIntegerRegistersStatus(){
 		Register register = new Register();
 		integerRegistersStatus.put(IntegerRegister.R0,register);
 		register = new Register();
@@ -151,11 +149,11 @@ public class Const {
 		integerRegistersStatus.put(IntegerRegister.R30,register);
 		register = new Register();
 		integerRegistersStatus.put(IntegerRegister.R31,register);
-		
 	}
 	
+	
 	public class FloatRegister{
-		public static String F0 = "F0",F1 = "F1", F2 = "F2", F3 = "F3", F4 = "F4", F5 = "F5",F6 = "F6",F7 = "F7",F8 = "F8"
+		public static final String F0 = "F0",F1 = "F1", F2 = "F2", F3 = "F3", F4 = "F4", F5 = "F5",F6 = "F6",F7 = "F7",F8 = "F8"
 				,F9 = "F9",F10 = "F10",F11 = "F11",F12 = "F12",F13 = "F13",F14 = "F14",F15 = "F15",F16 = "F16",F17 = "F17"
 				, F18 = "F18", F19 = "F19", F20 = "F20", F21 = "F21",F22 = "F22",F23 = "F23",F24 = "F24",F25 = "F25"
 				,F26 = "F26",F27 = "F27",F28 = "F28",F29 = "F29",F30 = "F30",F31 = "F31";
@@ -163,8 +161,11 @@ public class Const {
 	/*
 	 * Float Register Status Table
 	 */
-	public static HashMap<String,Register> floatRegistersStatus = new HashMap<String,Register>();
-	static{
+	public static HashMap floatRegistersStatus = new HashMap();
+    static{
+    	initiateFloatRegistersStatus();
+	}
+	public static void initiateFloatRegistersStatus(){
 		Register register = new Register();
 		floatRegistersStatus.put(FloatRegister.F0,register);
 		register = new Register();
@@ -229,15 +230,9 @@ public class Const {
 		floatRegistersStatus.put(FloatRegister.F30,register);
 		register = new Register();
 		floatRegistersStatus.put(FloatRegister.F31,register);
-		
 	}
+	
 	static int NR = 16;
-	public static java.util.ArrayList<ROBItem> ROB = new java.util.ArrayList<ROBItem>();
-	public class ROBItem{
-		boolean ready = false;
-		float value;
-		boolean busy;
-		String state;
-		String destination;
-	}
+	public static ArrayList ROB = new ArrayList();
+	
 }

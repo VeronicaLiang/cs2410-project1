@@ -1,27 +1,14 @@
-package cs.architecture;
 
 import java.io.*;
-import java.util.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-/**
- * @author Computer Architecture Simulator Project Group
- *
- */
-
-/*
- * Simulator, the simulating procedure runner.
- * 
- */
-public class Simulator {
+public class TomasuloSimulator {
 	BU buUnit;// BU unit instance;
-	Bus bus;//Bus unit instance;
 	FPU fpuUnit;// FPU unit instance;
 	INT0 int0Unit;//INT0 unit instance
 	INT1 int1Unit;//INT1 unit instance
-	IssueQueue issueQueue;//Issuing queue instance
 	LoadStore loadStoreUnit;// Load and store unit instance
 	MULT multUnit;// MULT unit instance
 	
@@ -37,14 +24,12 @@ public class Simulator {
 	
 //	int pc = 0;
 	
-	public Simulator(String instructionFile, Memory main){
+	public TomasuloSimulator(String instructionFile, Memory main){
 		//Initiate all the units
 		buUnit = BU.getInstance();
-		bus = Bus.getInstance();
 		fpuUnit = FPU.getInstance();
 		int0Unit = INT0.getInstance();
 		int1Unit = INT1.getInstance();
-		issueQueue = IssueQueue.getInstance();
 		loadStoreUnit = LoadStore.getInstance();
 		multUnit = MULT.getInstance();
 		
@@ -63,7 +48,7 @@ public class Simulator {
 					if(line.contains("DATA")){
 						flag = true;
 					}else{
-						Instructions instr = new Instructions();
+						Instruction instr = new Instruction();
 						instr = instr.loadInstrs(line);
 						main.loadInstruction(instr);
 					}
@@ -94,8 +79,8 @@ public class Simulator {
 		int clock_cycle = 0;
 		int pc = 0; //initialize the program counter 
 		BranchTargetBuffer BTBuffer = new BranchTargetBuffer();
-		LinkedList<Instruction> FQueue = new LinkedList<Instruction>(); // Fetched Instructions Queue
-		LinkedList<Instruction> DQueue = new LinkedList<Instruction>(); // Decoded Instructions Queue (actually, the decode is not needed, only check for branch)
+		LinkedList FQueue = new LinkedList(); // Fetched Instructions Queue
+		LinkedList DQueue = new LinkedList(); // Decoded Instructions Queue (actually, the decode is not needed, only check for branch)
 		
 		
 		while(!finishedFlag){//Clock cycles loop
@@ -107,7 +92,7 @@ public class Simulator {
 			 */
 			int fetched = 0;
 			while((FQueue.size() < NQ) && (fetched < NF) &&(pc < main.getInstrs().size())){
-				main.getInstrs().get(pc).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
+				((Instruction)main.getInstrs().get(pc)).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
 				FQueue.add(main.getInstrs().get(pc));
 				if(BTBuffer.Getbuffer()[pc][0] != -1){
 					pc = BTBuffer.Getbuffer()[pc%32][0]; // if there is an entry in BTBuffer, use the predicted pc, otherwise, pc ++
@@ -124,7 +109,7 @@ public class Simulator {
 			 */
 			int decoded = 0;
 			while((DQueue.size() <= NI) && (decoded < ND)&&(!FQueue.isEmpty()) ){
-				Instruction next = FQueue.poll();
+				Instruction next = (Instruction) FQueue.poll();
 				DQueue.add(next);
 				if ((next.opco != "BEQZ") &&(next.opco != "BNEZ")&&(next.opco != "BEQ")&&(BTBuffer.Getbuffer()[next.pc%32][0] != -1)){
 					// If the instruction is not a branch, but has entry in BTBuffer
@@ -140,10 +125,9 @@ public class Simulator {
 				}
 			}
 			
-			
-			issue(DQueue);
+			commit();
 			execute();
-			writeResult();
+			issue(DQueue);
 			
 			clock_cycle ++;
 			if(pc >= main.getInstrs().size()){
@@ -163,19 +147,35 @@ public class Simulator {
        issue is stalled until both have available entries.
 
 	 */
-	public void issue(LinkedList<Instruction> DQueue){
+	public void issue(LinkedList DQueue){
 		int decode_count = 0;
 		boolean halt = false;
 		while((decode_count < this.NW) &&(!halt)){
+			if(Const.ROB.size()>=Const.NR){//If ROB' size equals or is greater than NR , stop issuing instructions.
+				halt = true;
+				return;
+			}
 		//Check no more than NW instructions in the instructions waiting queue
-			Instruction instruction = DQueue.poll();
-			String unit = Const.unitsForInstruction.get(instruction.opco);
+			Instruction instruction = (Instruction) DQueue.poll();
+			String unit = (String)Const.unitsForInstruction.get(instruction.opco);
 			if(unit == "FPU"){
-				if(fpuUnit.insertInstruction(instruction.opco, instruction.rs, instruction.rt, instruction.rd)){
-					
-				}else{
+				boolean isSuccessful = fpuUnit.insertInstruction(instruction);
+				if(!isSuccessful){
 					halt = true;
-				};
+					return;
+				}
+			}else if(unit == "INT0"){
+				boolean isSuccessful = int0Unit.insertInstruction(instruction);
+				if(!isSuccessful){
+					halt = true;
+					return;
+				}
+			}else if(unit == "INT1"){
+				boolean isSuccessful = int1Unit.insertInstruction(instruction);
+				if(!isSuccessful){
+					halt = true;
+					return;
+				}
 			}
 			
 		}
@@ -197,26 +197,13 @@ public class Simulator {
 		//Iterate resvervation stations table, and execute every station.
     	fpuUnit.execute();
     	int0Unit.execute();
-    	buUnit.execute();
-	}
-    /*
-     * When the result is available, write it on the CDB (with the ROB
-       tag sent when the instruction issued) and from the CDB into the ROB, as well
-       as to any reservation stations waiting for this result. Mark the reservation station
-       as available. Special actions are required for store instructions. If the value
-       to be stored is available, it is written into the Value field of the ROB entry for
-       the store. If the value to be stored is not available yet, the CDB must be monitored
-       until that value is broadcast, at which time the Value field of the ROB
-       entry of the store is updated. For simplicity we assume that this occurs during
-       the write results stage of a store; we discuss relaxing this requirement later.
-     */
-    public void writeResult(){
     	
-    }
+	}
+    
     /*
      * This is the final stage of completing an instruction, after which only
-       its result remains. (Some processors call this commit phase °∞completion°± or
-       °∞graduation.°±) There are three different sequences of actions at commit depending
+       its result remains. (Some processors call this commit phase ÔøΩÔøΩcompletionÔøΩÔøΩ or
+       ÔøΩÔøΩgraduation.ÔøΩÔøΩ) There are three different sequences of actions at commit depending
        on whether the committing instruction is a branch with an incorrect prediction,
        a store, or any other instruction (normal commit). The normal commit case
        occurs when an instruction reaches the head of the ROB and its result is present
@@ -224,14 +211,38 @@ public class Simulator {
        removes the instruction from the ROB. Committing a store is similar except
        that memory is updated rather than a result register. When a branch with incorrect
        prediction reaches the head of the ROB, it indicates that the speculation
-       3.6 Hardware-Based Speculation °ˆ 187
+       3.6 Hardware-Based Speculation ÔøΩÔøΩ 187
        was wrong. The ROB is flushed and execution is restarted at the correct successor
        of the branch. If the branch was correctly predicted, the branch is finished.
        Once an instruction commits, its entry in the ROB is reclaimed and the register
        or memory destination is updated, eliminating the need for the ROB entry.
      */
     public void commit(){
-    	
+    	if(Const.ROB.size()>0){
+    		int h = 0;
+    		ROBItem item = (ROBItem)Const.ROB.get(h);
+    		if(item.ready){
+    			String d = item.destination;
+    			if(item.instruction.contains("BEQZ") || item.instruction.contains("BNEZ")
+    					||item.instruction.contains("BNE")||item.instruction.contains("BEQ")){
+    				if(false){// If branch is mispredicted.
+    					Const.ROB.clear();
+    					Const.initiateFloatRegistersStatus();
+    					Const.initiateIntegerRegistersStatus();
+    					//TODO Change PC for fetching branch dest
+    				}
+    			}else if(item.instruction.contains("S.D") || item.instruction.contains("SD")){
+    				//TODO Êääitem.value Â≠òÂà∞memoryÂú∞ÂùÄÊòØitem.
+    			}
+    			item.busy = false;
+    			if(((Register)Const.floatRegistersStatus.get(d)).Reorder==h){
+    				((Register)Const.floatRegistersStatus.get(d)).busy = false;
+    			}
+                if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
+                	((Register)Const.integerRegistersStatus.get(d)).busy = false;
+    			}
+    		}
+    	}
     }
 	public static void main(String args[]) throws IOException{
 		String inputFile = args[0];
@@ -241,7 +252,7 @@ public class Simulator {
 		int ND = Integer.parseInt(args[4]); // The length of the Decoded instruction queue
 		Memory main = new Memory(); // store memory data 
 		
-		Simulator simulator = new Simulator(inputFile, main);
+		TomasuloSimulator simulator = new TomasuloSimulator(inputFile, main);
 		
 		simulator.startSimulation(main, NF, NQ, NI, ND);
 	}

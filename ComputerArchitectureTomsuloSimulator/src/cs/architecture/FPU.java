@@ -130,17 +130,23 @@ public class FPU {
 				station.latency = station.latency +1;
 			}else{
 				if(station.latency==latency){
-					//TODO update data
+					//Write result.  执行完成，遍历所有依赖这个的做一个cdb广播，把依赖这个所有station Qj 和Qk赋值为0，并把这些station的Vj和Vk赋值
+					
 				}else{
-					//TODO Check whenther all the operands are available.
-					if(station.op.equals("ADD.D")){
-						//TODO
-					}else if(station.op.equals("SUB.D")){
-						//TODO 
-					}else if(station.op.equals("MUL.D")){
-						//TODO
-					}else if(station.op.equals("DIV.D")){
-						//TODO
+					//TODO Check whether all the operands are available.判断 (RS[r].Qj = 0) and (RS[r].Qk = 0)是不是依赖的station已经执行完了 r在这里是本station
+					if((station.Qj==0) && (station.Qk)){
+						float vk = station.Vk;
+						float vj = station.Vj;
+						if(station.op.equals("ADD.D")){
+							station.result = vk +vj;
+						}else if(station.op.equals("SUB.D")){
+							station.result = vj - vk; 
+						}else if(station.op.equals("MUL.D")){
+							station.result = vj * vk; 
+						}else if(station.op.equals("DIV.D")){
+							station.result = vj / vk;
+						}
+						latency = latency+1;
 					}
 				}
 				

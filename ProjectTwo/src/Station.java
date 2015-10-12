@@ -1,4 +1,4 @@
-package cs.architecture;
+
 /**
  * @author Computer Architecture Simulator Project Group
  *
@@ -34,18 +34,15 @@ public class Station {
 	 * The station's name.
 	 */
 	String name;
-	
+	/*
+	 * Busy—Indicates that this reservation station and its accompanying functional
+       unit are occupied.
+	 */
+	boolean Busy = false;
 	/*
 	 * The operation to perform on source operands S1 and S2.
 	 */
 	String Op;
-	
-	/*
-	 * Qj, Qk—The reservation stations that will produce the corresponding source
-       operand; a value of zero indicates that the source operand is already available
-       in Vj or Vk, or is unnecessary.
-	 */
-	int Qj, Qk;
 	
 	/*
 	 * Vj, Vk—The value of the source operands. Note that only one of the V
@@ -55,22 +52,23 @@ public class Station {
 	float Vj, Vk;
 	
 	/*
-	 * A—Used to hold information for the memory address calculation for a load
-       or store. Initially, the immediate field of the instruction is stored here; after
-       the address calculation, the effective address is stored here.
+	 * Qj, Qk—The reservation stations that will produce the corresponding source
+       operand; a value of zero indicates that the source operand is already available
+       in Vj or Vk, or is unnecessary.
 	 */
-	String A;
-	
-	/*
-	 * Busy—Indicates that this reservation station and its accompanying functional
-       unit are occupied.
-	 */
-	boolean Busy = false;
+	int Qj, Qk;
 	
 	/*
 	 * records the destination register's reorder number, if exists 
 	 */
 	int Dest;
+	
+	/*
+	 * A—Used to hold information for the memory address calculation for a load
+       or store. Initially, the immediate field of the instruction is stored here; after
+       the address calculation, the effective address is stored here.
+	 */
+	String A;
 	
 	int latency = 0;
 	
