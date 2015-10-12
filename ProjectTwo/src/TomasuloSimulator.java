@@ -176,6 +176,24 @@ public class TomasuloSimulator {
 					halt = true;
 					return;
 				}
+			}else if(unit == "Load/Store"){
+				boolean isSuccessful = loadStoreUnit.insertInstruction(instruction);
+				if(!isSuccessful){
+					halt = true;
+					return;
+				}
+			}else if(unit == "BU"){
+				boolean isSuccessful = buUnit.insertInstruction(instruction);
+				if(!isSuccessful){
+					halt = true;
+					return;
+				}
+			}else if(unit == "MULT"){
+				boolean isSuccessful = multUnit.insertInstruction(instruction);
+				if(!isSuccessful){
+					halt = true;
+					return;
+				}
 			}
 			
 		}
@@ -197,7 +215,10 @@ public class TomasuloSimulator {
 		//Iterate resvervation stations table, and execute every station.
     	fpuUnit.execute();
     	int0Unit.execute();
-    	
+    	int1Unit.execute();
+    	loadStoreUnit.execute();
+    	multUnit.execute();
+    	buUnit.execute();
 	}
     
     /*
