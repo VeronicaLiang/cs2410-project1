@@ -42,20 +42,25 @@ public class TomasuloSimulator {
 			BufferedReader bufferedreader = new BufferedReader (filereader);
 			boolean flag = false; // indicate when the data is start loading
 			while ((line = bufferedreader.readLine()) != null){
+				
 				if(flag){
 					main.loadData(line);
 				}else{
 					if(line.contains("DATA")){
 						flag = true;
 					}else{
-						Instruction instr = new Instruction();
-						instr = instr.loadInstrs(line);
-						main.loadInstruction(instr);
+						if (line.isEmpty() || line.trim().equals("") || line.trim().equals("\n")){
+							// skip the empty lines.
+						}else{
+							Instruction instr = new Instruction();
+							instr = instr.loadInstrs(line);
+							main.loadInstruction(instr);
+						}
 					}
 				}
 			}
 		
-//			System.out.println(main.getData().size());
+//			System.out.println(main.getInstrs().size());
 			bufferedreader.close();
 		}
 		catch (FileNotFoundException ex){
@@ -125,7 +130,7 @@ public class TomasuloSimulator {
 				}
 			}
 			
-			commit();
+			commit(main);
 			execute();
 			issue(DQueue);
 			
@@ -238,22 +243,23 @@ public class TomasuloSimulator {
        Once an instruction commits, its entry in the ROB is reclaimed and the register
        or memory destination is updated, eliminating the need for the ROB entry.
      */
-    public void commit(){
+    public void commit(Memory main){
     	if(Const.ROB.size()>0){
-    		int h = 0;
-    		ROBItem item = (ROBItem)Const.ROB.get(h);
+    		int h = 0;  // always commit the first item in ROB
+    			ROBItem item = (ROBItem)Const.ROB.get(h);
     		if(item.ready){
     			String d = item.destination;
     			if(item.instruction.contains("BEQZ") || item.instruction.contains("BNEZ")
     					||item.instruction.contains("BNE")||item.instruction.contains("BEQ")){
     				if(false){// If branch is mispredicted.
-    					Const.ROB.clear();
-    					Const.initiateFloatRegistersStatus();
-    					Const.initiateIntegerRegistersStatus();
-    					//TODO Change PC for fetching branch dest
+    						Const.ROB.clear();
+    						Const.initiateFloatRegistersStatus();
+    						Const.initiateIntegerRegistersStatus();
+    						//TODO Change PC for fetching branch dest
     				}
     			}else if(item.instruction.contains("S.D") || item.instruction.contains("SD")){
-    				//TODO 把item.value 存到memory地址是item.
+    				main.updateData(Integer.parseInt(d), item.value);
+    			}else{
     			}
     			item.busy = false;
     			if(((Register)Const.floatRegistersStatus.get(d)).Reorder==h){
@@ -265,7 +271,7 @@ public class TomasuloSimulator {
     		}
     	}
     }
-	public static void main(String args[]) throws IOException{
+    public static void main(String args[]) throws IOException{
 		String inputFile = args[0];
 		int NF = Integer.parseInt(args[1]); // The maximum number of instructions can be fetched in one cycle
 		int NQ = Integer.parseInt(args[2]); // The length of the instruction queue
@@ -275,7 +281,7 @@ public class TomasuloSimulator {
 		
 		TomasuloSimulator simulator = new TomasuloSimulator(inputFile, main);
 		
-		simulator.startSimulation(main, NF, NQ, NI, ND);
+//		simulator.startSimulation(main, NF, NQ, NI, ND);
 	}
 	
 	

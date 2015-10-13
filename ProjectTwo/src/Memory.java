@@ -27,4 +27,8 @@ public class Memory {
 	public Hashtable getData(){
 		return data;
 	}
+	
+	public void updateData(int key, double value){
+		
+	}
 }
