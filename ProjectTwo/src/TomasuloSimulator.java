@@ -99,7 +99,7 @@ public class TomasuloSimulator {
 			while((FQueue.size() < NQ) && (fetched < NF) &&(pc < main.getInstrs().size())){
 				((Instruction)main.getInstrs().get(pc)).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
 				FQueue.add(main.getInstrs().get(pc));
-				if(BTBuffer.Getbuffer()[pc][0] != -1){
+				if(BTBuffer.Getbuffer()[pc%32][0] != -1){
 					pc = BTBuffer.Getbuffer()[pc%32][0]; // if there is an entry in BTBuffer, use the predicted pc, otherwise, pc ++
 				}else{
 					pc++;
@@ -153,9 +153,9 @@ public class TomasuloSimulator {
 
 	 */
 	public void issue(LinkedList DQueue){
-		int decode_count = 0;
+		int issue_count = 0;
 		boolean halt = false;
-		while((decode_count < this.NW) &&(!halt)){
+		while((issue_count < this.NW) &&(!halt)){
 			if(Const.ROB.size()>=Const.NR){//If ROB' size equals or is greater than NR , stop issuing instructions.
 				halt = true;
 				return;
@@ -163,43 +163,26 @@ public class TomasuloSimulator {
 		//Check no more than NW instructions in the instructions waiting queue
 			Instruction instruction = (Instruction) DQueue.poll();
 			String unit = (String)Const.unitsForInstruction.get(instruction.opco);
+			boolean isSuccessful = true;
 			if(unit == "FPU"){
-				boolean isSuccessful = fpuUnit.insertInstruction(instruction);
-				if(!isSuccessful){
-					halt = true;
-					return;
-				}
+				isSuccessful = fpuUnit.insertInstruction(instruction);
 			}else if(unit == "INT0"){
-				boolean isSuccessful = int0Unit.insertInstruction(instruction);
-				if(!isSuccessful){
-					halt = true;
-					return;
-				}
+				isSuccessful = int0Unit.insertInstruction(instruction);
 			}else if(unit == "INT1"){
-				boolean isSuccessful = int1Unit.insertInstruction(instruction);
-				if(!isSuccessful){
-					halt = true;
-					return;
-				}
+				isSuccessful = int1Unit.insertInstruction(instruction);
 			}else if(unit == "Load/Store"){
-				boolean isSuccessful = loadStoreUnit.insertInstruction(instruction);
-				if(!isSuccessful){
-					halt = true;
-					return;
-				}
+				isSuccessful = loadStoreUnit.insertInstruction(instruction);
 			}else if(unit == "BU"){
-				boolean isSuccessful = buUnit.insertInstruction(instruction);
-				if(!isSuccessful){
-					halt = true;
-					return;
-				}
+				isSuccessful = buUnit.insertInstruction(instruction);
 			}else if(unit == "MULT"){
-				boolean isSuccessful = multUnit.insertInstruction(instruction);
-				if(!isSuccessful){
-					halt = true;
-					return;
-				}
+				isSuccessful = multUnit.insertInstruction(instruction);
+				
 			}
+			if(!isSuccessful){
+				halt = true;
+				return;
+			}
+			issue_count++;
 			
 		}
       }
