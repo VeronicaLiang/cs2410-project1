@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ComputerArchitectureTomsuloSimulator/ComputerArchitectureTomsuloSimulator.iml" filepath="$PROJECT_DIR$/ComputerArchitectureTomsuloSimulator/ComputerArchitectureTomsuloSimulator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ProjectTwo/ProjectTwo.iml" filepath="$PROJECT_DIR$/ProjectTwo/ProjectTwo.iml" />
+    </modules>
+  </component>
+</project>

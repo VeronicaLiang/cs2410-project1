@@ -130,7 +130,7 @@ public class TomasuloSimulator {
 				}
 			}
 			
-			commit(main);
+			commit(main,BTBuffer);
 			execute();
 			issue(DQueue);
 			
@@ -226,31 +226,43 @@ public class TomasuloSimulator {
        Once an instruction commits, its entry in the ROB is reclaimed and the register
        or memory destination is updated, eliminating the need for the ROB entry.
      */
-    public void commit(Memory main){
-    	if(Const.ROB.size()>0){
+    public void commit(Memory main,BranchTargetBuffer btb){
+		int NC = 4;
+		int bus_count = 0;
+    	if(Const.ROB.size()>0 && bus_count < NC ){
     		int h = 0;  // always commit the first item in ROB
-    			ROBItem item = (ROBItem)Const.ROB.get(h);
+			ROBItem item = (ROBItem)Const.ROB.get(h);
     		if(item.ready){
     			String d = item.destination;
-    			if(item.instruction.contains("BEQZ") || item.instruction.contains("BNEZ")
-    					||item.instruction.contains("BNE")||item.instruction.contains("BEQ")){
-    				if(false){// If branch is mispredicted.
+    			if(item.instruction.opco == "BEQZ" || item.instruction.opco == "BNEZ"
+    					||item.instruction.opco == "BNE"||item.instruction.opco == "BEQ"){
+    				int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
+					if(item.value != predicted){// If branch is mispredicted.
     						Const.ROB.clear();
     						Const.initiateFloatRegistersStatus();
     						Const.initiateIntegerRegistersStatus();
-    						//TODO Change PC for fetching branch dest
+							if(btb.Getbuffer()[item.instruction.pc%32][1] == 1){
+								// update the branch-target-buffer
+								btb.Getbuffer()[item.instruction.pc%32][0] = (int)item.value;
+								btb.Getbuffer()[item.instruction.pc%32][1] = 0;
+							}else{
+								// allow make mistakes twice.
+							}
     				}
-    			}else if(item.instruction.contains("S.D") || item.instruction.contains("SD")){
+    			}else if(item.instruction.opco == "S.D" || item.instruction.opco == "SD"){
     				main.updateData(Integer.parseInt(d), item.value);
     			}else{
+					//TODO update the registers
+					bus_count++;
+
     			}
     			item.busy = false;
     			if(((Register)Const.floatRegistersStatus.get(d)).Reorder==h){
     				((Register)Const.floatRegistersStatus.get(d)).busy = false;
     			}
-                if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
-                	((Register)Const.integerRegistersStatus.get(d)).busy = false;
-    			}
+//                if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
+//                	((Register)Const.integerRegistersStatus.get(d)).busy = false;
+//    			}
     		}
     	}
     }

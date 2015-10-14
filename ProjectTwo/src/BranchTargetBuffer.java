@@ -16,8 +16,9 @@ public class BranchTargetBuffer {
 		return b;
 	}
 	
-	public int[] [] Getbuffer(){
+	public int[][] Getbuffer(){
 		return buffer;
 	}
+
 	
 }
