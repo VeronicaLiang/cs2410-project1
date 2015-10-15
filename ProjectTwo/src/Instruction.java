@@ -18,7 +18,7 @@ public class Instruction {
 	public Instruction loadInstrs(String line){
 		String[] records = line.split("\\t+");
 		Instruction instr = new Instruction();
-		instr.note = records[0];
+		instr.note = records[0].substring(0, records[0].length()-1);
 		instr.opco = records[1];
 		String[] tmp = records[2].split(",\\s+");
 
