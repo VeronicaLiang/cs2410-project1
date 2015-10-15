@@ -33,7 +33,7 @@ private static final int LATENCY = 5;
 	   Station 18 and 19 are BU  stations.
 	 */
 	public boolean insertInstruction(Instruction instruction){
-		for(int i = 13;i<=17;i++){
+		for(int i =7;i<=12;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((!station.Busy)){
 				int h;//TODO 这里的h是ROB的head entry？？？

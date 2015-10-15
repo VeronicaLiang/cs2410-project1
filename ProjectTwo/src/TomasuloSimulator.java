@@ -33,9 +33,7 @@ public class TomasuloSimulator {
 		int1Unit = INT1.getInstance();
 		loadStoreUnit = LoadStore.getInstance();
 		multUnit = MULT.getInstance();
-		
-		
-		
+
 //		fetch all the instruction from instruction file.
 		String line = null;
 		try {
