@@ -22,18 +22,15 @@ public class Instruction {
 		instr.opco = records[1];
 		String[] tmp = records[2].split(",\\s+");
 
-		if(instr.opco != "S.D"){
+		if(instr.opco.equals("S.D")){
 			instr.rt = tmp[0];
-		}else{
-			instr.rs = tmp[0];
-		}
-			
-		if(instr.opco != "S.D"){
 			instr.rs = tmp[1];
 		}else{
 			instr.rt = tmp[1];
+			instr.rs = tmp[0];
 		}
-		if(instr.opco == "L.D" || instr.opco == "LD"){
+		
+		if(instr.opco.equals("L.D") || instr.opco.equals("LD")){
 			String immediate = tmp[1];
 			instr.immediate = immediate;
 		}
@@ -41,9 +38,9 @@ public class Instruction {
 		if(tmp.length > 2){
 			if(tmp[2] != null && !tmp[2].isEmpty()){
 				instr.rd = tmp[2];
-			} else {
-				instr.rd = tmp[1];
 			}
+		}  else {
+			instr.rd = tmp[1];
 		}
 		
 		return instr;
