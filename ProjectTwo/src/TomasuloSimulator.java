@@ -168,8 +168,9 @@ public class TomasuloSimulator {
 				isSuccessful = fpuUnit.insertInstruction(instruction);
 			}else if(unit == "INT0"){
 				isSuccessful = int0Unit.insertInstruction(instruction);
-			}else if(unit == "INT1"){
-				isSuccessful = int1Unit.insertInstruction(instruction);
+				if(!isSuccessful){
+					isSuccessful = int1Unit.insertInstruction(instruction);
+				}
 			}else if(unit == "Load/Store"){
 				isSuccessful = loadStoreUnit.insertInstruction(instruction);
 			}else if(unit == "BU"){
