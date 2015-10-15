@@ -129,7 +129,7 @@ public class TomasuloSimulator {
 			while((DQueue.size() <= NI) && (decoded < ND)&&(!FQueue.isEmpty()) ){
 				Instruction next = (Instruction) FQueue.poll();
 				DQueue.add(next);
-				if ((next.opco != "BEQZ") &&(next.opco != "BNEZ")&&(next.opco != "BEQ")&&(BTBuffer.Getbuffer()[next.pc%32][0] != -1)){
+				if (!next.opco.equals("BEQZ") && !next.opco.equals("BNEZ") && !next.opco.equals("BEQ") && !next.opco.equals("BNE")&&(BTBuffer.Getbuffer()[next.pc%32][0] != -1)){
 					// If the instruction is not a branch, but has entry in BTBuffer
 					FQueue.clear();
 					pc = next.pc++;
@@ -265,8 +265,14 @@ public class TomasuloSimulator {
     				}
     			}else if(item.instruction.opco == "S.D" || item.instruction.opco == "SD"){
     				main.updateData(Integer.parseInt(d), item.value);
+					bus_count++;
     			}else{
 					//TODO update the registers
+					if(d.contains("R")){
+						(Register) Const.integerRegistersStatus.d = item.value;
+					}else{
+						(Register) Const.floatRegistersStatus.d = item.value;
+					}
 					bus_count++;
 
     			}
@@ -290,7 +296,7 @@ public class TomasuloSimulator {
 		
 		TomasuloSimulator simulator = new TomasuloSimulator(inputFile, main);
 		
-//		simulator.startSimulation(main, NF, NQ, NI, ND);
+		simulator.startSimulation(main, NF, NQ, NI, ND);
 	}
 	
 	
