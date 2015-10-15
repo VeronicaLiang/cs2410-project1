@@ -41,6 +41,8 @@ public class Instruction {
 		if(tmp.length > 2){
 			if(tmp[2] != null && !tmp[2].isEmpty()){
 				instr.rd = tmp[2];
+			} else {
+				instr.rd = tmp[1];
 			}
 		}
 		

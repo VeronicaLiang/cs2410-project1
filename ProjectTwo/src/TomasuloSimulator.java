@@ -2,6 +2,7 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class TomasuloSimulator {
@@ -42,7 +43,6 @@ public class TomasuloSimulator {
 			BufferedReader bufferedreader = new BufferedReader (filereader);
 			boolean flag = false; // indicate when the data is start loading
 			while ((line = bufferedreader.readLine()) != null){
-				
 				if(flag){
 					main.loadData(line);
 				}else{
@@ -55,6 +55,19 @@ public class TomasuloSimulator {
 							Instruction instr = new Instruction();
 							instr = instr.loadInstrs(line);
 							main.loadInstruction(instr);
+						}
+					}
+				}
+			}
+			List instrs = main.getInstrs();
+			Instruction ins,ins2;
+			for (int i = 0; i < instrs.size(); i++) {
+				ins = (Instruction) instrs.get(i);
+				if (ins.opco.equals("BEQZ") || ins.opco.equals("BNEZ") || ins.opco.equals("BEQ") || ins.opco.equals("BNE")) {
+					for (int j= 0; j < instrs.size(); j++) {
+						ins2 = (Instruction) instrs.get(j);
+						if (ins.rd.equals(ins2.note)) {
+							ins.rd = j+"";
 						}
 					}
 				}
