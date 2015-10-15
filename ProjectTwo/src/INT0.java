@@ -32,7 +32,7 @@ public class INT0 {
 	   Station 18 and 19 are FPU  stations.
 	 */
 	
-private static final int LATENCY = 1;
+private static final int LATENCY = 2;
 	
 	/*
 	 * Reservation Stations Table.
@@ -43,7 +43,7 @@ private static final int LATENCY = 1;
 	   Station 18 and 19 are BU  stations.
 	 */
 	public boolean insertInstruction(Instruction instruction){
-		for(int i = 13;i<=17;i++){
+		for(int i = 1;i<=2;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((!station.Busy)){
 				int h;//TODO 这里的h是ROB的head entry？？？

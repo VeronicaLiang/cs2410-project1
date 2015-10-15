@@ -99,7 +99,7 @@ private static final int LATENCY = 2;
 	}
 	
 	public void execute(){
-		for(int i = 13;i<=17;i++){
+		for(int i = 5;i<=6;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((station.latency>0) && (station.latency<LATENCY)){
 				station.latency = station.latency +1;
