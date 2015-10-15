@@ -42,7 +42,7 @@ public class Station {
 	/*
 	 * The operation to perform on source operands S1 and S2.
 	 */
-	String Op;
+	String Op = "";
 	
 	/*
 	 * Vj, Vk—The value of the source operands. Note that only one of the V
