@@ -177,18 +177,18 @@ public class TomasuloSimulator {
 			Instruction instruction = (Instruction) DQueue.poll();
 			String unit = (String)Const.unitsForInstruction.get(instruction.opco);
 			boolean isSuccessful = true;
-			if(unit == "FPU"){
+			if(unit.equals("FPU")){
 				isSuccessful = fpuUnit.insertInstruction(instruction);
-			}else if(unit == "INT0"){
+			}else if(unit.equals("INT0")){
 				isSuccessful = int0Unit.insertInstruction(instruction);
 				if(!isSuccessful){
 					isSuccessful = int1Unit.insertInstruction(instruction);
 				}
-			}else if(unit == "Load/Store"){
+			}else if(unit.equals("Load/Store")){
 				isSuccessful = loadStoreUnit.insertInstruction(instruction);
-			}else if(unit == "BU"){
+			}else if(unit.equals("BU")){
 				isSuccessful = buUnit.insertInstruction(instruction);
-			}else if(unit == "MULT"){
+			}else if(unit.equals("MULT")){
 				isSuccessful = multUnit.insertInstruction(instruction);
 				
 			}
@@ -248,8 +248,8 @@ public class TomasuloSimulator {
 			ROBItem item = (ROBItem)Const.ROB.get(h);
     		if(item.ready){
     			String d = item.destination;
-    			if(item.instruction.opco == "BEQZ" || item.instruction.opco == "BNEZ"
-    					||item.instruction.opco == "BNE"||item.instruction.opco == "BEQ"){
+    			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
+    					||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
     				int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
 					if(item.value != predicted){// If branch is mispredicted.
     						Const.ROB.clear();
@@ -263,15 +263,15 @@ public class TomasuloSimulator {
 								// allow make mistakes twice.
 							}
     				}
-    			}else if(item.instruction.opco == "S.D" || item.instruction.opco == "SD"){
+    			}else if(item.instruction.opco.equals("S.D") || item.instruction.opco.equals("SD")){
     				main.updateData(Integer.parseInt(d), item.value);
 					bus_count++;
     			}else{
 					//TODO update the registers
 					if(d.contains("R")){
-						(Register) Const.integerRegistersStatus.d = item.value;
+						((Register) Const.integerRegistersStatus.get(d)).value = item.value;
 					}else{
-						(Register) Const.floatRegistersStatus.d = item.value;
+						((Register) Const.floatRegistersStatus.get(d)).value = item.value;
 					}
 					bus_count++;
 
