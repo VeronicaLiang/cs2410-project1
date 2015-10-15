@@ -11,7 +11,7 @@ public class Instruction {
        operand; a value of zero indicates that the source operand is already available
        in Vj or Vk, or is unnecessary.
 	 */
-	String Qj, Qk;
+	String immediate;
 	
 	int pc;
 	
@@ -32,6 +32,10 @@ public class Instruction {
 			instr.rs = tmp[1];
 		}else{
 			instr.rt = tmp[1];
+		}
+		if(instr.opco == "L.D" || instr.opco == "LD"){
+			String immediate = tmp[1];
+			instr.immediate = immediate;
 		}
 		
 		if(tmp.length > 2){

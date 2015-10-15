@@ -66,7 +66,7 @@ private static final int LATENCY = 5;
 					int b = Const.ROB.indexOf(item);
 					register.Reorder = b; 
 					register.busy = true;
-					station.A = imm;
+					station.A = instruction.immediate;
 					station.loadFlag = 1;
 				}else{
 					// The same update for rt 
@@ -94,7 +94,7 @@ private static final int LATENCY = 5;
 					}else{
 						register = (Register) Const.floatRegistersStatus.get(instruction.rd);
 					}
-					station.A = imm;
+					station.A = instruction.immediate;
 				}
 				
 				
@@ -161,7 +161,8 @@ private static final int LATENCY = 5;
 						}else{//store operation
 							ROBItem item = (ROBItem)Const.ROB.get(0);
 							if(item.instruction.equals("SD") || item.instruction.equals("S.D")){
-								item.Address = station.Vj + station.A;
+//								item.Address = station.Vj + station.A;
+								item.destination = station.Vj + station.A;//TODO 是不是用可以用一个别的？？？
 								station.latency = station.latency+1;
 							} 
 						}
