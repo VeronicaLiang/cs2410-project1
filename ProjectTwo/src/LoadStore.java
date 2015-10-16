@@ -48,6 +48,7 @@ public class LoadStore {
 			if((!station.Busy)){
 				int h;//TODO 这里的h是ROB的head entry？？？
 				Register register;
+				Register rd_register;
 				String rs;
 				String rd;
 				int replacement = 0;
@@ -78,6 +79,12 @@ public class LoadStore {
 					register = (Register) Const.floatRegistersStatus.get(rs);
 				}
 
+				if(rd.contains("R")){
+					rd_register = (Register) Const.integerRegistersStatus.get(rd);
+				}else{
+					rd_register = (Register) Const.floatRegistersStatus.get(rd);
+				}
+
 				if(register.busy){
 					h = register.Reorder;
 					if(((ROBItem)Const.ROB.get(h)).ready){
@@ -94,12 +101,12 @@ public class LoadStore {
 				if(instruction.opco.equals("LD") || instruction.opco.equals("L.D")){
 					ROBItem item = new ROBItem();
 					item.instruction = instruction;
-//					item.destination = instruction.rd;
+					item.destination = instruction.rd;
 					Const.ROB.add(item);
 					int b = Const.ROB.indexOf(item);
 					Const.lastOfROB = b+1;
-					register.Reorder = b;
-					register.busy = true;
+					rd_register.Reorder = b;
+					rd_register.busy = true;
 					// replacement + rs  is the address ;
 					station.A = replacement ;
 					station.loadFlag = 1;
