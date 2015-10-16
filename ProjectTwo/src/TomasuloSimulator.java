@@ -281,12 +281,17 @@ public class TomasuloSimulator {
 
     			}
     			item.busy = false;
-    			if(((Register)Const.floatRegistersStatus.get(d)).Reorder==h){
-    				((Register)Const.floatRegistersStatus.get(d)).busy = false;
+    			if(d.contains("R")){
+    				if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
+                    	((Register)Const.integerRegistersStatus.get(d)).busy = false;
+    				}
+    			} else {
+    				if(((Register)Const.floatRegistersStatus.get(d)).Reorder==h){
+        				((Register)Const.floatRegistersStatus.get(d)).busy = false;
+        			}
     			}
-//                if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
-//                	((Register)Const.integerRegistersStatus.get(d)).busy = false;
-//    			}
+    			
+    			
     		}
     	}
     }
