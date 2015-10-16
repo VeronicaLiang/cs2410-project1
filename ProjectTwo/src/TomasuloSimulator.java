@@ -146,7 +146,7 @@ public class TomasuloSimulator {
 			issue(DQueue);
 			
 			clock_cycle ++;
-			if(pc >= main.getInstrs().size()){
+			if(pc >= main.getInstrs().size() && Const.ROB.size() == 0){
 				finishedFlag = true;
 			}
 		}
@@ -173,7 +173,7 @@ public class TomasuloSimulator {
 			}
 		//Check no more than NW instructions in the instructions waiting queue
 			if(DQueue.size()!=0){
-				Instruction instruction = (Instruction) DQueue.poll();
+				Instruction instruction = (Instruction) DQueue.getFirst();
 				String unit = (String)Const.unitsForInstruction.get(instruction.opco);
 				boolean isSuccessful = true;
 				if(unit.equals("FPU")){
@@ -195,6 +195,7 @@ public class TomasuloSimulator {
 					halt = true;
 					return;
 				}
+				DQueue.poll(); // remove it if issued
 				issue_count++;
 			} else {
 				return;
