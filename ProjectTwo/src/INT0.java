@@ -120,7 +120,7 @@ private static final int LATENCY = 2;
 			if((station.latency>0) && (station.latency<LATENCY)){
 				station.latency = station.latency +1;
 			}else{
-				if(station.latency==LATENCY){
+				if(station.latency>=LATENCY){
 					//Write result. 
 					int b = station.Dest;
 					station.Busy = false;
