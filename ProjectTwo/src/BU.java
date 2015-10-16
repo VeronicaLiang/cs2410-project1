@@ -92,6 +92,7 @@ private static final int LATENCY = 2;
 				item.destination = instruction.rd;
 				Const.ROB.add(item);
 				int b = Const.ROB.indexOf(item);
+				Const.lastOfROB = b + 1;
 				register.Reorder = b; 
 				register.busy = true;
 				station.Busy = true;
@@ -104,7 +105,11 @@ private static final int LATENCY = 2;
 		// the issue is not successful, needs to stall for one cycle.
 		return false;
 	}
-	
+	/*
+	 *beq	000100	rs	rt	immediate	 beq $1,$2,10	 if($1==$2)  goto PC+4+40	 if (rs == rt) PC <- PC+4 + (sign-extend)immediate<<2 
+      bne	000101	rs	rt	immediate	 bne $1,$2,10	 if($1!=$2)  goto PC+4+40	 if (rs != rt) PC <- PC+4 + (sign-extend)immediate<<2 
+
+	 */
 	public void execute(){//BEQZ, BNEZ, BEQ, BNE
 		for(int i = 18;i<=19;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
