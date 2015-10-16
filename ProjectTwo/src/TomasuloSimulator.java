@@ -257,6 +257,8 @@ public class TomasuloSimulator {
     				int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
 					if(item.value != predicted){// If branch is mispredicted.
     						Const.ROB.clear();
+    						Const.firstOfROB = 0;
+    						Const.lastOfROB = 0;
     						Const.initiateFloatRegistersStatus();
     						Const.initiateIntegerRegistersStatus();
 							if(btb.Getbuffer()[item.instruction.pc%32][1] == 1){
