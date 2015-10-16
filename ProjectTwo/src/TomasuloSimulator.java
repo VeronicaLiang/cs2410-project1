@@ -100,7 +100,7 @@ public class TomasuloSimulator {
 		
 		
 		while(!finishedFlag){//Clock cycles loop
-			
+			Const.ROB.add(new ROBItem()); // add an item to ROB, so that we can use 1 as the first index
 			/**
 			 * If the instruction queue is not full, and there are instructions not finished,
 			 * Fetch instructions. 
@@ -220,12 +220,12 @@ public class TomasuloSimulator {
 	 */
     public void execute(){
 		//Iterate resvervation stations table, and execute every station.
-    	//fpuUnit.execute();
-    	//int0Unit.execute();
-    	//int1Unit.execute();
-    	//loadStoreUnit.execute();
+    	fpuUnit.execute();
+    	int0Unit.execute();
+    	int1Unit.execute();
+    	loadStoreUnit.execute();
     	multUnit.execute();
-    	//buUnit.execute();
+    	buUnit.execute();
 	}
     
     /*
@@ -258,8 +258,9 @@ public class TomasuloSimulator {
     				int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
 					if(item.value != predicted){// If branch is mispredicted.
     						Const.ROB.clear();
-    						Const.firstOfROB = 0;
-    						Const.lastOfROB = 0;
+    						Const.ROB.add(new ROBItem());
+    						Const.firstOfROB = 1;
+    						Const.lastOfROB = 1;
     						Const.initiateFloatRegistersStatus();
     						Const.initiateIntegerRegistersStatus();
 							if(btb.Getbuffer()[item.instruction.pc%32][1] == 1){
