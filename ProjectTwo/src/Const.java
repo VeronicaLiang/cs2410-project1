@@ -36,6 +36,7 @@ public class Const {
 		unitsForInstruction.put("DSUB",Unit.INT0);
 		
 		unitsForInstruction.put("DMUL",Unit.MULT);
+		unitsForInstruction.put("MUL.D", Unit.MULT);
 		
 		unitsForInstruction.put("LD",Unit.LoadStore);
 		unitsForInstruction.put("L.D",Unit.LoadStore);
