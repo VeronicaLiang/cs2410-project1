@@ -167,7 +167,7 @@ public class TomasuloSimulator {
 		int issue_count = 0;
 		boolean halt = false;
 		while((issue_count < this.NW) &&(!halt)){
-			if(Const.ROB.size()>=Const.NR){//If ROB' size equals or is greater than NR , stop issuing instructions.
+			if((Const.lastOfROB - Const.firstOfROB)>=Const.NR){//If ROB' size equals or is greater than NR , stop issuing instructions.
 				halt = true;
 				return;
 			}
@@ -281,6 +281,7 @@ public class TomasuloSimulator {
 
     			}
     			item.busy = false;
+    			Const.firstOfROB++;
     			if(d.contains("R")){
     				if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
                     	((Register)Const.integerRegistersStatus.get(d)).busy = false;

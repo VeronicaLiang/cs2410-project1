@@ -88,6 +88,7 @@ private static final int LATENCY = 2;
 				item.instruction = instruction;
 				Const.ROB.add(item);
 				int b = Const.ROB.indexOf(item);
+				Const.lastOfROB = b + 1;
 				register.Reorder = b; 
 				register.busy = true;
 				station.Busy = true;

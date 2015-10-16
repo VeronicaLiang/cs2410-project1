@@ -237,5 +237,7 @@ public class Const {
 	
 	static int NR = 16;
 	public static ArrayList ROB = new ArrayList();
+	static int firstOfROB = 0;
+	static int lastOfROB = 0;
 	
 }
