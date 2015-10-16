@@ -92,15 +92,15 @@ public class TomasuloSimulator {
 		this.ND = ND;
 		
 		finishedFlag = false;
-		int clock_cycle = 0;
+		int clock_cycle = 2;
 		int pc = 0; //initialize the program counter 
 		BranchTargetBuffer BTBuffer = new BranchTargetBuffer();
 		LinkedList FQueue = new LinkedList(); // Fetched Instructions Queue
 		LinkedList DQueue = new LinkedList(); // Decoded Instructions Queue (actually, the decode is not needed, only check for branch)
-		
+		Const.ROB.add(new ROBItem()); // add an item to ROB, so that we can use 1 as the first index
 		
 		while(!finishedFlag){//Clock cycles loop
-			Const.ROB.add(new ROBItem()); // add an item to ROB, so that we can use 1 as the first index
+			
 			/**
 			 * If the instruction queue is not full, and there are instructions not finished,
 			 * Fetch instructions. 
