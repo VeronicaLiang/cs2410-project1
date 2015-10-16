@@ -35,7 +35,7 @@ private static final int LATENCY = 2;
 		for(int i = 3;i<=4;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((!station.Busy)){
-				int h;//TODO 这里的h是ROB的head entry？？？
+				int h;//TODO 杩�������h���ROB���head entry锛�锛�锛�
 				Register register;
 				if (instruction.rs.contains("R")){
 					register = (Register) Const.integerRegistersStatus.get(instruction.rs);
@@ -57,26 +57,32 @@ private static final int LATENCY = 2;
 				}
 				
 				// The same update for rt 
-				if (instruction.rt.contains("R")){
-					register = (Register) Const.integerRegistersStatus.get(instruction.rt);
-				}else{
-					register = (Register) Const.floatRegistersStatus.get(instruction.rt);
-				}
-				
-				if(register.busy){
-					h = register.Reorder;
-					if(((ROBItem)Const.ROB.get(h)).ready){
-						station.Vk = ((ROBItem)Const.ROB.get(h)).value;
-						station.Qk = 0;
-					}else{
-						station.Qk = h;
-					}
-				}else{
-					station.Vk = register.value ;
+				if(instruction.immediate){//If the rt is an immediate.
+					station.Vk = Float.parseFloat(instruction.rt);
 					station.Qk = 0;
+				}else{//If rt is a register.
+					if (instruction.rt.contains("R")){
+						register = (Register) Const.integerRegistersStatus.get(instruction.rt);
+					}else{
+						register = (Register) Const.floatRegistersStatus.get(instruction.rt);
+					}
+					System.out.println("instruction.rt->"+instruction.rt);
+					if(register.busy){
+						h = register.Reorder;
+						if(((ROBItem)Const.ROB.get(h)).ready){
+							station.Vk = ((ROBItem)Const.ROB.get(h)).value;
+							station.Qk = 0;
+						}else{
+							station.Qk = h;//If the value of the register in the ROB not ready yet. Use the Qk to record the index, then get the value.
+						}
+					}else{
+						station.Vk = register.value ;
+						station.Qk = 0;
+					}
 				}
 				
-				if (instruction.rt.contains("R")){
+				
+				if (instruction.rd.contains("R")){
 					register = (Register) Const.integerRegistersStatus.get(instruction.rd);
 				}else{
 					register = (Register) Const.floatRegistersStatus.get(instruction.rd);
@@ -125,14 +131,36 @@ private static final int LATENCY = 2;
 					if((station.Qj==0) && (station.Qk==0)){
 						float vk = station.Vk;
 						float vj = station.Vj;
-						if(station.Op.equals("ADD.D")){
+						if(station.Op.equals("DADD")){
 							station.result = vk +vj;
-						}else if(station.Op.equals("SUB.D")){
+						}else if(station.Op.equals("DSUB")){
 							station.result = vj - vk; 
-						}else if(station.Op.equals("MUL.D")){
-							station.result = vj * vk; 
-						}else if(station.Op.equals("DIV.D")){
-							station.result = vj / vk;
+						}else if(station.Op.equals("DADDI")){
+							station.result = vj - vk;  
+						}else if(station.Op.equals("AND")){
+							station.result = vj + vk;
+						}else if(station.Op.equals("ANDI")){
+							station.result = vj + vk;
+						}else if(station.Op.equals("OR")){
+							station.result = ((int)vj) | ((int)vk);
+						}else if(station.Op.equals("ORI")){
+							station.result = ((int)vj) | ((int)vk);
+						}else if(station.Op.equals("SLT")){//if $s < $t $d = 1; advance_pc (4); else $d = 0; advance_pc (4);
+							boolean result ;
+							result = vj < vk ;
+							if(result){
+								station.result = 1;
+							}else{
+								station.result = 0;
+							}
+						}else if(station.Op.equals("SLTI")){
+							boolean result ;
+							result = vj < vk ;
+							if(result){
+								station.result = 1;
+							}else{
+								station.result = 0;
+							}
 						}
 						station.latency = station.latency+1;
 					}
