@@ -28,8 +28,8 @@ public class Instruction {
 		String[] tmp = records[2].split(",\\s+");
 
 		if(instr.opco.equals("S.D")){
-			instr.rt = tmp[0];
-			instr.rs = tmp[1];
+			instr.rt = tmp[1];
+			instr.rs = tmp[0];
 		}else{
 			instr.rd = tmp[0];
 			instr.rs = tmp[1];

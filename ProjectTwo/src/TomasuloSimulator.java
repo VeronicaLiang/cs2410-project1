@@ -216,7 +216,7 @@ public class TomasuloSimulator {
     	fpuUnit.execute();
     	int0Unit.execute();
     	int1Unit.execute();
-    	loadStoreUnit.execute();
+//    	loadStoreUnit.execute();
     	multUnit.execute();
     	buUnit.execute();
 	}

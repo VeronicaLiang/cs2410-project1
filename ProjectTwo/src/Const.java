@@ -29,6 +29,7 @@ public class Const {
 		unitsForInstruction.put("AND",Unit.INT0);
 		unitsForInstruction.put("ANDI",Unit.INT0);
 		unitsForInstruction.put("OR",Unit.INT0);
+		unitsForInstruction.put("ORI", Unit.INT0);
 		unitsForInstruction.put("SLT",Unit.INT0);
 		unitsForInstruction.put("DADD",Unit.INT0);
 		unitsForInstruction.put("DADDI",Unit.INT0);
@@ -50,7 +51,6 @@ public class Const {
 		unitsForInstruction.put("BNEZ",Unit.BU);
 		unitsForInstruction.put("BEQ",Unit.BU);
 		unitsForInstruction.put("BNE",Unit.BU);
-		unitsForInstruction.put("ORI",Unit.BU);
 	}
 	/*
 	 * Reservation Stations Table.
