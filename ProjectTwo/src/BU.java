@@ -36,7 +36,8 @@ private static final int LATENCY = 2;
 		for(int i = 18;i<=19;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((!station.Busy)){
-				int h;//TODO 这里的h是ROB的head entry？？？
+				int h;
+//				检查rs register
 				Register register;
 				if (instruction.rs.contains("R")){
 					register = (Register) Const.integerRegistersStatus.get(instruction.rs);
@@ -57,27 +58,32 @@ private static final int LATENCY = 2;
 					station.Qj = 0;
 				}
 				
-				// The same update for rt 
+				//检查 rt register 
 				if (instruction.rt.contains("R")){
 					register = (Register) Const.integerRegistersStatus.get(instruction.rt);
 				}else{
 					register = (Register) Const.floatRegistersStatus.get(instruction.rt);
 				}
-				
-				if(register.busy){
-					h = register.Reorder;
-					if(((ROBItem)Const.ROB.get(h)).ready){
-						station.Vk = ((ROBItem)Const.ROB.get(h)).value;
-						station.Qk = 0;
-					}else{
-						station.Qk = h;
-					}
-				}else{
-					station.Vk = register.value ;
+				if(register==null){//说明rt参数是immediate类型
+					station.Vk = Float.parseFloat(instruction.rt);
 					station.Qk = 0;
+				}else{
+					if(register.busy){
+						h = register.Reorder;
+						if(((ROBItem)Const.ROB.get(h)).ready){
+							station.Vk = ((ROBItem)Const.ROB.get(h)).value;
+							station.Qk = 0;
+						}else{
+							station.Qk = h;
+						}
+					}else{
+						station.Vk = register.value ;
+						station.Qk = 0;
+					}
 				}
 				
-				if (instruction.rt.contains("R")){
+//				检查rd register
+				if (instruction.rd.contains("R")){
 					register = (Register) Const.integerRegistersStatus.get(instruction.rd);
 				}else{
 					register = (Register) Const.floatRegistersStatus.get(instruction.rd);
@@ -126,13 +132,21 @@ private static final int LATENCY = 2;
 					if((station.Qj==0) && (station.Qk==0)){
 						float vk = station.Vk;
 						float vj = station.Vj;
-						if(station.Op.equals("ADD.D")){
-							station.result = vk +vj;
-						}else if(station.Op.equals("SUB.D")){
+						if(station.Op.equals("ORI")){//TODO 进行或运算  , , , 
+							if(vk>vj){
+								station.result = 1;
+							}else{
+								station.result = 0;
+							}
+						}else if(station.Op.equals("OR")){
 							station.result = vj - vk; 
-						}else if(station.Op.equals("MUL.D")){
+						}else if(station.Op.equals("BEQZ")){
+							station.result = vj - vk; 
+						}else if(station.Op.equals("BNEZ")){
 							station.result = vj * vk; 
-						}else if(station.Op.equals("DIV.D")){
+						}else if(station.Op.equals("BEQ")){
+							station.result = vj / vk;
+						}else if(station.Op.equals("BNE")){
 							station.result = vj / vk;
 						}
 						station.latency = station.latency+1;

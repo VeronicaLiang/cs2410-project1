@@ -31,8 +31,9 @@ public class Instruction {
 			instr.rt = tmp[0];
 			instr.rs = tmp[1];
 		}else{
-			instr.rt = tmp[1];
-			instr.rs = tmp[0];
+			instr.rd = tmp[0];
+			instr.rs = tmp[1];
+			
 		}
 		
 		if(instr.opco.equals("L.D") || instr.opco.equals("LD")){
@@ -42,7 +43,7 @@ public class Instruction {
 		
 		if(tmp.length > 2){
 			if(tmp[2] != null && !tmp[2].isEmpty()){
-				instr.rd = tmp[2];
+				instr.rt = tmp[2];
 			}
 		}  else {
 			instr.rd = tmp[1];

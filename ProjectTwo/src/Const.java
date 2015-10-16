@@ -50,6 +50,7 @@ public class Const {
 		unitsForInstruction.put("BNEZ",Unit.BU);
 		unitsForInstruction.put("BEQ",Unit.BU);
 		unitsForInstruction.put("BNE",Unit.BU);
+		unitsForInstruction.put("ORI",Unit.BU);
 	}
 	/*
 	 * Reservation Stations Table.

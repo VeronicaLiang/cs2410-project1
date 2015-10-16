@@ -159,12 +159,14 @@ private static final int LATENCY = 5;
 								station.latency = station.latency+1;
 							}
 						}else{//store operation
-							ROBItem item = (ROBItem)Const.ROB.get(0);
-							if(item.instruction.equals("SD") || item.instruction.equals("S.D")){
-//								item.Address = station.Vj + station.A;
-								item.destination = station.Vj + station.A;//TODO 是不是用可以用一个别的？？？
-								station.latency = station.latency+1;
-							} 
+							if(Const.ROB.size()>0){
+								ROBItem item = (ROBItem)Const.ROB.get(0);
+								if(item.instruction.equals("SD") || item.instruction.equals("S.D")){
+//									item.Address = station.Vj + station.A;
+									item.destination = station.Vj + station.A;//TODO 是不是用可以用一个别的？？？
+									station.latency = station.latency+1;
+								}
+							}
 						}
 						
 					}
