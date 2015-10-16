@@ -66,7 +66,7 @@ private static final int LATENCY = 5;
 					int b = Const.ROB.indexOf(item);
 					register.Reorder = b; 
 					register.busy = true;
-					station.A = instruction.immediate;
+					station.A = instruction.rs;
 					station.loadFlag = 1;
 				}else{
 					// The same update for rt 
@@ -94,7 +94,7 @@ private static final int LATENCY = 5;
 					}else{
 						register = (Register) Const.floatRegistersStatus.get(instruction.rd);
 					}
-					station.A = instruction.immediate;
+					station.A = instruction.rs;
 				}
 				
 				
