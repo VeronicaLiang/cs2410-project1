@@ -64,8 +64,8 @@ public class TomasuloSimulator {
 				if (ins.opco.equals("BEQZ") || ins.opco.equals("BNEZ") || ins.opco.equals("BEQ") || ins.opco.equals("BNE")) {
 					for (int j= 0; j < instrs.size(); j++) {
 						ins2 = (Instruction) instrs.get(j);
-						if (ins.rd.equals(ins2.note)) {
-							ins.rd = j+"";
+						if (ins.rt.equals(ins2.note)) {
+							ins.rt = j+"";
 						}
 					}
 				}
@@ -172,29 +172,32 @@ public class TomasuloSimulator {
 				return;
 			}
 		//Check no more than NW instructions in the instructions waiting queue
-			Instruction instruction = (Instruction) DQueue.poll();
-			String unit = (String)Const.unitsForInstruction.get(instruction.opco);
-			boolean isSuccessful = true;
-			if(unit.equals("FPU")){
-				isSuccessful = fpuUnit.insertInstruction(instruction);
-			}else if(unit.equals("INT0")){
-				isSuccessful = int0Unit.insertInstruction(instruction);
-				if(!isSuccessful){
-					isSuccessful = int1Unit.insertInstruction(instruction);
+			if(DQueue.size()==0){
+				Instruction instruction = (Instruction) DQueue.poll();
+				String unit = (String)Const.unitsForInstruction.get(instruction.opco);
+				boolean isSuccessful = true;
+				if(unit.equals("FPU")){
+					isSuccessful = fpuUnit.insertInstruction(instruction);
+				}else if(unit.equals("INT0")){
+					isSuccessful = int0Unit.insertInstruction(instruction);
+					if(!isSuccessful){
+						isSuccessful = int1Unit.insertInstruction(instruction);
+					}
+				}else if(unit.equals("LoadStore")){
+					isSuccessful = loadStoreUnit.insertInstruction(instruction);
+				}else if(unit.equals("BU")){
+					isSuccessful = buUnit.insertInstruction(instruction);
+				}else if(unit.equals("MULT")){
+					isSuccessful = multUnit.insertInstruction(instruction);
+					
 				}
-			}else if(unit.equals("LoadStore")){
-				isSuccessful = loadStoreUnit.insertInstruction(instruction);
-			}else if(unit.equals("BU")){
-				isSuccessful = buUnit.insertInstruction(instruction);
-			}else if(unit.equals("MULT")){
-				isSuccessful = multUnit.insertInstruction(instruction);
-				
+				if(!isSuccessful){
+					halt = true;
+					return;
+				}
+				issue_count++;
 			}
-			if(!isSuccessful){
-				halt = true;
-				return;
-			}
-			issue_count++;
+			
 			
 		}
       }
