@@ -11,7 +11,8 @@ public class Instruction {
        operand; a value of zero indicates that the source operand is already available
        in Vj or Vk, or is unnecessary.
 	 */
-	String immediate;
+//	String immediate;
+	boolean immediate = false;
 	
 	int pc;
 	
@@ -27,27 +28,26 @@ public class Instruction {
 		instr.opco = records[1];
 		String[] tmp = records[2].split(",\\s+");
 
+		// The instruction S.D has different style
 		if(instr.opco.equals("S.D")){
 			instr.rt = tmp[1];
 			instr.rs = tmp[0];
 		}else{
 			instr.rd = tmp[0];
 			instr.rs = tmp[1];
-			
 		}
-		
-		if(instr.opco.equals("L.D") || instr.opco.equals("LD")){
-			String immediate = tmp[1];
-			instr.immediate = immediate;
-		}
-		
+
+		//
 		if(tmp.length > 2){
 			if(tmp[2] != null && !tmp[2].isEmpty()){
 				instr.rt = tmp[2];
 			}
-		}  else {
-			instr.rd = tmp[1];
+			if(instr.opco.contains("I")){
+				instr.immediate = true;
+			}
 		}
+
+//		if (instr.opco.equals("BNEZ"))
 		
 		return instr;
 	}
