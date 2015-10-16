@@ -128,7 +128,6 @@ private static final int LATENCY = 2;
 					   ((ROBItem)Const.ROB.get(b)).ready = true;
 					}
 				}else{
-					//TODO Check whether all the operands are available.
 					if((station.Qj==0) && (station.Qk==0)){
 						float vk = station.Vk;
 						float vj = station.Vj;
