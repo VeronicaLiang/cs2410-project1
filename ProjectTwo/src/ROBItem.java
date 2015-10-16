@@ -1,6 +1,6 @@
 
 public class ROBItem {
-	int entry;
+	int offset;
 	boolean busy;
 //	String instruction;
 	Instruction instruction; // change the type of instruction, make the comparing of instruction type easier. --xl
