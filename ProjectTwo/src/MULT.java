@@ -90,6 +90,7 @@ private static final int LATENCY = 2;
 				int b = Const.ROB.indexOf(item);
 				register.Reorder = b; 
 				register.busy = true;
+				station.Busy = true;
 				station.latency = 0;
 				return true;
 			}
