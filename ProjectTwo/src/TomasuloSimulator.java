@@ -146,7 +146,8 @@ public class TomasuloSimulator {
 			issue(DQueue);
 			
 			clock_cycle ++;
-			if(pc >= main.getInstrs().size() && Const.ROB.size() == 0){
+			System.out.println(clock_cycle);
+			if(pc >= main.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
 				finishedFlag = true;
 			}
 		}
@@ -219,12 +220,12 @@ public class TomasuloSimulator {
 	 */
     public void execute(){
 		//Iterate resvervation stations table, and execute every station.
-    	fpuUnit.execute();
-    	int0Unit.execute();
-    	int1Unit.execute();
-    	loadStoreUnit.execute();
+    	//fpuUnit.execute();
+    	//int0Unit.execute();
+    	//int1Unit.execute();
+    	//loadStoreUnit.execute();
     	multUnit.execute();
-    	buUnit.execute();
+    	//buUnit.execute();
 	}
     
     /*
@@ -247,8 +248,8 @@ public class TomasuloSimulator {
     public void commit(Memory main,BranchTargetBuffer btb){
 		int NC = 4;
 		int bus_count = 0;
-    	if(Const.ROB.size()>0 && bus_count < NC ){
-    		int h = 0;  // always commit the first item in ROB
+    	while(Const.lastOfROB - Const.firstOfROB > 0 && bus_count < NC ){
+    		int h = Const.firstOfROB;  // always commit the first item in ROB
 			ROBItem item = (ROBItem)Const.ROB.get(h);
     		if(item.ready){
     			String d = item.destination;
@@ -295,7 +296,10 @@ public class TomasuloSimulator {
     			}
     			
     			
+    		} else {
+    			break;
     		}
+    		
     	}
     }
     public static void main(String args[]) throws IOException{
