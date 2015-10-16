@@ -97,6 +97,7 @@ public class LoadStore {
 //					item.destination = instruction.rd;
 					Const.ROB.add(item);
 					int b = Const.ROB.indexOf(item);
+					Const.lastOfROB = b+1;
 					register.Reorder = b;
 					register.busy = true;
 					// replacement + rs  is the address ;
