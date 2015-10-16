@@ -95,6 +95,7 @@ private static final int LATENCY = 2;
 				register.busy = true;
 				station.Busy = true;
 				station.latency = 0;
+				station.done = false;
 				return true;
 			}
 		}
@@ -109,7 +110,7 @@ private static final int LATENCY = 2;
 			if((station.latency>0) && (station.latency<LATENCY)){
 				station.latency = station.latency +1;
 			}else{
-				if(station.latency>=LATENCY){
+				if(station.latency>=LATENCY && station.done){
 					//Write result. 
 					int b = station.Dest;
 					station.Busy = false;
@@ -163,6 +164,7 @@ private static final int LATENCY = 2;
 							}
 						}
 						station.latency = station.latency+1;
+						station.done = true;
 					}
 				}
 				
