@@ -133,15 +133,7 @@ private static final int LATENCY = 2;
 						if((station.Qj==0) && (station.Qk==0)){
 							float vk = station.Vk;
 							float vj = station.Vj;
-							if(station.Op.equals("ADD.D")){
-								station.result = vk +vj;
-							}else if(station.Op.equals("SUB.D")){
-								station.result = vj - vk; 
-							}else if(station.Op.equals("MUL.D")){
-								station.result = vj * vk; 
-							}else if(station.Op.equals("DIV.D")){
-								station.result = vj / vk;
-							}
+							station.result = vj * vk;
 							station.latency = station.latency+1;
 							station.done = true;
 						}
