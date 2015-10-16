@@ -172,7 +172,7 @@ public class TomasuloSimulator {
 				return;
 			}
 		//Check no more than NW instructions in the instructions waiting queue
-			if(DQueue.size()==0){
+			if(DQueue.size()!=0){
 				Instruction instruction = (Instruction) DQueue.poll();
 				String unit = (String)Const.unitsForInstruction.get(instruction.opco);
 				boolean isSuccessful = true;
