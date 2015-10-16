@@ -107,37 +107,33 @@ private static final int LATENCY = 2;
 		for(int i = 5;i<=6;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy){
-				if((station.latency>0) && (station.latency<LATENCY)){
+				if(station.latency<LATENCY || !station.done){
 					station.latency = station.latency +1;
-				}else{
-					if(station.latency>=LATENCY && station.done){
-						//Write result. 
-						int b = station.Dest;
-						station.Busy = false;
-						
-						Iterator iterator = Const.reservationStations.entrySet().iterator();
-						while(iterator.hasNext()){
-						   Map.Entry entry = (Entry) iterator.next();
-						   Station s = (Station) entry.getValue();
-						   if(s.Qj==b){
-							   s.Vj = station.result;s.Qj = 0;
-						   }
-						   if(s.Qk==b){
-							   s.Vk = station.result;s.Qk = 0;
-						   }
-						   ((ROBItem)Const.ROB.get(b)).value = station.result;
-						   ((ROBItem)Const.ROB.get(b)).ready = true;
-						}
-					}else{
-						//TODO Check whether all the operands are available.
-						if((station.Qj==0) && (station.Qk==0)){
-							float vk = station.Vk;
-							float vj = station.Vj;
-							station.result = vj * vk;
-							station.latency = station.latency+1;
-							station.done = true;
-						}
+					if((station.Qj==0) && (station.Qk==0) && !station.done){
+						float vk = station.Vk;
+						float vj = station.Vj;
+						station.result = vj * vk;
+						station.done = true;
 					}
+				}else if(station.latency>=LATENCY && station.done){
+					//Write result. 
+					int b = station.Dest;
+					station.Busy = false;
+						
+					Iterator iterator = Const.reservationStations.entrySet().iterator();
+					while(iterator.hasNext()){
+					   Map.Entry entry = (Entry) iterator.next();
+					   Station s = (Station) entry.getValue();
+					   if(s.Qj==b){
+						   s.Vj = station.result;s.Qj = 0;
+					   }
+					   if(s.Qk==b){
+						   s.Vk = station.result;s.Qk = 0;
+					   }
+					   ((ROBItem)Const.ROB.get(b)).value = station.result;
+					   ((ROBItem)Const.ROB.get(b)).ready = true;
+					}
+					
 					
 				}
 			}
