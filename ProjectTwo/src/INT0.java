@@ -105,6 +105,7 @@ private static final int LATENCY = 2;
 				Const.lastOfROB = b + 1;
 				register.Reorder = b; 
 				register.busy = true;
+				station.Dest = b;
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;

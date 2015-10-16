@@ -31,19 +31,21 @@ private static final int LATENCY = 2;
 	   Station 7 to 12 are Load/Store  stations.
 	   Station 13 to 17 are FPU  stations.
 	   Station 18 and 19 are BU  stations.
+	   beq	000100	rs	rt	immediate	 beq $1,$2,10	 if($1==$2)  goto PC+4+40	 if (rs == rt) PC <- PC+4 + (sign-extend)immediate<<2 
+      bne	000101	rs	rt	immediate	 bne $1,$2,10	 if($1!=$2)  goto PC+4+40	 if (rs != rt) PC <- PC+4 + (sign-extend)immediate<<2 
+      BEQZ  条件转移指令，当寄存器中内容为0时转移发生  BEQZ R1,0
+      BENZ  条件转移指令，当寄存器中内容不为0时转移发生 BNEZ R1,0
+      BEQ   条件转移指令，当两个寄存器内容相等时转移发生 BEQ R1,R2
+      BNE 条件转移指令，当两个寄存器中内容不等时转移发生 BNE R1,R2
 	 */
 	public boolean insertInstruction(Instruction instruction){
 		for(int i = 18;i<=19;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((!station.Busy)){
 				int h;
-//				检查rs register
+//				检查rd register
 				Register register;
-				if (instruction.rs.contains("R")){
-					register = (Register) Const.integerRegistersStatus.get(instruction.rs);
-				}else{
-					register = (Register) Const.floatRegistersStatus.get(instruction.rs);
-				}
+				register = (Register) Const.integerRegistersStatus.get(instruction.rd);
 				
 				if(register.busy){
 					h = register.Reorder;
@@ -58,16 +60,11 @@ private static final int LATENCY = 2;
 					station.Qj = 0;
 				}
 				
-				//检查 rt register 
-				if (instruction.rt.contains("R")){
-					register = (Register) Const.integerRegistersStatus.get(instruction.rt);
+				//检查 rs register if the opco is beqz or benz, rs holds the loops index, vk could be nothing.
+				if(instruction.opco.equals("BEQZ") || instruction.opco.equals("BENZ")){
+					station.A = Integer.parseInt(instruction.rs) ;
 				}else{
-					register = (Register) Const.floatRegistersStatus.get(instruction.rt);
-				}
-				if(register==null){//说明rt参数是immediate类型
-					station.Vk = Float.parseFloat(instruction.rt);
-					station.Qk = 0;
-				}else{
+					register = (Register) Const.integerRegistersStatus.get(instruction.rs);
 					if(register.busy){
 						h = register.Reorder;
 						if(((ROBItem)Const.ROB.get(h)).ready){
@@ -82,12 +79,10 @@ private static final int LATENCY = 2;
 					}
 				}
 				
+				
 //				检查rd register
-				if (instruction.rd.contains("R")){
-					register = (Register) Const.integerRegistersStatus.get(instruction.rd);
-				}else{
-					register = (Register) Const.floatRegistersStatus.get(instruction.rd);
-				}
+				register = (Register) Const.integerRegistersStatus.get(instruction.rd);
+				
 				ROBItem item = new ROBItem();
 				item.destination = instruction.rd;
 				Const.ROB.add(item);
@@ -95,6 +90,7 @@ private static final int LATENCY = 2;
 				Const.lastOfROB = b + 1;
 				register.Reorder = b; 
 				register.busy = true;
+				station.Dest = b;
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;
@@ -108,9 +104,12 @@ private static final int LATENCY = 2;
 	/*
 	 *beq	000100	rs	rt	immediate	 beq $1,$2,10	 if($1==$2)  goto PC+4+40	 if (rs == rt) PC <- PC+4 + (sign-extend)immediate<<2 
       bne	000101	rs	rt	immediate	 bne $1,$2,10	 if($1!=$2)  goto PC+4+40	 if (rs != rt) PC <- PC+4 + (sign-extend)immediate<<2 
-
+      BEQZ  条件转移指令，当寄存器中内容为0时转移发生  BEQZ R1,0
+      BENZ  条件转移指令，当寄存器中内容不为0时转移发生 BNEZ R1,0
+      BEQ   条件转移指令，当两个寄存器内容相等时转移发生 BEQ R1,R2
+      BNE 条件转移指令，当两个寄存器中内容不等时转移发生 BNE R1,R2
 	 */
-	public void execute(){//BEQZ, BNEZ, BEQ, BNE
+	public void execute(){
 		for(int i = 18;i<=19;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((station.latency>0) && (station.latency<LATENCY)){
@@ -135,26 +134,25 @@ private static final int LATENCY = 2;
 					   ((ROBItem)Const.ROB.get(b)).ready = true;
 					}
 				}else{
-					//TODO Check whether all the operands are available.
+					/*
+					 *beq	000100	rs	rt	immediate	 beq $1,$2,10	 if($1==$2)  goto PC+4+40	 if (rs == rt) PC <- PC+4 + (sign-extend)immediate<<2 
+				      bne	000101	rs	rt	immediate	 bne $1,$2,10	 if($1!=$2)  goto PC+4+40	 if (rs != rt) PC <- PC+4 + (sign-extend)immediate<<2 
+				      BEQZ  条件转移指令，当寄存器中内容为0时转移发生  BEQZ R1,0
+				      BENZ  条件转移指令，当寄存器中内容不为0时转移发生 BNEZ R1,0
+				      BEQ   条件转移指令，当两个寄存器内容相等时转移发生 BEQ R1,R2
+				      BNE 条件转移指令，当两个寄存器中内容不等时转移发生 BNE R1,R2
+					 */
 					if((station.Qj==0) && (station.Qk==0)){
 						float vk = station.Vk;
 						float vj = station.Vj;
-						if(station.Op.equals("ORI")){//TODO 进行或运算  , , , 
-							if(vk>vj){
-								station.result = 1;
-							}else{
-								station.result = 0;
-							}
-						}else if(station.Op.equals("OR")){
-							station.result = vj - vk; 
-						}else if(station.Op.equals("BEQZ")){
-							station.result = vj - vk; 
+						if(station.Op.equals("BEQZ")){
+							
 						}else if(station.Op.equals("BNEZ")){
-							station.result = vj * vk; 
+							
 						}else if(station.Op.equals("BEQ")){
-							station.result = vj / vk;
+							
 						}else if(station.Op.equals("BNE")){
-							station.result = vj / vk;
+							
 						}
 						station.latency = station.latency+1;
 						station.done = true;
