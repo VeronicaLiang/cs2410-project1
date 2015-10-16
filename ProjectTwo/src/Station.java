@@ -75,4 +75,6 @@ public class Station {
 	float result;
 	
 	int loadFlag = 0;
+	
+	boolean done = false;
 }

@@ -196,6 +196,8 @@ public class TomasuloSimulator {
 					return;
 				}
 				issue_count++;
+			} else {
+				return;
 			}
 			
 			
