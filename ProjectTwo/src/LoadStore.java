@@ -153,8 +153,8 @@ public class LoadStore {
 								if(station.loadFlag ==1){
 									boolean isStoreAhead = false;
 									for(int n = (station.Dest-1);n>=0;n--){
-										if(((ROBItem)Const.ROB.get(n)).instruction.equals("LD") ||
-												((ROBItem)Const.ROB.get(n)).instruction.equals("L.D")){
+										if(((ROBItem)Const.ROB.get(n)).instruction.opco.equals("LD") ||
+												((ROBItem)Const.ROB.get(n)).instruction.opco.equals("L.D")){
 											isStoreAhead = true;
 										}
 									}
@@ -171,7 +171,7 @@ public class LoadStore {
 							}else{//store operation
 								if(Const.ROB.size()>0){
 									ROBItem item = (ROBItem)Const.ROB.get(0);
-									if(item.instruction.equals("SD") || item.instruction.equals("S.D")){
+									if(item.instruction.opco.equals("SD") || item.instruction.opco.equals("S.D")){
 //									item.Address = station.Vj + station.A;
 										item.destination = "load";
 										item.address = (int)station.Vj + station.A;
