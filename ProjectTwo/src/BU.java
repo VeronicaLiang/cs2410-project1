@@ -146,13 +146,21 @@ private static final int LATENCY = 2;
 						float vk = station.Vk;
 						float vj = station.Vj;
 						if(station.Op.equals("BEQZ")){
-							
+							if(vk==0){
+								//TODO 
+							}
 						}else if(station.Op.equals("BNEZ")){
-							
+							if(vk!=0){
+								//TODO 
+							}
 						}else if(station.Op.equals("BEQ")){
-							
+							if(vk==vj){
+								//TODO 
+							}
 						}else if(station.Op.equals("BNE")){
-							
+							if(vk!=vj){
+								//TODO 
+							}
 						}
 						station.latency = station.latency+1;
 						station.done = true;
