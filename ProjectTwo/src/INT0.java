@@ -46,7 +46,7 @@ private static final int LATENCY = 2;
 		for(int i = 1;i<=2;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((!station.Busy)){
-				int h;//TODO 杩�������h���ROB���head entry锛�锛�锛�
+				int h;
 				Register register;
 				if (instruction.rs.contains("R")){
 					register = (Register) Const.integerRegistersStatus.get(instruction.rs);
