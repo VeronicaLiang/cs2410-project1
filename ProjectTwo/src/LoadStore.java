@@ -94,19 +94,20 @@ public class LoadStore {
 				if(instruction.opco.equals("LD") || instruction.opco.equals("L.D")){
 					ROBItem item = new ROBItem();
 					item.instruction = instruction;
-					item.destination = instruction.rd;
+//					item.destination = instruction.rd;
 					Const.ROB.add(item);
 					int b = Const.ROB.indexOf(item);
 					register.Reorder = b;
 					register.busy = true;
 					// replacement + rs  is the address ;
-					station.A = replacement + (int)register.value;
+					station.A = replacement ;
 					station.loadFlag = 1;
 				}else{
-					station.A = rd_replacement + Integer.parseInt(rd);
+					station.A = rd_replacement ;
 				}
 				station.Busy = true;
 				station.latency = 0;
+				station.done = false;
 				return true;
 			}
 		}
@@ -122,7 +123,7 @@ public class LoadStore {
 				if((station.latency>0) && (station.latency<LATENCY)){
 					station.latency = station.latency +1;
 				}else{
-					if(station.latency>=LATENCY){
+					if(station.latency>=LATENCY && station.done){
 						//Write result.
 						if(station.loadFlag==0){
 							if(station.Qk == 0){
@@ -147,7 +148,6 @@ public class LoadStore {
 							}
 						}
 					}else{
-
 						if((station.Qj==0)){
 							if(station.loadFlag>0){//Load operation
 								if(station.loadFlag ==1){
@@ -160,7 +160,8 @@ public class LoadStore {
 									}
 									if(!isStoreAhead){
 										station.loadFlag = 2;
-										station.A = station.Vj + station.A;
+
+//										station.A = station.Vj + station.A
 									}
 
 								}else if(station.loadFlag ==2){
@@ -172,7 +173,8 @@ public class LoadStore {
 									ROBItem item = (ROBItem)Const.ROB.get(0);
 									if(item.instruction.equals("SD") || item.instruction.equals("S.D")){
 //									item.Address = station.Vj + station.A;
-										item.destination = station.Vj + station.A;//TODO 是不是用可以用一个别的？？？
+										item.destination = "load";
+										item.address = (int)station.Vj + station.A;
 										station.latency = station.latency+1;
 									}
 								}
