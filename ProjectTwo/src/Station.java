@@ -68,7 +68,7 @@ public class Station {
        or store. Initially, the immediate field of the instruction is stored here; after
        the address calculation, the effective address is stored here.
 	 */
-	String A;
+	Integer A;
 	
 	int latency = 0;
 	
