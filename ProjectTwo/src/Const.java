@@ -36,7 +36,7 @@ public class Const {
 		unitsForInstruction.put("DSUB",Unit.INT0);
 		
 		unitsForInstruction.put("DMUL",Unit.MULT);
-		unitsForInstruction.put("MUL.D", Unit.MULT);
+
 		
 		unitsForInstruction.put("LD",Unit.LoadStore);
 		unitsForInstruction.put("L.D",Unit.LoadStore);
@@ -47,6 +47,7 @@ public class Const {
 		unitsForInstruction.put("SUB.D",Unit.FPU);
 		unitsForInstruction.put("ADD.D",Unit.FPU);
 		unitsForInstruction.put("DIV.D",Unit.FPU);
+		unitsForInstruction.put("MUL.D", Unit.FPU);
 		
 		unitsForInstruction.put("BEQZ",Unit.BU);
 		unitsForInstruction.put("BNEZ",Unit.BU);

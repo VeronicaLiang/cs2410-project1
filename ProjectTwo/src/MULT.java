@@ -85,6 +85,7 @@ private static final int LATENCY = 2;
 				}
 				ROBItem item = new ROBItem();
 				item.destination = instruction.rd;
+				item.instruction = instruction;
 				Const.ROB.add(item);
 				int b = Const.ROB.indexOf(item);
 				register.Reorder = b; 

@@ -21,7 +21,7 @@ public class Memory {
 		double number = Double.parseDouble(tmp[tmp.length-1]);
 		String[] tmp2 = tmp[0].split("\\(");
 		int index = Integer.parseInt(tmp2[tmp2.length-1]);
-		//data.put(index, number); TODO
+		data.put(index, number);
 	}
 	
 	public Hashtable getData(){
