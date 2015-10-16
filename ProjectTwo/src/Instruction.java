@@ -47,9 +47,9 @@ public class Instruction {
 			}
 		}
 
-		if (instr.opco.equals("BNEZ") || instr.opco.equals("BEQZ")){
-			instr.rt = tmp[1];
-		}
+//		if (instr.opco.equals("BNEZ") || instr.opco.equals("BEQZ")){
+//			instr.rt = tmp[1];
+//		}
 		
 		return instr;
 	}

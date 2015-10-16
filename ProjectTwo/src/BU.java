@@ -64,6 +64,8 @@ private static final int LATENCY = 2;
 				if(instruction.opco.equals("BEQZ") || instruction.opco.equals("BENZ")){
 					station.A = Integer.parseInt(instruction.rs) ;
 				}else{
+					station.A = Integer.parseInt(instruction.rt) ;//offset
+					
 					register = (Register) Const.integerRegistersStatus.get(instruction.rs);
 					if(register.busy){
 						h = register.Reorder;
@@ -119,20 +121,12 @@ private static final int LATENCY = 2;
 					//Write result. 
 					int b = station.Dest;
 					station.Busy = false;
-					
-					Iterator iterator = Const.reservationStations.entrySet().iterator();
-					while(iterator.hasNext()){
-					   Map.Entry entry = (Entry) iterator.next();
-					   Station s = (Station) entry.getValue();
-					   if(s.Qj==b){
-						   s.Vj = station.result;s.Qj = 0;
-					   }
-					   if(s.Qk==b){
-						   s.Vk = station.result;s.Qk = 0;
-					   }
-					   ((ROBItem)Const.ROB.get(b)).value = station.result;
-					   ((ROBItem)Const.ROB.get(b)).ready = true;
+					((ROBItem)Const.ROB.get(b)).value = station.result;
+					if(station.result==1){
+						((ROBItem)Const.ROB.get(b)).offset = station.A;
 					}
+					((ROBItem)Const.ROB.get(b)).ready = true;
+					
 				}else{
 					/*
 					 *beq	000100	rs	rt	immediate	 beq $1,$2,10	 if($1==$2)  goto PC+4+40	 if (rs == rt) PC <- PC+4 + (sign-extend)immediate<<2 
@@ -147,19 +141,27 @@ private static final int LATENCY = 2;
 						float vj = station.Vj;
 						if(station.Op.equals("BEQZ")){
 							if(vk==0){
-								//TODO 
+								station.result = 1; 
+							}else{
+								station.result = 0; 
 							}
 						}else if(station.Op.equals("BNEZ")){
 							if(vk!=0){
-								//TODO 
+								station.result = 1; 
+							}else{
+								station.result = 0; 
 							}
 						}else if(station.Op.equals("BEQ")){
 							if(vk==vj){
-								//TODO 
+								station.result = 1; 
+							}else{
+								station.result = 0; 
 							}
 						}else if(station.Op.equals("BNE")){
 							if(vk!=vj){
-								//TODO 
+								station.result = 1;
+							}else{
+								station.result = 0; 
 							}
 						}
 						station.latency = station.latency+1;
