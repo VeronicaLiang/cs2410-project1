@@ -105,7 +105,7 @@ private static final int LATENCY = 2;
 		return false;
 	}
 	
-	public void execute(){
+	public void execute(){//BEQZ, BNEZ, BEQ, BNE
 		for(int i = 18;i<=19;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((station.latency>0) && (station.latency<LATENCY)){
