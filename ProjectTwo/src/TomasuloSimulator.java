@@ -262,7 +262,7 @@ public class TomasuloSimulator {
     	while(Const.lastOfROB - Const.firstOfROB > 0 && bus_count < NC ){
     		int h = Const.firstOfROB;  // always commit the first item in ROB
 			ROBItem item = (ROBItem)Const.ROB.get(h);
-			System.out.println("item.ready->"+item.ready);
+			System.out.println("item.ready->"+item.ready+"   item.opco->"+item.instruction.opco);
 			
     		if(item.ready){
     			String d = item.destination;
