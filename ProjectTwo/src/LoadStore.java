@@ -120,12 +120,13 @@ public class LoadStore {
 				int b = Const.ROB.indexOf(item);
 				Const.lastOfROB = b+1;
 				station.Dest = b;
-				rd_register.Reorder = b;
-				rd_register.busy = true;
+
 				if(instruction.opco.equals("LD") || instruction.opco.equals("L.D")){
 					// replacement + rs  is the address ;
 					station.A = replacement ;
 					station.loadFlag = 1;
+					rd_register.busy = true;
+					rd_register.Reorder = b;
 				}else{
 					station.A = rd_replacement ;
 				}
@@ -150,8 +151,8 @@ public class LoadStore {
 					station.latency = station.latency +1;
 					// a store instruction
 					if(station.loadFlag == 0){
-						if((station.Qj==0) && !station.done && (station.Dest == Const.firstOfROB)) {
-							station.result = station.Vj + station.A; // Need to check whether Vj is an integer.
+						if((station.Qk==0) && !station.done && (station.Dest == Const.firstOfROB)) {
+							station.result = station.Vk + station.A; // Need to check whether Vj is an integer.
 							((ROBItem)Const.ROB.get(station.Dest)).address = (int)station.result;
 							station.done = true;
 						}
@@ -195,7 +196,7 @@ public class LoadStore {
 							((ROBItem) Const.ROB.get(b)).value = station.result;
 						}
 					}else{
-						((ROBItem) Const.ROB.get(station.Dest)).value = station.Vk;
+						((ROBItem) Const.ROB.get(station.Dest)).value = station.Vj;
 					}
 					((ROBItem) Const.ROB.get(station.Dest)).ready = true;
 				}
