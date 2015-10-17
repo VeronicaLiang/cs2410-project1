@@ -96,6 +96,7 @@ public class FPU {
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;
+				station.Op = instruction.opco;
 				
 				return true;
 			}
