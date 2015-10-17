@@ -196,7 +196,7 @@ public class LoadStore {
 							((ROBItem) Const.ROB.get(b)).ready = true;
 						}
 					}else{
-						((ROBItem) Const.ROB.get(station.Dest)).value = station.result;
+						((ROBItem) Const.ROB.get(station.Dest)).value = station.Vk;
 					}
 					((ROBItem) Const.ROB.get(station.Dest)).ready = true;
 				}
