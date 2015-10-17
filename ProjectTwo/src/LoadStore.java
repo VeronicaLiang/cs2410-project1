@@ -123,6 +123,8 @@ public class LoadStore {
 
 				if(instruction.opco.equals("LD") || instruction.opco.equals("L.D")){
 					// replacement + rs  is the address ;
+					rd_register.Reorder = b;
+					rd_register.busy = true;
 					station.A = replacement ;
 					station.loadFlag = 1;
 					rd_register.busy = true;
