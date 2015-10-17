@@ -141,7 +141,8 @@ public class LoadStore {
 					}else{
 						if((station.Qj == 0) && !station.done) {
 							Memory test = Memory.getInstance();
-							float f = (float)test.getData().get(station.Dest);
+							int address = (int) (station.Vj + station.A);
+							float f = (float)test.getData().get(address);
 							station.result = f;
 							station.done = true;
 						}
@@ -167,7 +168,6 @@ public class LoadStore {
 							float f = (float)test.getData().get(b);
 							((ROBItem) Const.ROB.get(station.Dest)).value = f;
 						}
-
 					}
 				}
 			}
