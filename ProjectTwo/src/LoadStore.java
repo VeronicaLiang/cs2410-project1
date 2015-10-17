@@ -98,6 +98,21 @@ public class LoadStore {
 					station.Qj = 0;
 				}
 
+				if(instruction.opco.equals("SD") || instruction.opco.equals("S.D")){
+					if(rd_register.busy){
+						h = rd_register.Reorder;
+						if(((ROBItem)Const.ROB.get(h)).ready){
+							station.Vk = ((ROBItem)Const.ROB.get(h)).value;
+							station.Qk = 0;
+						}else{
+							station.Qk = h;
+						}
+					}else{
+						station.Vk = rd_register.value;
+						station.Qk = 0;
+					}
+				}
+
 				ROBItem item = new ROBItem();
 				item.instruction = instruction;
 				item.destination = instruction.rd;
@@ -105,9 +120,9 @@ public class LoadStore {
 				int b = Const.ROB.indexOf(item);
 				Const.lastOfROB = b+1;
 				station.Dest = b;
+				rd_register.Reorder = b;
+				rd_register.busy = true;
 				if(instruction.opco.equals("LD") || instruction.opco.equals("L.D")){
-					rd_register.Reorder = b;
-					rd_register.busy = true;
 					// replacement + rs  is the address ;
 					station.A = replacement ;
 					station.loadFlag = 1;

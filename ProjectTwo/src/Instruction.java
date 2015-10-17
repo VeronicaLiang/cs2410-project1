@@ -29,7 +29,7 @@ public class Instruction {
 		String[] tmp = records[2].split(",\\s+");
 
 		// The instruction S.D has different style
-		if(instr.opco.equals("S.D")){
+		if(instr.opco.equals("S.D")||instr.opco.equals("SD")){
 			instr.rd = tmp[1];
 			instr.rs = tmp[0];
 		}else{

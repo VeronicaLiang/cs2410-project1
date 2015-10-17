@@ -152,9 +152,10 @@ public class TomasuloSimulator {
 			
 			
 			System.out.println("Clock Cycle is :" + clock_cycle);
-			for (int i = 0; i < 32; i++){
+			for (int i = 5; i < 6; i++){
 				System.out.println("R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value);
 			}
+			System.out.println("Mem[300]: "+ memory.getData().get(300));
 			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
 				finishedFlag = true;
 			}
@@ -303,16 +304,18 @@ public class TomasuloSimulator {
     			}
     			item.busy = false;
     			Const.firstOfROB++;
-    			if(d.contains("R")){
-    				if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
-                    	((Register)Const.integerRegistersStatus.get(d)).busy = false;
-    				}
-    			} else {
-    				if(((Register)Const.floatRegistersStatus.get(d)).Reorder==h){
-        				((Register)Const.floatRegistersStatus.get(d)).busy = false;
+    			if(!item.instruction.opco.equals("S.D") && !item.instruction.opco.equals("SD")){
+        			if(d.contains("R")){
+        				if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
+                        	((Register)Const.integerRegistersStatus.get(d)).busy = false;
+        				}
+        			} else {
+        				if(((Register)Const.floatRegistersStatus.get(d)).Reorder==h){
+            				((Register)Const.floatRegistersStatus.get(d)).busy = false;
+            			}
         			}
     			}
-    			System.out.println("bus_count->"+bus_count);
+    			
     			
     		} else {
     			break;
