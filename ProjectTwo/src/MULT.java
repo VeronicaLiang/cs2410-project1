@@ -131,9 +131,9 @@ private static final int LATENCY = 2;
 					   if(s.Qk==b){
 						   s.Vk = station.result;s.Qk = 0;
 					   }
-					   ((ROBItem)Const.ROB.get(b)).value = station.result;
-					   ((ROBItem)Const.ROB.get(b)).ready = true;
 					}
+					((ROBItem)Const.ROB.get(b)).value = station.result;
+					((ROBItem)Const.ROB.get(b)).ready = true;
 					station.Busy = false;
 					
 				}
