@@ -100,6 +100,7 @@ private static final int LATENCY = 2;
 				}
 				ROBItem item = new ROBItem();
 				item.destination = instruction.rd;
+				item.instruction = instruction;
 				Const.ROB.add(item);
 				int b = Const.ROB.indexOf(item);
 				Const.lastOfROB = b + 1;
@@ -124,7 +125,7 @@ Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy){
 				if(station.latency<LATENCY || !station.done){
 					station.latency = station.latency +1;
-					if((station.Qj==0) && (station.Qk==0)){
+					if((station.Qj==0) && (station.Qk==0) && !station.done){
 						float vk = station.Vk;
 						float vj = station.Vj;
 						if(station.Op.equals("DADD")){
@@ -158,7 +159,6 @@ Station station = (Station) Const.reservationStations.get(i+"");
 								station.result = 0;
 							}
 						}
-						station.latency = station.latency+1;
 						station.done = true;
 					}
 				}else if(station.latency>=LATENCY && station.done){
