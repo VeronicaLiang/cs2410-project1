@@ -35,6 +35,9 @@ public class FPU {
 	   Station 18 and 19 are BU  stations.
 	 */
 	public boolean insertInstruction(Instruction instruction){
+		if (hasDivide()) {
+			return false;
+		}
 		for(int i = 13;i<=17;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((!station.Busy)){
@@ -107,12 +110,14 @@ public class FPU {
 	}
 	
 	public void execute(){
+		boolean isExecute = false;
+		boolean isWB = false;
 		for(int i = 13;i<=17;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy){
-				if (station.latency < LATENCY || !station.done) {
+				if ((station.latency < LATENCY || !station.done) && !station.Op.equals("DIV.D")) {
 					station.latency = station.latency + 1;
-					if ((station.Qj == 0) && (station.Qk == 0) && !station.done) {
+					if ((station.Qj == 0) && (station.Qk == 0) && !station.done && !isExecute) {
 						float vk = station.Vk;
 						float vj = station.Vj;
 						if (station.Op.equals("ADD.D")) {
@@ -121,12 +126,22 @@ public class FPU {
 							station.result = vj - vk;
 						} else if (station.Op.equals("MUL.D")) {
 							station.result = vj * vk;
-						} else if (station.Op.equals("DIV.D")) {
-							station.result = vj / vk;
 						}
 						station.done = true;
+						isExecute = true;
 					}
-				} else if (station.latency >= LATENCY && station.done) {
+				} else if ((station.latency < LATENCY || !station.done) && station.Op.equals("DIV.D")) {
+					if (!this.unitBusy(i)) {
+						station.latency = station.latency + 1;
+					}
+					if ((station.Qj == 0) && (station.Qk == 0) && !station.done && !isExecute) {
+						float vk = station.Vk;
+						float vj = station.Vj;
+						station.result = vj / vk;
+						station.done = true;
+						isExecute = true;
+					}
+				} else if (station.latency >= LATENCY && station.done && !isWB) {
 					// Write result.
 					int b = station.Dest;
 
@@ -147,10 +162,33 @@ public class FPU {
 					((ROBItem) Const.ROB.get(b)).value = station.result;
 					((ROBItem) Const.ROB.get(b)).ready = true;
 					station.Busy = false;
-
+					isWB = true;
 				}
 			}
 		}
+	}
+	
+	public boolean hasDivide () {
+		for(int i = 13;i<=17;i++){
+			Station station = (Station) Const.reservationStations.get(i+"");
+			if (station.Op.equals("DIV.D")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean unitBusy(int index) {
+		for(int i = 13;i<=17;i++){
+			if(i != index){
+				Station station = (Station) Const.reservationStations.get(i+"");
+				if (station.Busy) {
+					return true;
+				}
+			}
+			
+		}
+		return false;
 	}
 	
 	

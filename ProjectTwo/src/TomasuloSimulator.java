@@ -199,11 +199,10 @@ public class TomasuloSimulator {
 				}else if(unit.equals("INT0") && (!issueINT0 || !issueINT1)){
 					if (!issueINT0){
 						isSuccessful = int0Unit.insertInstruction(instruction);
+						issueINT0 = true;
 						if(!isSuccessful && !issueINT1){
 							isSuccessful = int1Unit.insertInstruction(instruction);
 							issueINT1 = true;
-						} else {
-							issueINT0 = true;
 						}
 					} else if (!issueINT1) {
 						isSuccessful = int1Unit.insertInstruction(instruction);
