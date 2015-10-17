@@ -86,10 +86,16 @@ public class FPU {
 				}
 				ROBItem item = new ROBItem();
 				item.destination = instruction.rd;
+				item.instruction = instruction;
 				Const.ROB.add(item);
 				int b = Const.ROB.indexOf(item);
 				register.Reorder = b; 
 				register.busy = true;
+				Const.lastOfROB = b + 1;
+				station.Dest = b;
+				station.Busy = true;
+				station.latency = 0;
+				station.done = false;
 				
 				return true;
 			}
@@ -102,45 +108,46 @@ public class FPU {
 	public void execute(){
 		for(int i = 13;i<=17;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
-			if((station.latency>0) && (station.latency<LATENCY)){
-				station.latency = station.latency +1;
-			}else{
-				if(station.latency==LATENCY){
-					//Write result. 
-					int b = station.Dest;
-					station.Busy = false;
-					
-					Iterator iterator = Const.reservationStations.entrySet().iterator();
-					while(iterator.hasNext()){
-					   Map.Entry entry = (Entry) iterator.next();
-					   Station s = (Station) entry.getValue();
-					   if(s.Qj==b){
-						   s.Vj = station.result;s.Qj = 0;
-					   }
-					   if(s.Qk==b){
-						   s.Vk = station.result;s.Qk = 0;
-					   }
-					   ((ROBItem)Const.ROB.get(b)).value = station.result;
-					   ((ROBItem)Const.ROB.get(b)).ready = true;
-					}
-				}else{
-					//TODO Check whether all the operands are available.
-					if((station.Qj==0) && (station.Qk==0)){
+			if(station.Busy){
+				if (station.latency < LATENCY || !station.done) {
+					station.latency = station.latency + 1;
+					if ((station.Qj == 0) && (station.Qk == 0) && !station.done) {
 						float vk = station.Vk;
 						float vj = station.Vj;
-						if(station.Op.equals("ADD.D")){
-							station.result = vk +vj;
-						}else if(station.Op.equals("SUB.D")){
-							station.result = vj - vk; 
-						}else if(station.Op.equals("MUL.D")){
-							station.result = vj * vk; 
-						}else if(station.Op.equals("DIV.D")){
+						if (station.Op.equals("ADD.D")) {
+							station.result = vk + vj;
+						} else if (station.Op.equals("SUB.D")) {
+							station.result = vj - vk;
+						} else if (station.Op.equals("MUL.D")) {
+							station.result = vj * vk;
+						} else if (station.Op.equals("DIV.D")) {
 							station.result = vj / vk;
 						}
-						station.latency = station.latency+1;
+						station.done = true;
 					}
+				} else if (station.latency >= LATENCY && station.done) {
+					// Write result.
+					int b = station.Dest;
+
+					Iterator iterator = Const.reservationStations.entrySet()
+							.iterator();
+					while (iterator.hasNext()) {
+						Map.Entry entry = (Entry) iterator.next();
+						Station s = (Station) entry.getValue();
+						if (s.Qj == b) {
+							s.Vj = station.result;
+							s.Qj = 0;
+						}
+						if (s.Qk == b) {
+							s.Vk = station.result;
+							s.Qk = 0;
+						}
+						((ROBItem) Const.ROB.get(b)).value = station.result;
+						((ROBItem) Const.ROB.get(b)).ready = true;
+					}
+					station.Busy = false;
+
 				}
-				
 			}
 		}
 	}
