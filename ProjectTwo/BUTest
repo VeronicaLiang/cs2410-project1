@@ -1,6 +1,6 @@
 loop:		LD		R5, 308(R0)
 		ADD.D		F6, F4, F6
-		BNEZ		R5, loop
+		BNE		R5, R6, loop
 DATA
 		Mem(300) = 5.0
 		Mem(308) = 2.0

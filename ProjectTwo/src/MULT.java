@@ -105,22 +105,23 @@ private static final int LATENCY = 2;
 	}
 	
 	public void execute(){
+		boolean isExecute = false;
+		boolean isWB = false;
 		for(int i = 5;i<=6;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy){
 				if(station.latency<LATENCY || !station.done){
 					station.latency = station.latency +1;
-					if((station.Qj==0) && (station.Qk==0) && !station.done){
+					if((station.Qj==0) && (station.Qk==0) && !station.done && !isExecute){
 						float vk = station.Vk;
 						float vj = station.Vj;
 						station.result = vj * vk;
 						station.done = true;
+						isExecute = true;
 					}
-				}else if(station.latency>=LATENCY && station.done){
+				}else if(station.latency>=LATENCY && station.done && !isWB){
 					//Write result. 
 					int b = station.Dest;
-					
-						
 					Iterator iterator = Const.reservationStations.entrySet().iterator();
 					while(iterator.hasNext()){
 					   Map.Entry entry = (Entry) iterator.next();
@@ -135,7 +136,7 @@ private static final int LATENCY = 2;
 					((ROBItem)Const.ROB.get(b)).value = station.result;
 					((ROBItem)Const.ROB.get(b)).ready = true;
 					station.Busy = false;
-					
+					isWB = true;
 				}
 			}
 			
