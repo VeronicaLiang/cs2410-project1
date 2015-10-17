@@ -177,6 +177,12 @@ public class TomasuloSimulator {
 	public void issue(LinkedList DQueue){
 		int issue_count = 0;
 		boolean halt = false;
+		boolean issueFPU = false;
+		boolean issueINT0 = false;
+		boolean issueINT1 = false;
+		boolean issueLS = false;
+		boolean issueBU = false;
+		boolean issueMULT = false;
 		while((issue_count < this.NW) &&(!halt)){
 			if((Const.lastOfROB - Const.firstOfROB)>=Const.NR){//If ROB' size equals or is greater than NR , stop issuing instructions.
 				halt = true;
@@ -187,20 +193,33 @@ public class TomasuloSimulator {
 				Instruction instruction = (Instruction) DQueue.getFirst();
 				String unit = (String)Const.unitsForInstruction.get(instruction.opco);
 				boolean isSuccessful = true;
-				if(unit.equals("FPU")){
+				if(unit.equals("FPU") && !issueFPU){
 					isSuccessful = fpuUnit.insertInstruction(instruction);
-				}else if(unit.equals("INT0")){
-					isSuccessful = int0Unit.insertInstruction(instruction);
-					if(!isSuccessful){
+					issueFPU = true;
+				}else if(unit.equals("INT0") && (!issueINT0 || !issueINT1)){
+					if (!issueINT0){
+						isSuccessful = int0Unit.insertInstruction(instruction);
+						if(!isSuccessful && !issueINT1){
+							isSuccessful = int1Unit.insertInstruction(instruction);
+							issueINT1 = true;
+						} else {
+							issueINT0 = true;
+						}
+					} else if (!issueINT1) {
 						isSuccessful = int1Unit.insertInstruction(instruction);
+						issueINT1 = true;
 					}
-				}else if(unit.equals("LoadStore")){
-					isSuccessful = loadStoreUnit.insertInstruction(instruction);
-				}else if(unit.equals("BU")){
-					isSuccessful = buUnit.insertInstruction(instruction);
-				}else if(unit.equals("MULT")){
-					isSuccessful = multUnit.insertInstruction(instruction);
 					
+					
+				}else if(unit.equals("LoadStore") && !issueLS){
+					isSuccessful = loadStoreUnit.insertInstruction(instruction);
+					issueLS = true;
+				}else if(unit.equals("BU") && !issueBU){
+					isSuccessful = buUnit.insertInstruction(instruction);
+					issueBU = true;
+				}else if(unit.equals("MULT") && !issueMULT){
+					isSuccessful = multUnit.insertInstruction(instruction);
+					issueMULT = true;
 				}
 				if(!isSuccessful){
 					halt = true;

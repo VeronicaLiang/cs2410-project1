@@ -121,7 +121,7 @@ private static final int LATENCY = 1;
 	
 	public void execute(){
 		for(int i = 1;i<=2;i++){
-Station station = (Station) Const.reservationStations.get(i+"");
+			Station station = (Station) Const.reservationStations.get(i+"");
 			
 			if(station.Busy){
 				if(station.latency<LATENCY || !station.done){
