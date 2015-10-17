@@ -136,12 +136,25 @@ public class LoadStore {
 					// a store instruction
 					if(station.loadFlag == 0){
 						if((station.Qj==0) && !station.done && (station.Dest == Const.firstOfROB)) {
-							station.result = station.Vj + station.A;
+							station.result = station.Vj + station.A; // Need to check whether Vj is an integer.
 							((ROBItem)Const.ROB.get(station.Dest)).address = (int)station.result;
 							station.done = true;
 						}
 					}else{
 						if((station.Qj == 0) && !station.done) {
+							boolean isStoreAhead = false;
+							int b = station.Dest;
+							for (int j = Const.firstOfROB; j < b; j++) {
+								if (((ROBItem) Const.ROB.get(j)).instruction.opco.equals("SD") || ((ROBItem) Const.ROB.get(i)).instruction.opco.equals("S.D")) {
+									isStoreAhead = true;
+								}
+							}
+							if (!isStoreAhead) {
+								station.A = (int) station.Vj + station.A;
+								Memory test = Memory.getInstance();
+								float f = (float)test.getData().get(b);
+								((ROBItem) Const.ROB.get(station.Dest)).value = f;
+							}
 							Memory test = Memory.getInstance();
 							int address = (int) (station.Vj + station.A);
 							float f = (float)test.getData().get(address);
@@ -157,19 +170,9 @@ public class LoadStore {
 							((ROBItem)Const.ROB.get(station.Dest)).value = station.Vk;
 						}
 					}else{
-						int b = station.Dest;
-						boolean isStoreAhead = false;
-						for (int j = Const.firstOfROB; j < b; j++) {
-							if (((ROBItem) Const.ROB.get(j)).instruction.opco.equals("SD") || ((ROBItem) Const.ROB.get(i)).instruction.opco.equals("S.D")) {
-								isStoreAhead = true;
-							}
-						}
-						if (!isStoreAhead) {
-							station.A = (int) station.Vj + station.A;
-							Memory test = Memory.getInstance();
-							float f = (float)test.getData().get(b);
-							((ROBItem) Const.ROB.get(station.Dest)).value = f;
-						}
+
+
+
 					}
 				}
 			}
