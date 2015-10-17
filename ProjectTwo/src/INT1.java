@@ -99,6 +99,7 @@ private static final int LATENCY = 2;
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;
+				station.Op = instruction.opco;
 				return true;
 			}
 		}
