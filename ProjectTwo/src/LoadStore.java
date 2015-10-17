@@ -146,7 +146,7 @@ public class LoadStore {
 							int b = station.Dest;
 							station.A = (int) station.Vj + station.A;
 							for (int j = Const.firstOfROB; j < b; j++) {
-								if (((ROBItem) Const.ROB.get(j)).instruction.opco.equals("SD") || ((ROBItem) Const.ROB.get(i)).instruction.opco.equals("S.D")) {
+								if (((ROBItem) Const.ROB.get(j)).instruction.opco.equals("SD") || ((ROBItem) Const.ROB.get(j)).instruction.opco.equals("S.D")) {
 									if(((ROBItem) Const.ROB.get(j)).address == station.A) {
 										isStoreAhead = true;
 									}
