@@ -177,13 +177,26 @@ public class LoadStore {
 					}
 				}else if(station.latency>=LATENCY && station.done){
 						//Write result.
+					int b = station.Dest;
 					station.Busy = false;
-					if(station.loadFlag==0){
-						if(station.Qk == 0){
-							((ROBItem)Const.ROB.get(station.Dest)).value = station.Vk;
+					if(station.loadFlag == 0) {
+						Iterator iterator = Const.reservationStations.entrySet().iterator();
+						while (iterator.hasNext()) {
+							Map.Entry entry = (Entry) iterator.next();
+							Station s = (Station) entry.getValue();
+							if (s.Qj == b) {
+								s.Vj = station.result;
+								s.Qj = 0;
+							}
+							if (s.Qk == b) {
+								s.Vk = station.result;
+								s.Qk = 0;
+							}
+							((ROBItem) Const.ROB.get(b)).value = station.result;
+							((ROBItem) Const.ROB.get(b)).ready = true;
 						}
 					}else{
-						((ROBItem) Const.ROB.get(station.Dest)).value = station.result;
+						((ROBItem) Const.ROB.get(station.Dest)).value = station.Vk;
 					}
 					((ROBItem) Const.ROB.get(station.Dest)).ready = true;
 				}
