@@ -296,8 +296,8 @@ public class TomasuloSimulator {
     						Const.ROB.add(new ROBItem());
     						Const.firstOfROB = 1;
     						Const.lastOfROB = 1;
-    						Const.initiateFloatRegistersStatus();
-    						Const.initiateIntegerRegistersStatus();
+//    						Const.initiateFloatRegistersStatus();
+//    						Const.initiateIntegerRegistersStatus();
 							if(btb.Getbuffer()[item.instruction.pc%32][1] == 1){
 								// update the branch-target-buffer
 								btb.Getbuffer()[item.instruction.pc%32][0] = (int)item.value;
