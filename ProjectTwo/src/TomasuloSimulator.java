@@ -12,7 +12,7 @@ public class TomasuloSimulator {
 	INT1 int1Unit;//INT1 unit instance
 	LoadStore loadStoreUnit;// Load and store unit instance
 	MULT multUnit;// MULT unit instance
-	
+	Memory memory;
 	
 	
 	
@@ -25,7 +25,7 @@ public class TomasuloSimulator {
 	
 //	int pc = 0;
 	
-	public TomasuloSimulator(String instructionFile, Memory main){
+	public TomasuloSimulator(String instructionFile){
 		//Initiate all the units
 		buUnit = BU.getInstance();
 		fpuUnit = FPU.getInstance();
@@ -33,6 +33,7 @@ public class TomasuloSimulator {
 		int1Unit = INT1.getInstance();
 		loadStoreUnit = LoadStore.getInstance();
 		multUnit = MULT.getInstance();
+		memory = Memory.getInstance();
 
 //		fetch all the instruction from instruction file.
 		String line = null;
@@ -42,7 +43,7 @@ public class TomasuloSimulator {
 			boolean flag = false; // indicate when the data is start loading
 			while ((line = bufferedreader.readLine()) != null){
 				if(flag){
-					main.loadData(line);
+					memory.loadData(line);
 				}else{
 					if(line.contains("DATA")){
 						flag = true;
@@ -52,12 +53,12 @@ public class TomasuloSimulator {
 						}else{
 							Instruction instr = new Instruction();
 							instr = instr.loadInstrs(line);
-							main.loadInstruction(instr);
+							memory.loadInstruction(instr);
 						}
 					}
 				}
 			}
-			List instrs = main.getInstrs();
+			List instrs = memory.getInstrs();
 			Instruction ins,ins2;
 			for (int i = 0; i < instrs.size(); i++) {
 				ins = (Instruction) instrs.get(i);
@@ -85,7 +86,7 @@ public class TomasuloSimulator {
 	/*
 	 * Start this simulation with a loop representing clock cycles.
 	 */
-	public void startSimulation(Memory main, int NF, int NQ, int NI, int ND){
+	public void startSimulation(int NF, int NQ, int NI, int ND){
 		this.NF = NF;
 		this.NQ = NQ;
 		this.NI = NI;
@@ -107,9 +108,9 @@ public class TomasuloSimulator {
 			 * In one clock cycle, the maximum number of fetching is NF. 
 			 */
 			int fetched = 0;
-			while((FQueue.size() < NQ) && (fetched < NF) &&(pc < main.getInstrs().size())){
-				((Instruction)main.getInstrs().get(pc)).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
-				FQueue.add(main.getInstrs().get(pc));
+			while((FQueue.size() < NQ) && (fetched < NF) &&(pc < memory.getInstrs().size())){
+				((Instruction)memory.getInstrs().get(pc)).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
+				FQueue.add(memory.getInstrs().get(pc));
 				if(BTBuffer.Getbuffer()[pc%32][0] != -1){
 					pc = BTBuffer.Getbuffer()[pc%32][0]; // if there is an entry in BTBuffer, use the predicted pc, otherwise, pc ++
 				}else{
@@ -141,13 +142,13 @@ public class TomasuloSimulator {
 				}
 			}
 			
-			commit(main,BTBuffer);
+			commit(BTBuffer);
 			execute();
 			issue(DQueue);
 			
 			clock_cycle ++;
 			System.out.println(clock_cycle);
-			if(pc >= main.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
+			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
 				finishedFlag = true;
 			}
 		}
@@ -245,7 +246,7 @@ public class TomasuloSimulator {
        Once an instruction commits, its entry in the ROB is reclaimed and the register
        or memory destination is updated, eliminating the need for the ROB entry.
      */
-    public void commit(Memory main,BranchTargetBuffer btb){
+    public void commit(BranchTargetBuffer btb){
 		int NC = 4;
 		int bus_count = 0;
     	while(Const.lastOfROB - Const.firstOfROB > 0 && bus_count < NC ){
@@ -272,7 +273,7 @@ public class TomasuloSimulator {
 							}
     				}
     			}else if(item.instruction.opco.equals("S.D") || item.instruction.opco.equals("SD")){
-    				main.getData().put(Integer.parseInt(d), item.value);
+    				memory.getData().put(Integer.parseInt(d), item.value);
 					bus_count++;
     			}else{
 					//TODO update the registers
@@ -309,11 +310,10 @@ public class TomasuloSimulator {
 		int NQ = Integer.parseInt(args[2]); // The length of the instruction queue
 		int NI =  Integer.parseInt(args[3]); // The maximum number of instructions can be decoded in one cycle
 		int ND = Integer.parseInt(args[4]); // The length of the Decoded instruction queue
-		Memory main = new Memory(); // store memory data 
 		
-		TomasuloSimulator simulator = new TomasuloSimulator(inputFile, main);
+		TomasuloSimulator simulator = new TomasuloSimulator(inputFile);
 		
-		simulator.startSimulation(main, NF, NQ, NI, ND);
+		simulator.startSimulation( NF, NQ, NI, ND);
 	}
 	
 	
