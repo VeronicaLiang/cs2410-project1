@@ -290,7 +290,12 @@ public class TomasuloSimulator {
     				}
     				bus_count++;
     			}else if(item.instruction.opco.equals("S.D") || item.instruction.opco.equals("SD")){
-    				memory.getData().put(item.address, item.value);
+    				if (item.instruction.opco.equals("SD")) {
+    					memory.getData().put(item.address, ((int) item.value)+"");
+    				} else {
+    					memory.getData().put(item.address, item.value+"");
+    				}
+    				
 					bus_count++;
     			}else{
 					//TODO update the registers

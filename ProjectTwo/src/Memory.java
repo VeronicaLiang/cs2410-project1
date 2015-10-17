@@ -28,7 +28,7 @@ public class Memory {
 		// when parse the string, hard coded... 
 		String[] records = line.split("\\t+");
 		String[] tmp = records[records.length-1].split("\\)\\s+\\=\\s+");
-		float number = Float.parseFloat(tmp[tmp.length-1]);
+		String number = tmp[tmp.length-1];
 		String[] tmp2 = tmp[0].split("\\(");
 		int index = Integer.parseInt(tmp2[tmp2.length-1]);
 		data.put(index, number);
