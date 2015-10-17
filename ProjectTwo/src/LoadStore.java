@@ -144,22 +144,20 @@ public class LoadStore {
 						if((station.Qj == 0) && !station.done) {
 							boolean isStoreAhead = false;
 							int b = station.Dest;
+							station.A = (int) station.Vj + station.A;
 							for (int j = Const.firstOfROB; j < b; j++) {
 								if (((ROBItem) Const.ROB.get(j)).instruction.opco.equals("SD") || ((ROBItem) Const.ROB.get(i)).instruction.opco.equals("S.D")) {
-									isStoreAhead = true;
+									if(((ROBItem) Const.ROB.get(j)).address == station.A) {
+										isStoreAhead = true;
+									}
 								}
 							}
 							if (!isStoreAhead) {
-								station.A = (int) station.Vj + station.A;
 								Memory test = Memory.getInstance();
-								float f = (float)test.getData().get(b);
-								((ROBItem) Const.ROB.get(station.Dest)).value = f;
+								float f = (float) test.getData().get(station.A);
+								station.result = f;
+								station.done = true;
 							}
-							Memory test = Memory.getInstance();
-							int address = (int) (station.Vj + station.A);
-							float f = (float)test.getData().get(address);
-							station.result = f;
-							station.done = true;
 						}
 					}
 				}else if(station.latency>=LATENCY && station.done){
@@ -170,9 +168,7 @@ public class LoadStore {
 							((ROBItem)Const.ROB.get(station.Dest)).value = station.Vk;
 						}
 					}else{
-
-
-
+						((ROBItem) Const.ROB.get(station.Dest)).value = station.result;
 					}
 				}
 			}
