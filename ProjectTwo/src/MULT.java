@@ -118,7 +118,7 @@ private static final int LATENCY = 2;
 				}else if(station.latency>=LATENCY && station.done){
 					//Write result. 
 					int b = station.Dest;
-					station.Busy = false;
+					
 						
 					Iterator iterator = Const.reservationStations.entrySet().iterator();
 					while(iterator.hasNext()){
@@ -133,7 +133,7 @@ private static final int LATENCY = 2;
 					   ((ROBItem)Const.ROB.get(b)).value = station.result;
 					   ((ROBItem)Const.ROB.get(b)).ready = true;
 					}
-					
+					station.Busy = false;
 					
 				}
 			}
