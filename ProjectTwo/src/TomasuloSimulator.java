@@ -263,14 +263,16 @@ public class TomasuloSimulator {
     	while(Const.lastOfROB - Const.firstOfROB > 0 && bus_count < NC ){
     		int h = Const.firstOfROB;  // always commit the first item in ROB
 			ROBItem item = (ROBItem)Const.ROB.get(h);
-			System.out.println("item.ready->"+item.ready+"   item.opco->"+item.instruction.opco+"   rob.size->"+Const.ROB.size());
+			//System.out.println("item.ready->"+item.ready+"   item.opco->"+item.instruction.opco+"   rob.size->"+Const.ROB.size());
 			
     		if(item.ready){
     			String d = item.destination;
     			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
     					||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
     				int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
+    				//System.out.println("item.value--->"+item.value+"   offset--->"+item.offset);
     				if(item.value==1){//Change pc.
+    					
     					if(item.offset != predicted){// If branch is mispredicted.
     						Const.ROB.clear();
     						Const.ROB.add(new ROBItem());
