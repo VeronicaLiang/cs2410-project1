@@ -192,7 +192,7 @@ public class TomasuloSimulator {
 			if(DQueue.size()!=0){
 				Instruction instruction = (Instruction) DQueue.getFirst();
 				String unit = (String)Const.unitsForInstruction.get(instruction.opco);
-				boolean isSuccessful = true;
+				boolean isSuccessful = false;
 				if(unit.equals("FPU") && !issueFPU){
 					isSuccessful = fpuUnit.insertInstruction(instruction);
 					issueFPU = true;
