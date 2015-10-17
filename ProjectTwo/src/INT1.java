@@ -123,7 +123,7 @@ private static final int LATENCY = 1;
 						}else if(station.Op.equals("DSUB")){
 							station.result = vj - vk; 
 						}else if(station.Op.equals("DADDI")){
-							station.result = vj - vk;  
+							station.result = vj + vk;  
 						}else if(station.Op.equals("AND")){
 							station.result = vj + vk;
 						}else if(station.Op.equals("ANDI")){

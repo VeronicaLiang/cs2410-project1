@@ -134,7 +134,7 @@ Station station = (Station) Const.reservationStations.get(i+"");
 						}else if(station.Op.equals("DSUB")){
 							station.result = vj - vk; 
 						}else if(station.Op.equals("DADDI")){
-							station.result = vj - vk;  
+							station.result = vj + vk;  
 						}else if(station.Op.equals("AND")){
 							station.result = vj + vk;
 						}else if(station.Op.equals("ANDI")){
