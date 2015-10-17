@@ -98,13 +98,13 @@ public class LoadStore {
 					station.Qj = 0;
 				}
 
+				ROBItem item = new ROBItem();
+				item.instruction = instruction;
+				item.destination = instruction.rd;
+				Const.ROB.add(item);
+				int b = Const.ROB.indexOf(item);
+				Const.lastOfROB = b+1;
 				if(instruction.opco.equals("LD") || instruction.opco.equals("L.D")){
-					ROBItem item = new ROBItem();
-					item.instruction = instruction;
-					item.destination = instruction.rd;
-					Const.ROB.add(item);
-					int b = Const.ROB.indexOf(item);
-					Const.lastOfROB = b+1;
 					rd_register.Reorder = b;
 					rd_register.busy = true;
 					// replacement + rs  is the address ;
