@@ -171,6 +171,8 @@ private static final int LATENCY = 2;
 				}
 			}
 			
+			
+			
 //			if((station.latency>0) && (station.latency<LATENCY)){
 //				station.latency = station.latency +1;
 //				/*
