@@ -172,7 +172,7 @@ public class LoadStore {
 							}
 							if (!isStoreAhead) {
 								Memory test = Memory.getInstance();
-								float f = (float) test.getData().get(station.A);
+								float f = Float.parseFloat((String) test.getData().get(station.A));
 								station.result = f;
 								station.done = true;
 							}
