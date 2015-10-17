@@ -133,9 +133,9 @@ public class LoadStore {
 			if(station.Busy){
 				if(station.latency<LATENCY || !station.done){
 					station.latency = station.latency +1;
-					// a load instruction
+					// a store instruction
 					if(station.loadFlag == 0){
-						if((station.Qj==0) && !station.done) {
+						if((station.Qj==0) && !station.done && (station.Dest == Const.firstOfROB)) {
 							station.result = station.Vj + station.A;
 							station.done = true;
 						}
@@ -153,7 +153,7 @@ public class LoadStore {
 					station.Busy = false;
 					if(station.loadFlag==0){
 						if(station.Qk == 0){
-							((ROBItem)Const.ROB.get(station.Dest)).value = station.result;
+							((ROBItem)Const.ROB.get(station.Dest)).value = station.Vk;
 						}
 					}else{
 						int b = station.Dest;
