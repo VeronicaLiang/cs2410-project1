@@ -152,10 +152,14 @@ public class TomasuloSimulator {
 			
 			
 			System.out.println("Clock Cycle is :" + clock_cycle);
-			for (int i = 5; i < 6; i++){
+			for (int i = 0; i < 6; i++){
 				System.out.println("R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value);
 			}
-			System.out.println("Mem[300]: "+ memory.getData().get(300));
+			for (int i = 0; i < 7; i++){
+				System.out.println("F"+i+": "+((Register)Const.floatRegistersStatus.get("F"+i)).value);
+			}
+			printROB();
+			//System.out.println("Mem[300]: "+ memory.getData().get(300));
 			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
 				finishedFlag = true;
 			}
@@ -282,13 +286,12 @@ public class TomasuloSimulator {
     		int h = Const.firstOfROB;  // always commit the first item in ROB
 			ROBItem item = (ROBItem)Const.ROB.get(h);
 			//System.out.println("item.ready->"+item.ready+"   item.opco->"+item.instruction.opco+"   rob.size->"+Const.ROB.size());
-			
     		if(item.ready){
     			String d = item.destination;
     			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
     					||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
     				int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
-    				//System.out.println("item.value--->"+item.value+"   offset--->"+item.offset);
+    				
     				if(item.value==1){//Change pc.
     					
     					if(item.offset != predicted){// If branch is mispredicted.
@@ -346,6 +349,12 @@ public class TomasuloSimulator {
     			break;
     		}
     		
+    	}
+    }
+    
+    public void printROB () {
+    	for (int i = Const.firstOfROB; i < Const.lastOfROB; i++) {
+    		System.out.println("Opco-->"+((ROBItem)Const.ROB.get(i)).instruction.opco);
     	}
     }
     public static void main(String args[]) throws IOException{
