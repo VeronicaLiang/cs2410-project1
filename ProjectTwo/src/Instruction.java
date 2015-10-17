@@ -30,7 +30,7 @@ public class Instruction {
 
 		// The instruction S.D has different style
 		if(instr.opco.equals("S.D")){
-			instr.rt = tmp[1];
+			instr.rd = tmp[1];
 			instr.rs = tmp[0];
 		}else{
 			instr.rd = tmp[0];
