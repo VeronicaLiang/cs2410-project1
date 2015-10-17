@@ -119,29 +119,11 @@ private static final int LATENCY = 2;
 	
 	public void execute(){
 		for(int i = 1;i<=2;i++){
-			Station station = (Station) Const.reservationStations.get(i+"");
-			if((station.latency>0) && (station.latency<LATENCY)){
-				station.latency = station.latency +1;
-			}else{
-				if(station.latency>=LATENCY && station.done){
-					//Write result. 
-					int b = station.Dest;
-					station.Busy = false;
-					
-					Iterator iterator = Const.reservationStations.entrySet().iterator();
-					while(iterator.hasNext()){
-					   Map.Entry entry = (Entry) iterator.next();
-					   Station s = (Station) entry.getValue();
-					   if(s.Qj==b){
-						   s.Vj = station.result;s.Qj = 0;
-					   }
-					   if(s.Qk==b){
-						   s.Vk = station.result;s.Qk = 0;
-					   }
-					   ((ROBItem)Const.ROB.get(b)).value = station.result;
-					   ((ROBItem)Const.ROB.get(b)).ready = true;
-					}
-				}else{
+Station station = (Station) Const.reservationStations.get(i+"");
+			
+			if(station.Busy){
+				if(station.latency<LATENCY || !station.done){
+					station.latency = station.latency +1;
 					if((station.Qj==0) && (station.Qk==0)){
 						float vk = station.Vk;
 						float vj = station.Vj;
@@ -179,8 +161,25 @@ private static final int LATENCY = 2;
 						station.latency = station.latency+1;
 						station.done = true;
 					}
+				}else if(station.latency>=LATENCY && station.done){
+					//Write result. 
+					int b = station.Dest;
+					
+					Iterator iterator = Const.reservationStations.entrySet().iterator();
+					while(iterator.hasNext()){
+					   Map.Entry entry = (Entry) iterator.next();
+					   Station s = (Station) entry.getValue();
+					   if(s.Qj==b){
+						   s.Vj = station.result;s.Qj = 0;
+					   }
+					   if(s.Qk==b){
+						   s.Vk = station.result;s.Qk = 0;
+					   }
+					   ((ROBItem)Const.ROB.get(b)).value = station.result;
+					   ((ROBItem)Const.ROB.get(b)).ready = true;
+					}
+					station.Busy = false;
 				}
-				
 			}
 		}
 	}
