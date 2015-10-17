@@ -46,7 +46,7 @@ private static final int LATENCY = 2;
 //				检查rd register
 				Register register;
 				register = (Register) Const.integerRegistersStatus.get(instruction.rd);
-				
+				//System.out.println("instruction.rd--->"+instruction.rd);
 				if(register.busy){
 					h = register.Reorder;
 					if(((ROBItem)Const.ROB.get(h)).ready){
@@ -59,6 +59,8 @@ private static final int LATENCY = 2;
 					station.Vj = register.value;
 					station.Qj = 0;
 				}
+				//System.out.println("instruction.rs--->"+instruction.rs);
+				//System.out.println("instruction.rt--->"+instruction.rt);
 				//, , BEQ, BNE
 				//检查 rs register if the opco is beqz or benz, rs holds the loops index, vk could be nothing.
 				if(instruction.opco.equals("BEQZ") || instruction.opco.equals("BNEZ")){
@@ -93,6 +95,7 @@ private static final int LATENCY = 2;
 				Const.lastOfROB = b + 1;
 				register.Reorder = b; 
 				register.busy = true;
+				station.Op = instruction.opco;
 				station.Dest = b;
 				station.Busy = true;
 				station.latency = 0;
@@ -120,6 +123,7 @@ private static final int LATENCY = 2;
 			if(station.Busy){
 				if(station.latency<LATENCY || !station.done){
 					station.latency = station.latency +1;
+					//System.out.println("station.Qj--->"+station.Qj+"   station.Qk--->"+station.Qk);
 					/*
 					 *beq	000100	rs	rt	immediate	 beq $1,$2,10	 if($1==$2)  goto PC+4+40	 if (rs == rt) PC <- PC+4 + (sign-extend)immediate<<2 
 				      bne	000101	rs	rt	immediate	 bne $1,$2,10	 if($1!=$2)  goto PC+4+40	 if (rs != rt) PC <- PC+4 + (sign-extend)immediate<<2 
@@ -131,14 +135,15 @@ private static final int LATENCY = 2;
 					if((station.Qj==0) && (station.Qk==0)){
 						float vk = station.Vk;
 						float vj = station.Vj;
+						//System.out.println("vj--->"+vj+"   vk--->"+vk);
 						if(station.Op.equals("BEQZ")){
-							if(vk==0){
+							if(vj==0){
 								station.result = 1; 
 							}else{
 								station.result = 0; 
 							}
 						}else if(station.Op.equals("BNEZ")){
-							if(vk!=0){
+							if(vj!=0){
 								station.result = 1; 
 							}else{
 								station.result = 0; 
@@ -169,7 +174,7 @@ private static final int LATENCY = 2;
 					//}
 					((ROBItem)Const.ROB.get(b)).ready = true;
 					station.Busy = false;
-					
+					//System.out.println("station.result--->"+station.result+"   station.offset--->"+station.A);
 					
 				}
 			}
