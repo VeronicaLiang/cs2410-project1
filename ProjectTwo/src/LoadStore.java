@@ -104,13 +104,13 @@ public class LoadStore {
 				Const.ROB.add(item);
 				int b = Const.ROB.indexOf(item);
 				Const.lastOfROB = b+1;
+				station.Dest = b;
 				if(instruction.opco.equals("LD") || instruction.opco.equals("L.D")){
 					rd_register.Reorder = b;
 					rd_register.busy = true;
 					// replacement + rs  is the address ;
 					station.A = replacement ;
 					station.loadFlag = 1;
-					station.Dest = b;
 				}else{
 					station.A = rd_replacement ;
 				}
@@ -118,6 +118,7 @@ public class LoadStore {
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;
+				station.Op = instruction.opco;
 				return true;
 			}
 		}
