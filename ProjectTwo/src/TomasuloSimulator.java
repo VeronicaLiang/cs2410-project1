@@ -23,7 +23,7 @@ public class TomasuloSimulator {
 	int ND ; // The length of the Decoded instruction queue
 	int NW = 4;//The maximum number of instructions can be issued every clock cycle to reservation stations. 
 	
-//	int pc = 0;
+	int pc = 0; //initialize the program counter 
 	
 	public TomasuloSimulator(String instructionFile){
 		//Initiate all the units
@@ -94,7 +94,7 @@ public class TomasuloSimulator {
 		
 		finishedFlag = false;
 		int clock_cycle = 2;
-		int pc = 0; //initialize the program counter 
+		
 		BranchTargetBuffer BTBuffer = new BranchTargetBuffer();
 		LinkedList FQueue = new LinkedList(); // Fetched Instructions Queue
 		LinkedList DQueue = new LinkedList(); // Decoded Instructions Queue (actually, the decode is not needed, only check for branch)
@@ -257,7 +257,8 @@ public class TomasuloSimulator {
     			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
     					||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
     				int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
-					if(item.value != predicted){// If branch is mispredicted.
+    				if(item.value==1){//Change pc.
+    					if(item.offset != predicted){// If branch is mispredicted.
     						Const.ROB.clear();
     						Const.ROB.add(new ROBItem());
     						Const.firstOfROB = 1;
@@ -271,7 +272,10 @@ public class TomasuloSimulator {
 							}else{
 								// allow make mistakes twice.
 							}
+							pc = item.offset;
+    				    }
     				}
+					
     			}else if(item.instruction.opco.equals("S.D") || item.instruction.opco.equals("SD")){
     				memory.getData().put(Integer.parseInt(d), item.value);
 					bus_count++;

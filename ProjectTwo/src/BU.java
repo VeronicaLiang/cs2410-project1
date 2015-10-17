@@ -163,9 +163,9 @@ private static final int LATENCY = 2;
 					int b = station.Dest;
 					
 					((ROBItem)Const.ROB.get(b)).value = station.result;
-					if(station.result==1){
+					//if(station.result==1){
 						((ROBItem)Const.ROB.get(b)).offset = station.A;
-					}
+					//}
 					((ROBItem)Const.ROB.get(b)).ready = true;
 					station.Busy = false;
 				}
