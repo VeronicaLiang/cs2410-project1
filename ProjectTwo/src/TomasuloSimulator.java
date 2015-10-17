@@ -149,10 +149,17 @@ public class TomasuloSimulator {
 			clock_cycle ++;
 //			System.out.println(clock_cycle);
 //			System.out.println("pc->"+pc+"  getInstrs->"+memory.getInstrs().size()+"  Const.lastOfROB->"+Const.lastOfROB+"  firstOfROB->"+Const.firstOfROB);
+			
+			
+			System.out.println("Clock Cycle is :" + clock_cycle);
+			for (int i = 0; i < 32; i++){
+				System.out.println("R"+i+": "+Const.integerRegistersStatus.get(i));
+			}
 			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
 				finishedFlag = true;
 			}
 		}
+		
 		//Destroying all the resources. TODO
 	}
 	/*
@@ -256,6 +263,7 @@ public class TomasuloSimulator {
     		int h = Const.firstOfROB;  // always commit the first item in ROB
 			ROBItem item = (ROBItem)Const.ROB.get(h);
 			System.out.println("item.ready->"+item.ready);
+			
     		if(item.ready){
     			String d = item.destination;
     			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
