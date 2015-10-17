@@ -32,7 +32,7 @@ public class INT0 {
 	   Station 18 and 19 are FPU  stations.
 	 */
 	
-private static final int LATENCY = 2;
+private static final int LATENCY = 1;
 	
 	/*
 	 * Reservation Stations Table.

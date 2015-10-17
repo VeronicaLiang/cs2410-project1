@@ -21,7 +21,7 @@ public class INT1 {
 			instance = new INT1();
 		return instance;
 	}
-private static final int LATENCY = 2;
+private static final int LATENCY = 1;
 	
 	/*
 	 * Reservation Stations Table.
