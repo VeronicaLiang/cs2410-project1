@@ -263,7 +263,7 @@ public class TomasuloSimulator {
     	while(Const.lastOfROB - Const.firstOfROB > 0 && bus_count < NC ){
     		int h = Const.firstOfROB;  // always commit the first item in ROB
 			ROBItem item = (ROBItem)Const.ROB.get(h);
-			System.out.println("item.ready->"+item.ready+"   item.opco->"+item.instruction.opco);
+			System.out.println("item.ready->"+item.ready+"   item.opco->"+item.instruction.opco+"   rob.size->"+Const.ROB.size());
 			
     		if(item.ready){
     			String d = item.destination;
@@ -333,6 +333,7 @@ public class TomasuloSimulator {
 		TomasuloSimulator simulator = new TomasuloSimulator(inputFile);
 		
 		simulator.startSimulation( NF, NQ, NI, ND);
+    	
 	}
 	
 	
