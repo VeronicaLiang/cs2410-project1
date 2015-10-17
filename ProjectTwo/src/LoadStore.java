@@ -179,7 +179,7 @@ public class LoadStore {
 						//Write result.
 					int b = station.Dest;
 					station.Busy = false;
-					if(station.loadFlag == 0) {
+					if(station.loadFlag != 0) {
 						Iterator iterator = Const.reservationStations.entrySet().iterator();
 						while (iterator.hasNext()) {
 							Map.Entry entry = (Entry) iterator.next();
