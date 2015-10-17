@@ -22,7 +22,7 @@ public class LoadStore {
 			instance = new LoadStore();
 		return instance;
 	}
-	private static final int LATENCY = 5;
+	private static final int LATENCY = 1;
 
 	/*
 	 * Reservation Stations Table.
@@ -110,9 +110,11 @@ public class LoadStore {
 					// replacement + rs  is the address ;
 					station.A = replacement ;
 					station.loadFlag = 1;
+					station.Dest = b;
 				}else{
 					station.A = rd_replacement ;
 				}
+
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;
@@ -128,71 +130,49 @@ public class LoadStore {
 		for(int i = 7;i<=12;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy){
-				if((station.latency>0) && (station.latency<LATENCY)){
+				if(station.latency<LATENCY || !station.done){
 					station.latency = station.latency +1;
-				}else{
-					if(station.latency>=LATENCY && station.done){
-						//Write result.
-						if(station.loadFlag==0){
-							if(station.Qk == 0){
-								((ROBItem)Const.ROB.get(0)).value = station.Vk;
-							}
-						}else{
-							int b = station.Dest;
-							station.Busy = false;
-
-							Iterator iterator = Const.reservationStations.entrySet().iterator();
-							while(iterator.hasNext()){
-								Map.Entry entry = (Entry) iterator.next();
-								Station s = (Station) entry.getValue();
-								if(s.Qj==b){
-									s.Vj = station.result;s.Qj = 0;
-								}
-								if(s.Qk==b){
-									s.Vk = station.result;s.Qk = 0;
-								}
-								((ROBItem)Const.ROB.get(b)).value = station.result;
-								((ROBItem)Const.ROB.get(b)).ready = true;
-							}
+					// a load instruction
+					if(station.loadFlag == 0){
+						if((station.Qj==0) && !station.done) {
+							station.result = station.Vj + station.A;
+							station.done = true;
 						}
 					}else{
-						if((station.Qj==0)){
-							if(station.loadFlag>0){//Load operation
-								if(station.loadFlag ==1){
-									boolean isStoreAhead = false;
-									for(int n = (station.Dest-1);n>=0;n--){
-										if(((ROBItem)Const.ROB.get(n)).instruction.opco.equals("LD") ||
-												((ROBItem)Const.ROB.get(n)).instruction.opco.equals("L.D")){
-											isStoreAhead = true;
-										}
-									}
-									if(!isStoreAhead){
-										station.loadFlag = 2;
-
-//										station.A = station.Vj + station.A
-									}
-
-								}else if(station.loadFlag ==2){
-									//TODO read from memory station.A
-									station.latency = station.latency+1;
-								}
-							}else{//store operation
-								if(Const.ROB.size()>0){
-									ROBItem item = (ROBItem)Const.ROB.get(0);
-									if(item.instruction.opco.equals("SD") || item.instruction.opco.equals("S.D")){
-//									item.Address = station.Vj + station.A;
-										item.destination = "load";
-										item.address = (int)station.Vj + station.A;
-										station.latency = station.latency+1;
-									}
-								}
-							}
-
+						if((station.Qj == 0) && !station.done) {
+							Memory test = Memory.getInstance();
+							float f = (float)test.getData().get(station.Dest);
+							station.result = f;
+							station.done = true;
 						}
+					}
+				}else if(station.latency>=LATENCY && station.done){
+						//Write result.
+					station.Busy = false;
+					if(station.loadFlag==0){
+						if(station.Qk == 0){
+							((ROBItem)Const.ROB.get(station.Dest)).value = station.result;
+						}
+					}else{
+						int b = station.Dest;
+						boolean isStoreAhead = false;
+						for (int j = Const.firstOfROB; j < b; j++) {
+							if (((ROBItem) Const.ROB.get(j)).instruction.opco.equals("SD") || ((ROBItem) Const.ROB.get(i)).instruction.opco.equals("S.D")) {
+								isStoreAhead = true;
+							}
+						}
+						if (!isStoreAhead) {
+							station.A = (int) station.Vj + station.A;
+							Memory test = Memory.getInstance();
+							float f = (float)test.getData().get(b);
+							((ROBItem) Const.ROB.get(station.Dest)).value = f;
+						}
+
 					}
 				}
 			}
 		}
 	}
+
 }
 
