@@ -222,11 +222,11 @@ public class TomasuloSimulator {
     public void execute(){
 		//Iterate resvervation stations table, and execute every station.
     	fpuUnit.execute();
-    	//int0Unit.execute();
-    	//int1Unit.execute();
-    	//loadStoreUnit.execute();
+    	int0Unit.execute();
+    	int1Unit.execute();
+    	loadStoreUnit.execute();
     	multUnit.execute();
-    	//buUnit.execute();
+    	buUnit.execute();
 	}
     
     /*
