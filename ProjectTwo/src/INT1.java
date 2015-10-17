@@ -125,9 +125,9 @@ private static final int LATENCY = 1;
 						}else if(station.Op.equals("DADDI")){
 							station.result = vj + vk;  
 						}else if(station.Op.equals("AND")){
-							station.result = vj + vk;
+							station.result = (int)vj & (int)vk;
 						}else if(station.Op.equals("ANDI")){
-							station.result = vj + vk;
+							station.result = (int)vj & (int)vk;
 						}else if(station.Op.equals("OR")){
 							station.result = ((int)vj) | ((int)vk);
 						}else if(station.Op.equals("ORI")){
