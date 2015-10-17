@@ -137,6 +137,7 @@ public class LoadStore {
 					if(station.loadFlag == 0){
 						if((station.Qj==0) && !station.done && (station.Dest == Const.firstOfROB)) {
 							station.result = station.Vj + station.A;
+							((ROBItem)Const.ROB.get(station.Dest)).address = (int)station.result;
 							station.done = true;
 						}
 					}else{
