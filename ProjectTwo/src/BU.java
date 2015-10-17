@@ -59,9 +59,9 @@ private static final int LATENCY = 2;
 					station.Vj = register.value;
 					station.Qj = 0;
 				}
-				
+				//, , BEQ, BNE
 				//检查 rs register if the opco is beqz or benz, rs holds the loops index, vk could be nothing.
-				if(instruction.opco.equals("BEQZ") || instruction.opco.equals("BENZ")){
+				if(instruction.opco.equals("BEQZ") || instruction.opco.equals("BNEZ")){
 					station.A = Integer.parseInt(instruction.rt) ;
 				}else{
 					station.A = Integer.parseInt(instruction.rt) ;//offset
