@@ -147,7 +147,12 @@ public class TomasuloSimulator {
 			issue(DQueue);
 			
 			clock_cycle ++;
-			System.out.println(clock_cycle);
+			
+			
+			System.out.println("Clock Cycle is :" + clock_cycle);
+			for (int i = 0; i < 32; i++){
+				System.out.println("R"+i+": "+Const.integerRegistersStatus.get(i));
+			}
 			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
 				finishedFlag = true;
 			}
