@@ -20,6 +20,7 @@ public class TomasuloSimulator {
 	int ND ; // The length of the Decoded instruction queue
 	int NW = 4;//The maximum number of instructions can be issued every clock cycle to reservation stations. 
 	
+	
 	int pc = 0; //initialize the program counter 
 	
 	public TomasuloSimulator(String instructionFile){
@@ -262,6 +263,7 @@ public class TomasuloSimulator {
 	 */
     public void execute(){
 		//Iterate resvervation stations table, and execute every station.
+    	Const.NB = 4;
     	fpuUnit.execute();
     	int0Unit.execute();
     	int1Unit.execute();

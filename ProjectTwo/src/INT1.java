@@ -155,7 +155,7 @@ private static final int LATENCY = 1;
 						station.done = true;
 						isExecute = true;
 					}
-				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB){
+				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0){
 					//Write result. 
 					int b = station.Dest;
 					
@@ -175,6 +175,7 @@ private static final int LATENCY = 1;
 					station.Busy = false;
 					isWB = true;
 					station.wbDone = true;
+					Const.NB--;
 				}
 			}
 			

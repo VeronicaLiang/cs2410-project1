@@ -142,7 +142,7 @@ public class FPU {
 						station.done = true;
 						isExecute = true;
 					}
-				} else if (station.latency >= LATENCY && !station.wbDone && station.done && !isWB) {
+				} else if (station.latency >= LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0) {
 					// Write result.
 					int b = station.Dest;
 
@@ -165,6 +165,7 @@ public class FPU {
 					station.Busy = false;
 					isWB = true;
 					station.wbDone = true;
+					Const.NB--;
 				}
 			}
 		}
