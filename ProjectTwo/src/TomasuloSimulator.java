@@ -139,10 +139,6 @@ public class TomasuloSimulator {
 					}
 				}
 			}
-
-			if(clock_cycle == 27) {
-				System.out.println();
-			}
 			
 			if(commit(BTBuffer)){
 				DQueue.clear();
