@@ -346,7 +346,7 @@ public class TomasuloSimulator {
 							}
 						}
     				}else{
-						pc = item.instruction.pc++;
+						pc = item.instruction.pc + 1;
 						if(btb.Getbuffer ()[item.instruction.pc % 32][0] != -1){
 							Const.ROB.clear();
 							Const.reservationStations = new HashMap();
