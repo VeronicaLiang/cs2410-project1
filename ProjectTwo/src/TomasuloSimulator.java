@@ -317,6 +317,20 @@ public class TomasuloSimulator {
     						int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
 							if (item.offset != predicted) {// If branch is mispredicted.
 								Const.ROB.clear();
+								Const.reservationStations = new HashMap();
+								Station station;
+								for(int i = 1;i<=19;i++){
+									station = new Station();
+									station.name = i+"";
+									Const.reservationStations.put(station.name ,station);
+								}
+
+								for (int i = 0; i < 32; i++){
+									((Register)Const.integerRegistersStatus.get("R"+i)).busy = false ;
+									((Register)Const.floatRegistersStatus.get("F"+i)).busy = false;
+								}
+
+
 								Const.ROB.add(new ROBItem());
 								Const.firstOfROB = 1;
 								Const.lastOfROB = 1;
@@ -331,7 +345,31 @@ public class TomasuloSimulator {
 								pc = item.offset;
 							}
 						}
-    				}
+    				}else{
+						pc = item.instruction.pc++;
+						if(btb.Getbuffer ()[item.instruction.pc % 32][0] != -1){
+							Const.ROB.clear();
+							Const.reservationStations = new HashMap();
+							Station station;
+							for(int i = 1;i<=19;i++){
+								station = new Station();
+								station.name = i+"";
+								Const.reservationStations.put(station.name ,station);
+							}
+
+							for (int i = 0; i < 32; i++){
+								((Register)Const.integerRegistersStatus.get("R"+i)).busy = false ;
+								((Register)Const.floatRegistersStatus.get("F"+i)).busy = false;
+							}
+
+							if(btb.Getbuffer()[item.instruction.pc % 32][1] == 1){
+								btb.Getbuffer()[item.instruction.pc % 32][0] = pc;
+								btb.Getbuffer()[item.instruction.pc % 32][1] = 0;
+							}else{
+								btb.Getbuffer()[item.instruction.pc % 32][1] = 1;
+							}
+						}
+					}
     				bus_count++;
     			}else if(item.instruction.opco.equals("S.D") || item.instruction.opco.equals("SD")){
     				if (item.instruction.opco.equals("SD")) {
