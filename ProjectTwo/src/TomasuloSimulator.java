@@ -1,9 +1,6 @@
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class TomasuloSimulator {
 	BU buUnit;// BU unit instance;
@@ -296,6 +293,20 @@ public class TomasuloSimulator {
 							// If there is no entry in the Branch Target Buffer
 							Const.ROB.clear();
 							Const.ROB.add(new ROBItem());
+							// clear reservation station
+							Const.reservationStations = new HashMap();
+							Station station;
+							for(int i = 1;i<=19;i++){
+								station = new Station();
+								station.name = i+"";
+								Const.reservationStations.put(station.name ,station);
+							}
+
+							for (int i = 0; i < 32; i++){
+								((Register)Const.integerRegistersStatus.get("R"+i)).busy = false ;
+								((Register)Const.floatRegistersStatus.get("F"+i)).busy = false;
+							}
+
 							Const.firstOfROB = 1;
 							Const.lastOfROB = 1;
 							//update the buffer
