@@ -138,8 +138,12 @@ public class TomasuloSimulator {
 					}
 				}
 			}
-			
-			commit(BTBuffer);
+
+			if(commit(BTBuffer)){
+				DQueue.clear();
+				FQueue.clear();
+			}
+
 			execute();
 			issue(DQueue);
 			
@@ -274,11 +278,11 @@ public class TomasuloSimulator {
        Once an instruction commits, its entry in the ROB is reclaimed and the register
        or memory destination is updated, eliminating the need for the ROB entry.
      */
-    public void commit(BranchTargetBuffer btb){
+    public boolean commit(BranchTargetBuffer btb){
     	
 		int NC = 4;
 		int bus_count = 0;
-		
+		boolean flushflag = false;
     	while(Const.lastOfROB - Const.firstOfROB > 0 && bus_count < NC ){
     		int h = Const.firstOfROB;  // always commit the first item in ROB
 			ROBItem item = (ROBItem)Const.ROB.get(h);
@@ -291,6 +295,7 @@ public class TomasuloSimulator {
 
 						if(btb.Getbuffer()[item.instruction.pc % 32][0] == -1){
 							// If there is no entry in the Branch Target Buffer
+							flushflag = true;
 							Const.ROB.clear();
 							Const.ROB.add(new ROBItem());
 							// clear reservation station
@@ -316,6 +321,7 @@ public class TomasuloSimulator {
 						}else{
     						int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
 							if (item.offset != predicted) {// If branch is mispredicted.
+								flushflag = true;
 								Const.ROB.clear();
 								Const.reservationStations = new HashMap();
 								Station station;
@@ -341,6 +347,7 @@ public class TomasuloSimulator {
 									btb.Getbuffer()[item.instruction.pc % 32][1] = 0;
 								} else {
 									// allow make mistakes twice.
+									btb.Getbuffer()[item.instruction.pc % 32][1] = 0;
 								}
 								pc = item.offset;
 							}
@@ -348,6 +355,7 @@ public class TomasuloSimulator {
     				}else{
 						pc = item.instruction.pc + 1;
 						if(btb.Getbuffer ()[item.instruction.pc % 32][0] != -1){
+							flushflag = true;
 							Const.ROB.clear();
 							Const.reservationStations = new HashMap();
 							Station station;
@@ -414,6 +422,7 @@ public class TomasuloSimulator {
     		}
     		
     	}
+		return flushflag;
     }
     
     public void printROB () {
