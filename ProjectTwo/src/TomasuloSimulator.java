@@ -161,7 +161,7 @@ public class TomasuloSimulator {
 			}
 			printROB();
 			//System.out.println("Mem[300]: "+ memory.getData().get(300));
-			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0 || clock_cycle>100){
+			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
 				finishedFlag = true;
 			}
 		}
@@ -351,6 +351,7 @@ public class TomasuloSimulator {
 								}
 								pc = item.offset;
 							}
+							Const.firstOfROB++;
 						}
     				}else{
 						pc = item.instruction.pc + 1;
