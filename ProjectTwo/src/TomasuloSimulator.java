@@ -157,22 +157,69 @@ public class TomasuloSimulator {
 //			System.out.println("pc->"+pc+"  getInstrs->"+memory.getInstrs().size()+"  Const.lastOfROB->"+Const.lastOfROB+"  firstOfROB->"+Const.firstOfROB);
 			
 			
-			System.out.println("Clock Cycle is :" + clock_cycle);
-			for (int i = 0; i < 4; i++){
-				System.out.println("R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value);
+			System.out.println("After Clock Cycle " + clock_cycle +":");
+			System.out.println("------------------------------");
+			System.out.println("Registers Status:");
+			for (int i = 0; i < 32; i++){
+				String str = "R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value;
+				int length = str.length();
+				for (int m = 0; m < 15-length; m++) {
+					str = str + " ";
+				}
+				//str = str + str.length();
+				str = str + "F"+i+": "+((Register)Const.floatRegistersStatus.get("F"+i)).value;
+				System.out.println(str);
 			}
-			for (int i = 0; i < 0; i++){
-				System.out.println("F"+i+": "+((Register)Const.floatRegistersStatus.get("F"+i)).value);
-			}
-			for (int i = 1; i <= 4; i++) {
+			System.out.println("------------------------------");
+			System.out.println("Reservation Stations (Busy) Status:");
+			boolean printFlag = true;
+			for (int i = 1; i <= 19; i++) {
 				Station station = (Station) Const.reservationStations.get(i+"");
-				String result = "name-->"+station.name+" Op-->"+station.Op+" Qj-->"+station.Qj+" Vj-->"+station.Vj+" Qk-->"+station.Qk+" Vk-->"+station.Vk+" done-->"+station.done+" result-->"+station.result+" wbDone-->"+station.wbDone;
-				System.out.println(result);
+				if (station.Busy == true) {
+					String result = "name-->"+station.name+" Op-->"+station.Op+" Qj-->"+station.Qj+" Vj-->"+station.Vj+" Qk-->"+station.Qk+" Vk-->"+station.Vk+" result-->"+station.result;
+					System.out.println(result);
+					printFlag = false;
+				}
+				
 			}
-			printROB();
-			//System.out.println("Mem[300]: "+ memory.getData().get(300));
-			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0 || clock_cycle==100){
+			if (printFlag) {
+				System.out.println("All Reservation Stations are idle.");
+			}
+			printFlag = true;
+			System.out.println("------------------------------");
+			System.out.println("ROB Status:");
+			for (int i = Const.firstOfROB; i < Const.lastOfROB; i++) {
+	    		System.out.println("Opco-->"+((ROBItem)Const.ROB.get(i)).instruction.opco + " pc-->"+((ROBItem)Const.ROB.get(i)).instruction.pc+" Reorder-->"+i);
+	    		printFlag = false;
+			}
+			if (printFlag) {
+				System.out.println("No item in ROB.");
+			}
+			System.out.println("------------------------------");
+			System.out.println("Memory Status:");
+			//System.out.println("Mem[R2]: "+ memory.getData().get((int)((Register)Const.integerRegistersStatus.get("R2")).value));
+			printFlag = true;
+			TreeMap teMap=new TreeMap(); 
+			Iterator it = memory.getData().entrySet().iterator();  
+			while (it.hasNext()) {  
+				Map.Entry e = (Map.Entry) it.next();  
+				teMap.put(e.getKey(), e.getValue());
+			}
+			it = teMap.entrySet().iterator();  
+			while (it.hasNext()) {  
+				Map.Entry e = (Map.Entry) it.next();
+				System.out.println("Mem[" + e.getKey() + "]: "  + e.getValue());  
+				printFlag = false;
+			}
+			
+			if (printFlag) {
+				System.out.println("Memory is empty.");
+			}
+			System.out.println("------------------------------");
+			System.out.println();
+			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
 				finishedFlag = true;
+				System.out.println("Total Clock Cycle are "+clock_cycle);
 			}
 		}
 		
@@ -302,7 +349,7 @@ public class TomasuloSimulator {
     			String d = item.destination;
     			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
 						||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
-    				System.out.println("item.value-->"+item.value);
+    				//System.out.println("item.value-->"+item.value);
 					if(item.value == 1){ // change pc
 						if(btb.Getbuffer()[item.instruction.pc % 32][0] == -1){
 							// If there is no entry in the Branch Target Buffer
@@ -436,12 +483,7 @@ public class TomasuloSimulator {
     	}
 		return flushflag;
     }
-    
-    public void printROB () {
-    	for (int i = Const.firstOfROB; i < Const.lastOfROB; i++) {
-    		System.out.println("Opco-->"+((ROBItem)Const.ROB.get(i)).instruction.opco + " pc-->"+((ROBItem)Const.ROB.get(i)).instruction.pc+" Reorder-->"+i);
-    	}
-    }
+
     public static void main(String args[]) throws IOException{
 		String inputFile = args[0];
 		int NF = Integer.parseInt(args[1]); // The maximum number of instructions can be fetched in one cycle

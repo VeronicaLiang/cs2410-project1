@@ -99,6 +99,7 @@ private static final int LATENCY = 2;
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;
+				station.wbDone = false;
 				return true;
 			}
 		}
@@ -115,10 +116,10 @@ private static final int LATENCY = 2;
       BNE 条件转移指令，当两个寄存器中内容不等时转移发生 BNE R1,R2
 	 */
 	public void execute(){
+		boolean isExecute = false;
+		boolean isWB = false;
 		for(int i = 18;i<=19;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
-			
-			
 			if(station.Busy){
 				if(station.latency<LATENCY || !station.done){
 					station.latency = station.latency +1;
@@ -131,7 +132,7 @@ private static final int LATENCY = 2;
 				      BEQ   条件转移指令，当两个寄存器内容相等时转移发生 BEQ R1,R2
 				      BNE 条件转移指令，当两个寄存器中内容不等时转移发生 BNE R1,R2
 					 */
-					if((station.Qj==0) && (station.Qk==0) && !station.done){
+					if((station.Qj==0) && (station.Qk==0) && !station.done && !isExecute){
 						float vk = station.Vk;
 						float vj = station.Vj;
 						
@@ -164,7 +165,7 @@ private static final int LATENCY = 2;
 						station.latency = station.latency+1;
 						station.done = true;
 					}
-				}else if(station.latency>=LATENCY && station.done){
+				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0){
 					//Write result. 
 					int b = station.Dest;
 					
@@ -172,7 +173,9 @@ private static final int LATENCY = 2;
 					((ROBItem)Const.ROB.get(b)).offset = station.A;
 					((ROBItem)Const.ROB.get(b)).ready = true;
 					station.Busy = false;
-					
+					isWB = true;
+					station.wbDone = true;
+					Const.NB--;
 				}
 			}
 			

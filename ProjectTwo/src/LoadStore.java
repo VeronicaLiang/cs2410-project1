@@ -35,7 +35,7 @@ public class LoadStore {
 	public boolean insertInstruction(Instruction instruction){
 		int start;
 		int end;
-		if(instruction.opco.contains("L")){
+		if(instruction.opco.contains("S")){
 			start = 7;
 			end = 9;
 		}else{
@@ -136,6 +136,7 @@ public class LoadStore {
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;
+				station.wbDone = false;
 				station.Op = instruction.opco;
 				return true;
 			}
@@ -146,6 +147,8 @@ public class LoadStore {
 	}
 
 	public void execute(){
+		boolean isExecute = false;
+		boolean isWB = false;
 		for(int i = 7;i<=12;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy){
@@ -153,13 +156,13 @@ public class LoadStore {
 					station.latency = station.latency +1;
 					// a store instruction
 					if(station.loadFlag == 0){
-						if((station.Qk==0) && !station.done && (station.Dest == Const.firstOfROB)) {
+						if((station.Qk==0) && !station.done && (station.Dest == Const.firstOfROB) && !isExecute) {
 							station.result = station.Vk + station.A; // Need to check whether Vj is an integer.
 							((ROBItem)Const.ROB.get(station.Dest)).address = (int)station.result;
 							station.done = true;
 						}
 					}else{
-						if((station.Qj == 0) && !station.done) {
+						if((station.Qj == 0) && !station.done && !isExecute) {
 							boolean isStoreAhead = false;
 							int b = station.Dest;
 							station.A = (int) station.Vj + station.A;
@@ -179,10 +182,11 @@ public class LoadStore {
 								}
 								station.result = f;
 								station.done = true;
+								isExecute = true;
 							}
 						}
 					}
-				}else if(station.latency>=LATENCY && station.done){
+				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0){
 						//Write result.
 					int b = station.Dest;
 					station.Busy = false;
@@ -205,6 +209,9 @@ public class LoadStore {
 						((ROBItem) Const.ROB.get(station.Dest)).value = station.Vj;
 					}
 					((ROBItem) Const.ROB.get(station.Dest)).ready = true;
+					isWB = true;
+					station.wbDone = true;
+					Const.NB--;
 				}
 			}
 		}
