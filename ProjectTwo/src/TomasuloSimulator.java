@@ -289,27 +289,37 @@ public class TomasuloSimulator {
     		if(item.ready){
     			String d = item.destination;
     			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
-    					||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
-    				int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
-    				
-    				if(item.value==1){//Change pc.
-    					
-    					if(item.offset != predicted){// If branch is mispredicted.
-    						Const.ROB.clear();
-    						Const.ROB.add(new ROBItem());
-    						Const.firstOfROB = 1;
-    						Const.lastOfROB = 1;
-//    						Const.initiateFloatRegistersStatus();
-//    						Const.initiateIntegerRegistersStatus();
-							if(btb.Getbuffer()[item.instruction.pc%32][1] == 1){
-								// update the branch-target-buffer
-								btb.Getbuffer()[item.instruction.pc%32][0] = (int)item.value;
-								btb.Getbuffer()[item.instruction.pc%32][1] = 0;
-							}else{
-								// allow make mistakes twice.
-							}
+						||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
+					if(item.value == 1){ // change pc
+
+						if(btb.Getbuffer()[item.instruction.pc % 32][0] == -1){
+							// If there is no entry in the Branch Target Buffer
+							Const.ROB.clear();
+							Const.ROB.add(new ROBItem());
+							Const.firstOfROB = 1;
+							Const.lastOfROB = 1;
+							//update the buffer
+							btb.Getbuffer()[item.instruction.pc % 32][0] = item.offset;
+							btb.Getbuffer()[item.instruction.pc % 32][1] = 0;
 							pc = item.offset;
-    				    }
+						}else{
+    						int predicted = btb.Getbuffer ()[item.instruction.pc % 32][0]; // the predicted pc
+							if (item.offset != predicted) {// If branch is mispredicted.
+								Const.ROB.clear();
+								Const.ROB.add(new ROBItem());
+								Const.firstOfROB = 1;
+								Const.lastOfROB = 1;
+
+								if (btb.Getbuffer()[item.instruction.pc % 32][1] == 1) {
+									// update the branch-target-buffer
+									btb.Getbuffer()[item.instruction.pc % 32][0] = (int) item.offset;
+									btb.Getbuffer()[item.instruction.pc % 32][1] = 0;
+								} else {
+									// allow make mistakes twice.
+								}
+								pc = item.offset;
+							}
+						}
     				}
     				bus_count++;
     			}else if(item.instruction.opco.equals("S.D") || item.instruction.opco.equals("SD")){
@@ -320,6 +330,7 @@ public class TomasuloSimulator {
     				}
     				
 					bus_count++;
+					Const.firstOfROB++;
     			}else{
 					//TODO update the registers
 					if(d.contains("R")){
@@ -328,11 +339,13 @@ public class TomasuloSimulator {
 						((Register) Const.floatRegistersStatus.get(d)).value = item.value;
 					}
 					bus_count++;
-
+					Const.firstOfROB++;
     			}
     			item.busy = false;
-    			Const.firstOfROB++;
-    			if(!item.instruction.opco.equals("S.D") && !item.instruction.opco.equals("SD")){
+
+    			if(!item.instruction.opco.equals("S.D") && !item.instruction.opco.equals("SD")
+						&& !item.instruction.opco.equals("BEQZ") && !item.instruction.opco.equals("BNEZ")
+						&& !item.instruction.opco.equals("BNE") && !item.instruction.opco.equals("BEQ")){
         			if(d.contains("R")){
         				if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
                         	((Register)Const.integerRegistersStatus.get(d)).busy = false;
@@ -343,8 +356,7 @@ public class TomasuloSimulator {
             			}
         			}
     			}
-    			
-    			
+
     		} else {
     			break;
     		}
