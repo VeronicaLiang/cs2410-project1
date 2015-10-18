@@ -357,6 +357,9 @@ public class TomasuloSimulator {
 								Const.reservationStations.put(station.name ,station);
 							}
 
+							Const.ROB.add(new ROBItem());
+							Const.firstOfROB = 1;
+							Const.lastOfROB = 1;
 							for (int i = 0; i < 32; i++){
 								((Register)Const.integerRegistersStatus.get("R"+i)).busy = false ;
 								((Register)Const.floatRegistersStatus.get("F"+i)).busy = false;
