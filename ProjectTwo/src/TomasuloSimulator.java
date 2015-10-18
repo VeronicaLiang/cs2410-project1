@@ -139,6 +139,9 @@ public class TomasuloSimulator {
 				}
 			}
 
+			if(clock_cycle == 27) {
+				System.out.println();
+			}
 			
 			if(commit(BTBuffer)){
 				DQueue.clear();
@@ -154,15 +157,20 @@ public class TomasuloSimulator {
 			
 			
 			System.out.println("Clock Cycle is :" + clock_cycle);
-			for (int i = 0; i < 6; i++){
+			for (int i = 0; i < 4; i++){
 				System.out.println("R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value);
 			}
-			for (int i = 0; i < 7; i++){
+			for (int i = 0; i < 0; i++){
 				System.out.println("F"+i+": "+((Register)Const.floatRegistersStatus.get("F"+i)).value);
+			}
+			for (int i = 1; i <= 4; i++) {
+				Station station = (Station) Const.reservationStations.get(i+"");
+				String result = "name-->"+station.name+" Op-->"+station.Op+" Qj-->"+station.Qj+" Vj-->"+station.Vj+" Qk-->"+station.Qk+" Vk-->"+station.Vk+" done-->"+station.done+" result-->"+station.result+" wbDone-->"+station.wbDone;
+				System.out.println(result);
 			}
 			printROB();
 			//System.out.println("Mem[300]: "+ memory.getData().get(300));
-			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
+			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0 || clock_cycle==100){
 				finishedFlag = true;
 			}
 		}
@@ -429,7 +437,7 @@ public class TomasuloSimulator {
     
     public void printROB () {
     	for (int i = Const.firstOfROB; i < Const.lastOfROB; i++) {
-    		System.out.println("Opco-->"+((ROBItem)Const.ROB.get(i)).instruction.opco + " pc-->"+((ROBItem)Const.ROB.get(i)).instruction.pc);
+    		System.out.println("Opco-->"+((ROBItem)Const.ROB.get(i)).instruction.opco + " pc-->"+((ROBItem)Const.ROB.get(i)).instruction.pc+" Reorder-->"+i);
     	}
     }
     public static void main(String args[]) throws IOException{

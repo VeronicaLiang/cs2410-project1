@@ -92,8 +92,8 @@ private static final int LATENCY = 2;
 				Const.ROB.add(item);
 				int b = Const.ROB.indexOf(item);
 				Const.lastOfROB = b + 1;
-				register.Reorder = b; 
-				register.busy = true;
+				//register.Reorder = b; 
+				//register.busy = true;
 				station.Op = instruction.opco;
 				station.Dest = b;
 				station.Busy = true;
@@ -131,7 +131,7 @@ private static final int LATENCY = 2;
 				      BEQ   条件转移指令，当两个寄存器内容相等时转移发生 BEQ R1,R2
 				      BNE 条件转移指令，当两个寄存器中内容不等时转移发生 BNE R1,R2
 					 */
-					if((station.Qj==0) && (station.Qk==0)){
+					if((station.Qj==0) && (station.Qk==0) && !station.done){
 						float vk = station.Vk;
 						float vj = station.Vj;
 						

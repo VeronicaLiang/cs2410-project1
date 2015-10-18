@@ -72,10 +72,12 @@ public class Station {
 	
 	int latency = 0;
 	
-	float result;
+	float result = 0;
 	
 	int loadFlag = 0;
 	
 	boolean done = false;
 	boolean wbDone = false;
+	
+
 }
