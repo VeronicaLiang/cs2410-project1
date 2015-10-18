@@ -161,7 +161,7 @@ public class TomasuloSimulator {
 			}
 			printROB();
 			//System.out.println("Mem[300]: "+ memory.getData().get(300));
-			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
+			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0 || clock_cycle>100){
 				finishedFlag = true;
 			}
 		}
@@ -291,8 +291,8 @@ public class TomasuloSimulator {
     			String d = item.destination;
     			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
 						||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
+    				System.out.println("item.value-->"+item.value);
 					if(item.value == 1){ // change pc
-
 						if(btb.Getbuffer()[item.instruction.pc % 32][0] == -1){
 							// If there is no entry in the Branch Target Buffer
 							flushflag = true;
@@ -427,7 +427,7 @@ public class TomasuloSimulator {
     
     public void printROB () {
     	for (int i = Const.firstOfROB; i < Const.lastOfROB; i++) {
-    		System.out.println("Opco-->"+((ROBItem)Const.ROB.get(i)).instruction.opco);
+    		System.out.println("Opco-->"+((ROBItem)Const.ROB.get(i)).instruction.opco + " pc-->"+((ROBItem)Const.ROB.get(i)).instruction.pc);
     	}
     }
     public static void main(String args[]) throws IOException{
