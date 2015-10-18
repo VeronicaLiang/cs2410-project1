@@ -174,7 +174,7 @@ public class LoadStore {
 								Memory test = Memory.getInstance();
 								String fs = (String) test.getData().get(station.A);
 								float f = 0.0f;
-								if (!fs.equals("")){
+								if (fs!=null){
 									f = Float.parseFloat(fs);
 								}
 								station.result = f;
