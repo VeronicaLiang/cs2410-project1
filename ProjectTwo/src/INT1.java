@@ -99,6 +99,7 @@ private static final int LATENCY = 1;
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;
+				station.wbDone = false;
 				station.Op = instruction.opco;
 				return true;
 			}
@@ -154,7 +155,7 @@ private static final int LATENCY = 1;
 						station.done = true;
 						isExecute = true;
 					}
-				}else if(station.latency>=LATENCY && station.done && !isWB){
+				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB){
 					//Write result. 
 					int b = station.Dest;
 					
@@ -173,6 +174,7 @@ private static final int LATENCY = 1;
 					((ROBItem)Const.ROB.get(b)).ready = true;
 					station.Busy = false;
 					isWB = true;
+					station.wbDone = true;
 				}
 			}
 			

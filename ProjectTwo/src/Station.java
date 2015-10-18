@@ -77,4 +77,5 @@ public class Station {
 	int loadFlag = 0;
 	
 	boolean done = false;
+	boolean wbDone = false;
 }

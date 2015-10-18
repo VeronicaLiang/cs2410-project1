@@ -99,6 +99,7 @@ public class FPU {
 				station.Busy = true;
 				station.latency = 0;
 				station.done = false;
+				station.wbDone = false;
 				station.Op = instruction.opco;
 				
 				return true;
@@ -141,7 +142,7 @@ public class FPU {
 						station.done = true;
 						isExecute = true;
 					}
-				} else if (station.latency >= LATENCY && station.done && !isWB) {
+				} else if (station.latency >= LATENCY && !station.wbDone && station.done && !isWB) {
 					// Write result.
 					int b = station.Dest;
 
@@ -163,6 +164,7 @@ public class FPU {
 					((ROBItem) Const.ROB.get(b)).ready = true;
 					station.Busy = false;
 					isWB = true;
+					station.wbDone = true;
 				}
 			}
 		}

@@ -139,6 +139,7 @@ public class TomasuloSimulator {
 				}
 			}
 
+			
 			if(commit(BTBuffer)){
 				DQueue.clear();
 				FQueue.clear();
