@@ -101,7 +101,8 @@ public class FPU {
 				station.done = false;
 				station.wbDone = false;
 				station.Op = instruction.opco;
-				
+				station.status = "issued";
+				station.text = instruction.text;
 				return true;
 			}
 		}
@@ -130,6 +131,7 @@ public class FPU {
 						}
 						station.done = true;
 						isExecute = true;
+						station.status = "executed";
 					}
 				} else if ((station.latency < LATENCY || !station.done) && station.Op.equals("DIV.D")) {
 					if (!this.unitBusy(i)) {

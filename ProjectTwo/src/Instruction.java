@@ -6,6 +6,7 @@ public class Instruction {
 	String rt;
 	String rd;
 	String opco;
+	String text; // output original instruction
 	/*
 	 * Qj, Qk—The reservation stations that will produce the corresponding source
        operand; a value of zero indicates that the source operand is already available
@@ -19,6 +20,7 @@ public class Instruction {
 	public Instruction loadInstrs(String line){
 		String[] records = line.split("\\t+");
 		Instruction instr = new Instruction();
+		instr.text = line.trim().replace("\t", " ");
 		if (records[0].equals("")){
 			instr.note = records[0];
 		} else {

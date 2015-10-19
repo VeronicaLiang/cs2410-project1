@@ -138,6 +138,8 @@ public class LoadStore {
 				station.done = false;
 				station.wbDone = false;
 				station.Op = instruction.opco;
+				station.status = "issued";
+				station.text = instruction.text;
 				return true;
 			}
 		}
@@ -160,6 +162,8 @@ public class LoadStore {
 							station.result = station.Vk + station.A; // Need to check whether Vj is an integer.
 							((ROBItem)Const.ROB.get(station.Dest)).address = (int)station.result;
 							station.done = true;
+							isExecute = true;
+							station.status = "executed";
 						}
 					}else{
 						if((station.Qj == 0) && !station.done && !isExecute) {
@@ -183,6 +187,7 @@ public class LoadStore {
 								station.result = f;
 								station.done = true;
 								isExecute = true;
+								station.status = "executed";
 							}
 						}
 					}

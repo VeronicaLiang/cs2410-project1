@@ -91,7 +91,7 @@ public class TomasuloSimulator {
 		this.ND = ND;
 		
 		finishedFlag = false;
-		int clock_cycle = 2;
+		int clock_cycle = 0;
 		
 		BranchTargetBuffer BTBuffer = new BranchTargetBuffer();
 		LinkedList FQueue = new LinkedList(); // Fetched Instructions Queue
@@ -99,6 +99,39 @@ public class TomasuloSimulator {
 		Const.ROB.add(new ROBItem()); // add an item to ROB, so that we can use 1 as the first index
 		
 		while(!finishedFlag){//Clock cycles loop
+			
+			if(commit(BTBuffer)){
+				DQueue.clear();
+				FQueue.clear();
+			}
+
+			execute();
+			issue(DQueue);
+			
+
+
+			
+			/**
+			 * Decode the instruction
+			 * If the instruction is not a branch, but find in BTBuffer, need to deleted the following instructions in the iqueue, and refetch. 
+			 */
+			int decoded = 0;
+			while((DQueue.size() < NI) && (decoded < ND)&&(!FQueue.isEmpty()) ){
+				Instruction next = (Instruction) FQueue.poll();
+				DQueue.add(next);
+				if (!next.opco.equals("BEQZ") && !next.opco.equals("BNEZ") && !next.opco.equals("BEQ") && !next.opco.equals("BNE")&&(BTBuffer.Getbuffer()[next.pc%32][0] != -1)){
+					// If the instruction is not a branch, but has entry in BTBuffer
+					FQueue.clear();
+					pc = next.pc++;
+					if(BTBuffer.Getbuffer()[next.pc%32][1] == 0) {
+						BTBuffer.Getbuffer()[next.pc%32][1] = 1; // allow the first time is wrong
+					}else{
+						// reset the entry
+						BTBuffer.Getbuffer()[next.pc%32][0] = -1;
+						BTBuffer.Getbuffer()[next.pc%32][1] = 0;
+					}
+				}
+			}
 			
 			/**
 			 * If the instruction queue is not full, and there are instructions not finished,
@@ -116,37 +149,6 @@ public class TomasuloSimulator {
 				}
 				fetched++;
 			}
-
-			
-			/**
-			 * Decode the instruction
-			 * If the instruction is not a branch, but find in BTBuffer, need to deleted the following instructions in the iqueue, and refetch. 
-			 */
-			int decoded = 0;
-			while((DQueue.size() <= NI) && (decoded < ND)&&(!FQueue.isEmpty()) ){
-				Instruction next = (Instruction) FQueue.poll();
-				DQueue.add(next);
-				if (!next.opco.equals("BEQZ") && !next.opco.equals("BNEZ") && !next.opco.equals("BEQ") && !next.opco.equals("BNE")&&(BTBuffer.Getbuffer()[next.pc%32][0] != -1)){
-					// If the instruction is not a branch, but has entry in BTBuffer
-					FQueue.clear();
-					pc = next.pc++;
-					if(BTBuffer.Getbuffer()[next.pc%32][1] == 0) {
-						BTBuffer.Getbuffer()[next.pc%32][1] = 1; // allow the first time is wrong
-					}else{
-						// reset the entry
-						BTBuffer.Getbuffer()[next.pc%32][0] = -1;
-						BTBuffer.Getbuffer()[next.pc%32][1] = 0;
-					}
-				}
-			}
-			
-			if(commit(BTBuffer)){
-				DQueue.clear();
-				FQueue.clear();
-			}
-
-			execute();
-			issue(DQueue);
 			
 			clock_cycle ++;
 //			System.out.println(clock_cycle);
@@ -155,24 +157,32 @@ public class TomasuloSimulator {
 			
 			System.out.println("After Clock Cycle " + clock_cycle +":");
 			System.out.println("------------------------------");
-			System.out.println("Registers Status:");
-			for (int i = 0; i < 32; i++){
-				String str = "R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value;
-				int length = str.length();
-				for (int m = 0; m < 15-length; m++) {
-					str = str + " ";
-				}
-				//str = str + str.length();
-				str = str + "F"+i+": "+((Register)Const.floatRegistersStatus.get("F"+i)).value;
-				System.out.println(str);
+			System.out.println("Fetch Queue Status (NQ: "+NQ+"):");
+			boolean printFlag = true;
+			for (int i = 0; i < FQueue.size(); i++) {
+				System.out.println(((Instruction)FQueue.get(i)).text+" pc-->"+((Instruction)FQueue.get(i)).pc);
+				printFlag = false;
+			}
+			if (printFlag) {
+				System.out.println("Not fetch any instruction.");
+			}
+			System.out.println("------------------------------");
+			System.out.println("Decode Queue Status (NI: "+NI+"):");
+			printFlag = true;
+			for (int i = 0; i < DQueue.size(); i++) {
+				System.out.println(((Instruction)DQueue.get(i)).text+" pc-->"+((Instruction)DQueue.get(i)).pc);
+				printFlag = false;
+			}
+			if (printFlag) {
+				System.out.println("Not decode any instruction.");
 			}
 			System.out.println("------------------------------");
 			System.out.println("Reservation Stations (Busy) Status:");
-			boolean printFlag = true;
+			printFlag = true;
 			for (int i = 1; i <= 19; i++) {
 				Station station = (Station) Const.reservationStations.get(i+"");
 				if (station.Busy == true) {
-					String result = "name-->"+station.name+" Op-->"+station.Op+" Qj-->"+station.Qj+" Vj-->"+station.Vj+" Qk-->"+station.Qk+" Vk-->"+station.Vk+" result-->"+station.result;
+					String result = "name-->"+station.name+" Instruction-->"+station.text+" Qj-->"+station.Qj+" Vj-->"+station.Vj+" Qk-->"+station.Qk+" Vk-->"+station.Vk+" destination-->"+station.Dest+" result-->"+station.result+" status-->"+station.status;
 					System.out.println(result);
 					printFlag = false;
 				}
@@ -183,13 +193,35 @@ public class TomasuloSimulator {
 			}
 			printFlag = true;
 			System.out.println("------------------------------");
-			System.out.println("ROB Status:");
+			System.out.println("ROB Status (NR: "+Const.NR+"):");
 			for (int i = Const.firstOfROB; i < Const.lastOfROB; i++) {
-	    		System.out.println("Opco-->"+((ROBItem)Const.ROB.get(i)).instruction.opco + " pc-->"+((ROBItem)Const.ROB.get(i)).instruction.pc+" Reorder-->"+i);
+	    		System.out.println("Instruction-->"+((ROBItem)Const.ROB.get(i)).instruction.text + " pc-->"+((ROBItem)Const.ROB.get(i)).instruction.pc+" Index-->"+i+" destination-->"+((ROBItem)Const.ROB.get(i)).destination+" value-->"+((ROBItem)Const.ROB.get(i)).value+" ready-->"+((ROBItem)Const.ROB.get(i)).ready);
 	    		printFlag = false;
 			}
 			if (printFlag) {
 				System.out.println("No item in ROB.");
+			}
+			System.out.println("------------------------------");
+			System.out.println("Registers Status:");
+			for (int i = 0; i < 32; i++){
+				String str = "R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value;
+				int length = str.length();
+				for (int m = 0; m < 15-length; m++) {
+					str = str + " ";
+				}
+				str = str + "ROB#: " + ((Register)Const.integerRegistersStatus.get("R"+i)).Reorder;
+				length = str.length();
+				for (int m = 0; m < 30-length; m++) {
+					str = str + " ";
+				}
+				//str = str + str.length();
+				str = str + "|F"+i+": "+((Register)Const.floatRegistersStatus.get("F"+i)).value;
+				length = str.length();
+				for (int m = 0; m < 45-length; m++) {
+					str = str + " ";
+				}
+				str = str + "ROB#: " + ((Register)Const.floatRegistersStatus.get("F"+i)).Reorder;
+				System.out.println(str);
 			}
 			System.out.println("------------------------------");
 			System.out.println("Memory Status:");
@@ -213,9 +245,11 @@ public class TomasuloSimulator {
 			}
 			System.out.println("------------------------------");
 			System.out.println();
-			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0){
+			
+			
+			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0 && clock_cycle > 2){
 				finishedFlag = true;
-				System.out.println("Total Clock Cycle are "+clock_cycle);
+				System.out.println("Total Clock Cycle is "+clock_cycle);
 			}
 		}
 		
@@ -484,8 +518,8 @@ public class TomasuloSimulator {
 		String inputFile = args[0];
 		int NF = Integer.parseInt(args[1]); // The maximum number of instructions can be fetched in one cycle
 		int NQ = Integer.parseInt(args[2]); // The length of the instruction queue
-		int NI =  Integer.parseInt(args[3]); // The maximum number of instructions can be decoded in one cycle
-		int ND = Integer.parseInt(args[4]); // The length of the Decoded instruction queue
+		int ND =  Integer.parseInt(args[3]); // The length of the Decoded instruction queue
+		int NI = Integer.parseInt(args[4]); // The maximum number of instructions can be decoded in one cycle
 		
 		TomasuloSimulator simulator = new TomasuloSimulator(inputFile);
 		

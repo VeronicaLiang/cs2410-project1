@@ -97,6 +97,8 @@ private static final int LATENCY = 2;
 				station.done = false;
 				station.wbDone = false;
 				station.Op = instruction.opco;
+				station.status = "issued";
+				station.text = instruction.text;
 				return true;
 			}
 		}
@@ -119,6 +121,7 @@ private static final int LATENCY = 2;
 						station.result = vj * vk;
 						station.done = true;
 						isExecute = true;
+						station.status = "executed";
 					}
 				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0){
 					//Write result. 

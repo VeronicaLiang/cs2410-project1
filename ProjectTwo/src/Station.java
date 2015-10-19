@@ -78,6 +78,7 @@ public class Station {
 	
 	boolean done = false;
 	boolean wbDone = false;
-	
+	String status = "";
+	String text = "";
 
 }
