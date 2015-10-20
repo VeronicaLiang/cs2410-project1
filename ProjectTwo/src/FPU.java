@@ -184,7 +184,7 @@ public class FPU {
 	public boolean hasDivide () {
 		for(int i = 13;i<=17;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
-			if (station.Op.equals("DIV.D")) {
+			if (station.Op.equals("DIV.D") && station.Busy) {
 				return true;
 			}
 		}
