@@ -396,8 +396,10 @@ public class TomasuloSimulator {
 							}
 
 							for (int i = 0; i < 32; i++){
-								((Register)Const.integerRegistersStatus.get("R"+i)).busy = false ;
+								((Register)Const.integerRegistersStatus.get("R"+i)).busy = false;
 								((Register)Const.floatRegistersStatus.get("F"+i)).busy = false;
+								((Register)Const.integerRegistersStatus.get("R"+i)).Reorder = 0;
+	            				((Register)Const.floatRegistersStatus.get("F"+i)).Reorder = 0;
 							}
 
 							Const.firstOfROB = 1;
@@ -420,8 +422,10 @@ public class TomasuloSimulator {
 								}
 
 								for (int i = 0; i < 32; i++){
-									((Register)Const.integerRegistersStatus.get("R"+i)).busy = false ;
+									((Register)Const.integerRegistersStatus.get("R"+i)).busy = false;
 									((Register)Const.floatRegistersStatus.get("F"+i)).busy = false;
+									((Register)Const.integerRegistersStatus.get("R"+i)).Reorder = 0;
+		            				((Register)Const.floatRegistersStatus.get("F"+i)).Reorder = 0;
 								}
 
 
@@ -458,8 +462,10 @@ public class TomasuloSimulator {
 							Const.firstOfROB = 1;
 							Const.lastOfROB = 1;
 							for (int i = 0; i < 32; i++){
-								((Register)Const.integerRegistersStatus.get("R"+i)).busy = false ;
+								((Register)Const.integerRegistersStatus.get("R"+i)).busy = false;
 								((Register)Const.floatRegistersStatus.get("F"+i)).busy = false;
+								((Register)Const.integerRegistersStatus.get("R"+i)).Reorder = 0;
+	            				((Register)Const.floatRegistersStatus.get("F"+i)).Reorder = 0;
 							}
 
 							if(btb.Getbuffer()[item.instruction.pc % 32][1] == 1){
@@ -498,10 +504,12 @@ public class TomasuloSimulator {
         			if(d.contains("R")){
         				if(((Register)Const.integerRegistersStatus.get(d)).Reorder==h){
                         	((Register)Const.integerRegistersStatus.get(d)).busy = false;
+                        	((Register)Const.integerRegistersStatus.get(d)).Reorder = 0;
         				}
         			} else {
         				if(((Register)Const.floatRegistersStatus.get(d)).Reorder==h){
             				((Register)Const.floatRegistersStatus.get(d)).busy = false;
+            				((Register)Const.floatRegistersStatus.get(d)).Reorder = 0;
             			}
         			}
     			}

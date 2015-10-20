@@ -35,9 +35,10 @@ public class FPU {
 	   Station 18 and 19 are BU  stations.
 	 */
 	public boolean insertInstruction(Instruction instruction){
-		if (hasDivide()) {
-			return false;
-		}
+		// we can issue a divide, but we cannot execute when this unit has divide.
+		//if (hasDivide()) {
+		//	return false;
+		//}
 		for(int i = 13;i<=17;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if((!station.Busy)){
@@ -117,7 +118,11 @@ public class FPU {
 		for(int i = 13;i<=17;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy){
-				if ((station.latency < LATENCY || !station.done) && !station.Op.equals("DIV.D")) {
+				// if latency == 0 and not div.d, this instruction issued after div.d.
+				// so if there is a divide in unit, just waiting (skip to next station)
+				if (station.latency == 0 && !station.Op.equals("DIV.D") && this.hasDivide()) {
+					continue;
+				} else if ((station.latency < LATENCY || !station.done) && !station.Op.equals("DIV.D")) {
 					station.latency = station.latency + 1;
 					if ((station.Qj == 0) && (station.Qk == 0) && !station.done && !isExecute) {
 						float vk = station.Vk;
@@ -187,7 +192,7 @@ public class FPU {
 		for(int i = 13;i<=17;i++){
 			if(i != index){
 				Station station = (Station) Const.reservationStations.get(i+"");
-				if (station.Busy) {
+				if (station.Busy && station.latency > 0) {
 					return true;
 				}
 			}
