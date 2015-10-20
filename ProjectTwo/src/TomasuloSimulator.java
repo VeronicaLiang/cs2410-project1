@@ -478,7 +478,8 @@ public class TomasuloSimulator {
 							}
 						}
 					}
-    				bus_count++;
+					// commit branch do not need CDB
+    				// bus_count++;
     			}else if(item.instruction.opco.equals("S.D") || item.instruction.opco.equals("SD")){
     				if (item.instruction.opco.equals("SD")) {
     					memory.getData().put(item.address, ((int) item.value)+"");

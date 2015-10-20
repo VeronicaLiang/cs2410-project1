@@ -212,6 +212,7 @@ public class LoadStore {
 							}
 							((ROBItem) Const.ROB.get(b)).value = station.result;
 						}
+						Const.NC--;
 					}else{
 						((ROBItem) Const.ROB.get(b)).value = station.Vj;
 					}
