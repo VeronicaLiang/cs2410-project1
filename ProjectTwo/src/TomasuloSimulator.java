@@ -99,24 +99,31 @@ public class TomasuloSimulator {
 		Const.ROB.add(new ROBItem()); // add an item to ROB, so that we can use 1 as the first index
 		
 		while(!finishedFlag){//Clock cycles loop
-			
-			if(commit(BTBuffer)){
-				DQueue.clear();
-				FQueue.clear();
+
+			/**
+			 * If the instruction queue is not full, and there are instructions not finished,
+			 * Fetch instructions. 
+			 * In one clock cycle, the maximum number of fetching is NF. 
+			 */
+			int fetched = 0;
+			while((FQueue.size() < NQ) && (fetched < NF) &&(pc < memory.getInstrs().size())){
+				((Instruction)memory.getInstrs().get(pc)).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
+				FQueue.add(memory.getInstrs().get(pc));
+				if(BTBuffer.Getbuffer()[pc%32][0] != -1){
+					pc = BTBuffer.Getbuffer()[pc%32][0]; // if there is an entry in BTBuffer, use the predicted pc, otherwise, pc ++
+				}else{
+					pc++;
+				}
+				fetched++;
 			}
-
-			execute();
-			issue(DQueue);
-			
-
-
 			
 			/**
 			 * Decode the instruction
 			 * If the instruction is not a branch, but find in BTBuffer, need to deleted the following instructions in the iqueue, and refetch. 
 			 */
 			int decoded = 0;
-			while((DQueue.size() < NI) && (decoded < ND)&&(!FQueue.isEmpty()) ){
+			int firstOfDQ = DQueue.size();
+			while((DQueue.size() < NI) && (decoded < ND)&&(!FQueue.isEmpty()) && FQueue.size() > fetched){
 				Instruction next = (Instruction) FQueue.poll();
 				DQueue.add(next);
 				if (!next.opco.equals("BEQZ") && !next.opco.equals("BNEZ") && !next.opco.equals("BEQ") && !next.opco.equals("BNE")&&(BTBuffer.Getbuffer()[next.pc%32][0] != -1)){
@@ -133,21 +140,15 @@ public class TomasuloSimulator {
 				}
 			}
 			
-			/**
-			 * If the instruction queue is not full, and there are instructions not finished,
-			 * Fetch instructions. 
-			 * In one clock cycle, the maximum number of fetching is NF. 
-			 */
-			int fetched = 0;
-			while((FQueue.size() < NQ) && (fetched < NF) &&(pc < memory.getInstrs().size())){
-				((Instruction)memory.getInstrs().get(pc)).UpdatePC(pc); // Instruction needs to have a feature called pc, so that can check whether the BTBuffer prediction is wrong.
-				FQueue.add(memory.getInstrs().get(pc));
-				if(BTBuffer.Getbuffer()[pc%32][0] != -1){
-					pc = BTBuffer.Getbuffer()[pc%32][0]; // if there is an entry in BTBuffer, use the predicted pc, otherwise, pc ++
-				}else{
-					pc++;
-				}
-				fetched++;
+			changeNewIssuedStatus(); // when issue a new operation, a newIssued flag will set to true
+			issue(DQueue, decoded); // so we need to set them to false, in the next cycle
+			
+			changeNewReadyStatus(); // same reason to issue, if newReady flag is true
+			execute(); // no commit in this cycle. but we need to set it to false before new execution (WB)
+			
+			if(commit(BTBuffer)){
+				DQueue.clear();
+				FQueue.clear();
 			}
 			
 			clock_cycle ++;
@@ -266,7 +267,7 @@ public class TomasuloSimulator {
        issue is stalled until both have available entries.
 
 	 */
-	public void issue(LinkedList DQueue){
+	public void issue(LinkedList DQueue, int decoded){
 		int issue_count = 0;
 		boolean halt = false;
 		boolean issueFPU = false;
@@ -275,13 +276,13 @@ public class TomasuloSimulator {
 		boolean issueLS = false;
 		boolean issueBU = false;
 		boolean issueMULT = false;
-		while((issue_count < this.NW) &&(!halt)){
+		while((issue_count < this.NW) && (!halt)){
 			if((Const.lastOfROB - Const.firstOfROB)>=Const.NR){//If ROB' size equals or is greater than NR , stop issuing instructions.
 				halt = true;
 				return;
 			}
 		//Check no more than NW instructions in the instructions waiting queue
-			if(DQueue.size()!=0){
+			if(DQueue.size() > decoded){
 				Instruction instruction = (Instruction) DQueue.getFirst();
 				String unit = (String)Const.unitsForInstruction.get(instruction.opco);
 				boolean isSuccessful = false;
@@ -375,7 +376,7 @@ public class TomasuloSimulator {
     		int h = Const.firstOfROB;  // always commit the first item in ROB
 			ROBItem item = (ROBItem)Const.ROB.get(h);
 			//System.out.println("item.ready->"+item.ready+"   item.opco->"+item.instruction.opco+"   rob.size->"+Const.ROB.size());
-    		if(item.ready){
+    		if(item.ready && !item.newReady){
     			String d = item.destination;
     			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
 						||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
@@ -520,6 +521,24 @@ public class TomasuloSimulator {
     		
     	}
 		return flushflag;
+    }
+    
+    public void changeNewIssuedStatus(){
+    	for(int i = 1;i<=19;i++){
+			Station station = (Station) Const.reservationStations.get(i+"");
+			if (station.Busy) {
+				station.newIssued = false;
+			}
+		}	
+    }
+    
+    public void changeNewReadyStatus(){
+    	int h = Const.firstOfROB;
+    	while(Const.lastOfROB - h > 0){
+			ROBItem item = (ROBItem)Const.ROB.get(h);
+			item.newReady = false;
+			h++;
+    	}	
     }
 
     public static void main(String args[]) throws IOException{

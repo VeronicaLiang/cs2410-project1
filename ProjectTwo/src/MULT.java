@@ -99,6 +99,7 @@ private static final int LATENCY = 2;
 				station.Op = instruction.opco;
 				station.status = "issued";
 				station.text = instruction.text;
+				station.newIssued = true;
 				return true;
 			}
 		}
@@ -112,7 +113,7 @@ private static final int LATENCY = 2;
 		boolean isWB = false;
 		for(int i = 5;i<=6;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
-			if(station.Busy){
+			if(station.Busy && !station.newIssued){
 				if(station.latency<LATENCY || !station.done){
 					station.latency = station.latency +1;
 					if((station.Qj==0) && (station.Qk==0) && !station.done && !isExecute){
@@ -139,6 +140,7 @@ private static final int LATENCY = 2;
 					}
 					((ROBItem)Const.ROB.get(b)).value = station.result;
 					((ROBItem)Const.ROB.get(b)).ready = true;
+					((ROBItem)Const.ROB.get(b)).newReady = true;
 					station.Busy = false;
 					isWB = true;
 					station.wbDone = true;

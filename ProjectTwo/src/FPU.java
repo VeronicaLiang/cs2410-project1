@@ -104,6 +104,7 @@ public class FPU {
 				station.Op = instruction.opco;
 				station.status = "issued";
 				station.text = instruction.text;
+				station.newIssued = true;
 				return true;
 			}
 		}
@@ -117,7 +118,7 @@ public class FPU {
 		boolean isWB = false;
 		for(int i = 13;i<=17;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
-			if(station.Busy){
+			if(station.Busy && !station.newIssued){
 				// if latency == 0 and not div.d, this instruction issued after div.d.
 				// so if there is a divide in unit, just waiting (skip to next station)
 				if (station.latency == 0 && !station.Op.equals("DIV.D") && this.hasDivide()) {
@@ -169,6 +170,7 @@ public class FPU {
 					}
 					((ROBItem) Const.ROB.get(b)).value = station.result;
 					((ROBItem) Const.ROB.get(b)).ready = true;
+					((ROBItem)Const.ROB.get(b)).newReady = true;
 					station.Busy = false;
 					isWB = true;
 					station.wbDone = true;

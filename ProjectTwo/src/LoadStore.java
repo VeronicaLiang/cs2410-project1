@@ -140,6 +140,7 @@ public class LoadStore {
 				station.Op = instruction.opco;
 				station.status = "issued";
 				station.text = instruction.text;
+				station.newIssued = true;
 				return true;
 			}
 		}
@@ -153,7 +154,7 @@ public class LoadStore {
 		boolean isWB = false;
 		for(int i = 7;i<=12;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
-			if(station.Busy){
+			if(station.Busy && !station.newIssued){
 				if(station.latency<LATENCY || !station.done){
 					station.latency = station.latency +1;
 					// a store instruction
@@ -214,6 +215,7 @@ public class LoadStore {
 						((ROBItem) Const.ROB.get(station.Dest)).value = station.Vj;
 					}
 					((ROBItem) Const.ROB.get(station.Dest)).ready = true;
+					((ROBItem)Const.ROB.get(b)).newReady = true;
 					isWB = true;
 					station.wbDone = true;
 					Const.NB--;

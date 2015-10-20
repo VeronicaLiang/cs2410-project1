@@ -9,4 +9,5 @@ public class ROBItem {
 	int address;
 	float value;
 	boolean ready = false;
+	boolean newReady = false;
 }
