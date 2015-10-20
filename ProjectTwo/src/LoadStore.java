@@ -167,7 +167,7 @@ public class LoadStore {
 							station.status = "executed";
 						}
 					}else{
-						if((station.Qj == 0) && !station.done && !isExecute) {
+						if((station.Qj == 0) && !station.done && !isExecute && !hasStoreInROB()) {
 							boolean isStoreAhead = false;
 							int b = station.Dest;
 							station.A = (int) station.Vj + station.A;
@@ -195,8 +195,9 @@ public class LoadStore {
 				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0){
 						//Write result.
 					int b = station.Dest;
-					station.Busy = false;
+					
 					if(station.loadFlag != 0) {
+						
 						Iterator iterator = Const.reservationStations.entrySet().iterator();
 						while (iterator.hasNext()) {
 							Map.Entry entry = (Entry) iterator.next();
@@ -212,9 +213,10 @@ public class LoadStore {
 							((ROBItem) Const.ROB.get(b)).value = station.result;
 						}
 					}else{
-						((ROBItem) Const.ROB.get(station.Dest)).value = station.Vj;
+						((ROBItem) Const.ROB.get(b)).value = station.Vj;
 					}
-					((ROBItem) Const.ROB.get(station.Dest)).ready = true;
+					station.Busy = false;
+					((ROBItem) Const.ROB.get(b)).ready = true;
 					((ROBItem)Const.ROB.get(b)).newReady = true;
 					isWB = true;
 					station.wbDone = true;
@@ -222,6 +224,10 @@ public class LoadStore {
 				}
 			}
 		}
+	}
+	
+	public boolean hasStoreInROB() {
+		return ((ROBItem) Const.ROB.get(Const.firstOfROB)).ready && !((ROBItem)Const.ROB.get(Const.firstOfROB)).newReady;
 	}
 
 }
