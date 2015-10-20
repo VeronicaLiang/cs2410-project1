@@ -90,6 +90,7 @@ public class TomasuloSimulator {
 		this.NI = NI;
 		this.ND = ND;
 		
+		
 		finishedFlag = false;
 		int clock_cycle = 0;
 		
@@ -99,7 +100,8 @@ public class TomasuloSimulator {
 		Const.ROB.add(new ROBItem()); // add an item to ROB, so that we can use 1 as the first index
 		
 		while(!finishedFlag){//Clock cycles loop
-
+			Const.NC = 4; //reset size of CDB for this cycle.
+			
 			/**
 			 * If the instruction queue is not full, and there are instructions not finished,
 			 * Fetch instructions. 
@@ -369,10 +371,9 @@ public class TomasuloSimulator {
      */
     public boolean commit(BranchTargetBuffer btb){
     	
-		int NC = 4;
 		int bus_count = 0;
 		boolean flushflag = false;
-    	while(Const.lastOfROB - Const.firstOfROB > 0 && bus_count < NC ){
+    	while(Const.lastOfROB - Const.firstOfROB > 0 && bus_count < Const.NC ){
     		int h = Const.firstOfROB;  // always commit the first item in ROB
 			ROBItem item = (ROBItem)Const.ROB.get(h);
 			//System.out.println("item.ready->"+item.ready+"   item.opco->"+item.instruction.opco+"   rob.size->"+Const.ROB.size());

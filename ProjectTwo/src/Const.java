@@ -240,6 +240,7 @@ public class Const {
 	static int firstOfROB = 1;
 	static int lastOfROB = 1;
 	
-	static int NB = 4; //up to 4 instructions can finish execution in one cycle
+	static int NB = 4; //up to 4 instructions can finish execution in one cycle (WB)
+	static int NC = 4; // size of CBD
 	
 }

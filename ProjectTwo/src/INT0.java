@@ -170,7 +170,7 @@ private static final int LATENCY = 1;
 						isExecute = true;
 						station.status = "executed";
 					}
-				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0){
+				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0 && Const.NC > 0){
 					//Write result. 
 					int b = station.Dest;
 					
@@ -192,6 +192,7 @@ private static final int LATENCY = 1;
 					isWB = true;
 					station.wbDone = true;
 					Const.NB--;
+					Const.NC--;
 				}
 			}
 		}
