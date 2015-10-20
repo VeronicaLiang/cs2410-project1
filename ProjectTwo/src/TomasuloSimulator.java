@@ -84,11 +84,12 @@ public class TomasuloSimulator {
 	/*
 	 * Start this simulation with a loop representing clock cycles.
 	 */
-	public void startSimulation(int NF, int NQ, int NI, int ND){
+	public void startSimulation(int NF, int NQ, int NI, int ND, int NW){
 		this.NF = NF;
 		this.NQ = NQ;
 		this.NI = NI;
 		this.ND = ND;
+		this.NW = NW;
 		
 		
 		finishedFlag = false;
@@ -140,6 +141,7 @@ public class TomasuloSimulator {
 						BTBuffer.Getbuffer()[next.pc%32][1] = 0;
 					}
 				}
+				decoded++;
 			}
 			
 			changeNewIssuedStatus(); // when issue a new operation, a newIssued flag will set to true
@@ -247,12 +249,21 @@ public class TomasuloSimulator {
 				System.out.println("Memory is empty.");
 			}
 			System.out.println("------------------------------");
+			//pressAnyKeyToContinue();
 			System.out.println();
+			
 			
 			
 			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0 && clock_cycle > 2){
 				finishedFlag = true;
-				System.out.println("Total Clock Cycle is "+clock_cycle);
+				System.out.println("Instructions executed: "+Const.instructionsExecuted);
+				System.out.println("Cycles: "+clock_cycle);
+				System.out.println("IPC: "+(Const.instructionsExecuted*1.0)/(clock_cycle*1.0));
+				System.out.println("Stalls caused by RS: "+Const.stallsByRS);
+				//System.out.println("Stalls caused by Units: "+(Const.stallsByUnits-Const.stallsByRS));
+				System.out.println("Stalls caused by ROB: "+Const.stallsByROB);
+				System.out.println("Branch prediction miss rate: "+((Const.branchMissed*1.0)/(Const.branchExecuted*1.0)));
+				
 			}
 		}
 		
@@ -280,6 +291,7 @@ public class TomasuloSimulator {
 		boolean issueMULT = false;
 		while((issue_count < this.NW) && (!halt)){
 			if((Const.lastOfROB - Const.firstOfROB)>=Const.NR){//If ROB' size equals or is greater than NR , stop issuing instructions.
+				Const.stallsByROB++;
 				halt = true;
 				return;
 			}
@@ -316,6 +328,7 @@ public class TomasuloSimulator {
 					issueMULT = true;
 				}
 				if(!isSuccessful){
+					Const.stallsByUnits++;
 					halt = true;
 					return;
 				}
@@ -381,6 +394,7 @@ public class TomasuloSimulator {
     			String d = item.destination;
     			if(item.instruction.opco.equals("BEQZ") || item.instruction.opco.equals("BNEZ")
 						||item.instruction.opco.equals("BNE")||item.instruction.opco.equals("BEQ")){
+    				Const.branchExecuted++;
     				//System.out.println("item.value-->"+item.value);
 					if(item.value == 1){ // change pc
 						if(btb.Getbuffer()[item.instruction.pc % 32][0] == -1){
@@ -403,7 +417,7 @@ public class TomasuloSimulator {
 								((Register)Const.integerRegistersStatus.get("R"+i)).Reorder = 0;
 	            				((Register)Const.floatRegistersStatus.get("F"+i)).Reorder = 0;
 							}
-
+							Const.branchMissed++;
 							Const.firstOfROB = 1;
 							Const.lastOfROB = 1;
 							//update the buffer
@@ -432,6 +446,7 @@ public class TomasuloSimulator {
 
 
 								Const.ROB.add(new ROBItem());
+								Const.branchMissed++;
 								Const.firstOfROB = 1;
 								Const.lastOfROB = 1;
 
@@ -446,6 +461,7 @@ public class TomasuloSimulator {
 								pc = item.offset;
 							}
 							Const.firstOfROB++;
+							Const.instructionsExecuted++;
 						}
     				}else{
 						pc = item.instruction.pc + 1;
@@ -461,6 +477,7 @@ public class TomasuloSimulator {
 							}
 
 							Const.ROB.add(new ROBItem());
+							Const.branchMissed++;
 							Const.firstOfROB = 1;
 							Const.lastOfROB = 1;
 							for (int i = 0; i < 32; i++){
@@ -489,6 +506,7 @@ public class TomasuloSimulator {
     				
 					bus_count++;
 					Const.firstOfROB++;
+					Const.instructionsExecuted++;
     			}else{
 					//TODO update the registers
 					if(d.contains("R")){
@@ -498,6 +516,7 @@ public class TomasuloSimulator {
 					}
 					bus_count++;
 					Const.firstOfROB++;
+					Const.instructionsExecuted++;
     			}
     			item.busy = false;
 
@@ -542,17 +561,56 @@ public class TomasuloSimulator {
 			h++;
     	}	
     }
+    
+    public void pressAnyKeyToContinue()
+    { 
+           System.out.println("Press any key to continue...");
+           try
+           {
+               System.in.read();
+           }  
+           catch(Exception e)
+           {}  
+    }
 
     public static void main(String args[]) throws IOException{
 		String inputFile = args[0];
-		int NF = Integer.parseInt(args[1]); // The maximum number of instructions can be fetched in one cycle
-		int NQ = Integer.parseInt(args[2]); // The length of the instruction queue
-		int ND =  Integer.parseInt(args[3]); // The length of the Decoded instruction queue
-		int NI = Integer.parseInt(args[4]); // The maximum number of instructions can be decoded in one cycle
-		
+		int NF = 4; // The maximum number of instructions can be fetched in one cycle
+		int NQ = 8; // The length of the instruction queue
+		int ND = 4; // The maximum number of instructions can be decoded in one cycle
+		int NI = 8; // The length of the Decoded instruction queue
+		int NW = 4; // The maximum number of instructions can be issued to reservation stations
+		int NR = 16; // Size of ROB
+		int NB = 4; // busses connecting execution stations to ROB
+		int NC = 4; // Size of CDB
+		for (int i = 1; i < args.length; i++){
+			String[] tmp = args[i].split("=");
+			if (tmp[0].equals("NF")) {
+				NF = Integer.parseInt(tmp[1]);
+			} else if (tmp[0].equals("NQ")) {
+				NQ = Integer.parseInt(tmp[1]);
+			} else if (tmp[0].equals("ND")) {
+				ND = Integer.parseInt(tmp[1]);
+			} else if (tmp[0].equals("NI")) {
+				NI = Integer.parseInt(tmp[1]);
+			} else if (tmp[0].equals("NW")) {
+				NW = Integer.parseInt(tmp[1]);
+			} else if (tmp[0].equals("NR")) {
+				NR = Integer.parseInt(tmp[1]);
+			} else if (tmp[0].equals("NB")) {
+				NB = Integer.parseInt(tmp[1]);
+			} else if (tmp[0].equals("NC")) {
+				NC = Integer.parseInt(tmp[1]);
+			}
+		}
+		Const.NB = NB;
+		Const.NC = NC;
+		Const.NR = NR;
 		TomasuloSimulator simulator = new TomasuloSimulator(inputFile);
-		
-		simulator.startSimulation( NF, NQ, NI, ND);
+		System.out.println("Parameters are:");
+		System.out.println("NF = "+NF+"; NQ = "+NQ+"; ND = "+ND+"; NI = "+NI+"; NW = "+NW+"; NR = "+NR+"; NB = "+NB+"; NC = "+NC);
+		System.out.println("------------------------------");
+		simulator.startSimulation(NF, NQ, NI, ND, NW);
     	
 	}
 	

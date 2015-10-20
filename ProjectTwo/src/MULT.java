@@ -105,6 +105,7 @@ private static final int LATENCY = 2;
 		}
 		
 		// the issue is not successful, needs to stall for one cycle.
+		Const.stallsByRS++;
 		return false;
 	}
 	

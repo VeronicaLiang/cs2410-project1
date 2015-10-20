@@ -146,6 +146,7 @@ public class LoadStore {
 		}
 
 		// the issue is not successful, needs to stall for one cycle.
+		Const.stallsByRS++;
 		return false;
 	}
 

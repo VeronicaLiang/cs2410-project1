@@ -110,6 +110,7 @@ public class FPU {
 		}
 		
 		// the issue is not successful, needs to stall for one cycle.
+		Const.stallsByRS++;
 		return false;
 	}
 	
