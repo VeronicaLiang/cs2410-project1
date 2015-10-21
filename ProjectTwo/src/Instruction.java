@@ -35,7 +35,7 @@ public class Instruction {
 			text = text.substring(0, text.length()-1);
 		}
 		instr.text = text;
-		System.out.println(text);
+		//System.out.println(text);
 		
 		if (pre[0].equals("")){
 			instr.note = pre[0];
