@@ -115,15 +115,20 @@ private static final int LATENCY = 2;
 		for(int i = 5;i<=6;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy && !station.newIssued){
-				if(station.latency<LATENCY || !station.done){
-					station.latency = station.latency +1;
-					if((station.Qj==0) && (station.Qk==0) && !station.done && !isExecute){
+				if (station.latency == 0 && isExecute) {
+					continue;
+				} else if(station.latency<LATENCY || !station.done){
+					if (station.done) {
+						station.latency = station.latency +1;
+					}
+					if((station.Qj==0) && (station.Qk==0) && !station.done){
 						float vk = station.Vk;
 						float vj = station.Vj;
 						station.result = vj * vk;
 						station.done = true;
 						isExecute = true;
-						station.status = "executed";
+						station.status = "executing";
+						station.latency = station.latency +1;
 					}
 				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0 && Const.NC > 0){
 					//Write result. 
@@ -147,6 +152,8 @@ private static final int LATENCY = 2;
 					station.wbDone = true;
 					Const.NB--;
 					Const.NC--;
+					station.status = "WB";
+					station.newWB = true;
 				}
 			}
 			

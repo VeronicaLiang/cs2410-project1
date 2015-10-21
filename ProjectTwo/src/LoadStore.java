@@ -156,19 +156,24 @@ public class LoadStore {
 		for(int i = 7;i<=12;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy && !station.newIssued){
-				if(station.latency<LATENCY || !station.done){
-					station.latency = station.latency +1;
+				if (station.latency == 0 && isExecute) {
+					continue;
+				} else if(station.latency<LATENCY || !station.done){
+					if (station.done) {
+						station.latency = station.latency +1;
+					}
 					// a store instruction
 					if(station.loadFlag == 0){
-						if((station.Qk==0) && !station.done && (station.Dest == Const.firstOfROB) && !isExecute) {
+						if((station.Qk==0) && !station.done && (station.Dest == Const.firstOfROB)) {
 							station.result = station.Vk + station.A; // Need to check whether Vj is an integer.
 							((ROBItem)Const.ROB.get(station.Dest)).address = (int)station.result;
 							station.done = true;
 							isExecute = true;
-							station.status = "executed";
+							station.status = "executing";
+							station.latency = station.latency +1;
 						}
 					}else{
-						if((station.Qj == 0) && !station.done && !isExecute && !hasStoreInROB()) {
+						if((station.Qj == 0) && !station.done && !hasStoreInROB()) {
 							boolean isStoreAhead = false;
 							int b = station.Dest;
 							station.A = (int) station.Vj + station.A;
@@ -189,7 +194,8 @@ public class LoadStore {
 								station.result = f;
 								station.done = true;
 								isExecute = true;
-								station.status = "executed";
+								station.status = "executing";
+								station.latency = station.latency +1;
 							}
 						}
 					}
@@ -223,13 +229,15 @@ public class LoadStore {
 					isWB = true;
 					station.wbDone = true;
 					Const.NB--;
+					station.status = "WB";
+					station.newWB = true;
 				}
 			}
 		}
 	}
 	
 	public boolean hasStoreInROB() {
-		return ((ROBItem) Const.ROB.get(Const.firstOfROB)).ready && !((ROBItem)Const.ROB.get(Const.firstOfROB)).newReady;
+		return ((ROBItem) Const.ROB.get(Const.firstOfROB)).ready && !((ROBItem)Const.ROB.get(Const.firstOfROB)).newReady && (((ROBItem) Const.ROB.get(Const.firstOfROB)).instruction.opco.equals("SD") || ((ROBItem) Const.ROB.get(Const.firstOfROB)).instruction.opco.equals("S.D"));
 	}
 
 }

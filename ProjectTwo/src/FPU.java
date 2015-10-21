@@ -105,6 +105,7 @@ public class FPU {
 				station.status = "issued";
 				station.text = instruction.text;
 				station.newIssued = true;
+				station.afterDiv = this.afterDivide(b);
 				return true;
 			}
 		}
@@ -122,11 +123,25 @@ public class FPU {
 			if(station.Busy && !station.newIssued){
 				// if latency == 0 and not div.d, this instruction issued after div.d.
 				// so if there is a divide in unit, just waiting (skip to next station)
-				if (station.latency == 0 && !station.Op.equals("DIV.D") && this.hasDivide()) {
+				boolean tmpFlag = false;
+				if (station.afterDiv != -1) {
+					if (((ROBItem) Const.ROB.get(station.afterDiv)).ready && !((ROBItem)Const.ROB.get(station.afterDiv)).newReady) {
+						tmpFlag = true;
+					}
+				} else {
+					tmpFlag = true;
+				}
+				
+				
+				if (station.latency == 0 && isExecute) {
+					continue;
+				} else if (!tmpFlag) {
 					continue;
 				} else if ((station.latency < LATENCY || !station.done) && !station.Op.equals("DIV.D")) {
-					station.latency = station.latency + 1;
-					if ((station.Qj == 0) && (station.Qk == 0) && !station.done && !isExecute) {
+					if (station.done) {
+						station.latency = station.latency +1;
+					}
+					if ((station.Qj == 0) && (station.Qk == 0) && !station.done) {
 						float vk = station.Vk;
 						float vj = station.Vj;
 						if (station.Op.equals("ADD.D")) {
@@ -138,18 +153,24 @@ public class FPU {
 						}
 						station.done = true;
 						isExecute = true;
-						station.status = "executed";
+						station.status = "executing";
+						station.latency = station.latency +1;
 					}
 				} else if ((station.latency < LATENCY || !station.done) && station.Op.equals("DIV.D")) {
-					if (!this.unitBusy(i)) {
-						station.latency = station.latency + 1;
+					if (this.unitBusy(i)) {
+						continue;
 					}
-					if ((station.Qj == 0) && (station.Qk == 0) && !station.done && !isExecute) {
+					if (station.done) {
+						station.latency = station.latency +1;
+					}
+					if ((station.Qj == 0) && (station.Qk == 0) && !station.done) {
 						float vk = station.Vk;
 						float vj = station.Vj;
 						station.result = vj / vk;
 						station.done = true;
 						isExecute = true;
+						station.status = "executing";
+						station.latency = station.latency +1;
 					}
 				} else if (station.latency >= LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0 && Const.NC > 0) {
 					// Write result.
@@ -177,6 +198,8 @@ public class FPU {
 					station.wbDone = true;
 					Const.NB--;
 					Const.NC--;
+					station.status = "WB";
+					station.newWB = true;
 				}
 			}
 		}
@@ -190,6 +213,21 @@ public class FPU {
 			}
 		}
 		return false;
+	}
+	
+	public int afterDivide (int b) {
+		int max = -1;
+		int dest = 0;
+		for(int i = 13;i<=17;i++){
+			Station station = (Station) Const.reservationStations.get(i+"");
+			if (station.Op.equals("DIV.D") && station.Busy && b > station.Dest) {
+				dest = station.Dest;
+				if (dest > max) {
+					max = dest;
+				}
+			}
+		}
+		return max;
 	}
 	
 	public boolean unitBusy(int index) {

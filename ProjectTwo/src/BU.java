@@ -125,8 +125,12 @@ private static final int LATENCY = 2;
 		for(int i = 18;i<=19;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
 			if(station.Busy && !station.newIssued){
-				if(station.latency<LATENCY || !station.done){
-					station.latency = station.latency +1;
+				if (station.latency == 0 && isExecute) {
+					continue;
+				} else if(station.latency<LATENCY || !station.done){
+					if (station.done) {
+						station.latency = station.latency +1;
+					}
 					//System.out.println("station.Qj--->"+station.Qj+"   station.Qk--->"+station.Qk);
 					/*
 					 *beq	000100	rs	rt	immediate	 beq $1,$2,10	 if($1==$2)  goto PC+4+40	 if (rs == rt) PC <- PC+4 + (sign-extend)immediate<<2 
@@ -136,7 +140,7 @@ private static final int LATENCY = 2;
 				      BEQ   条件转移指令，当两个寄存器内容相等时转移发生 BEQ R1,R2
 				      BNE 条件转移指令，当两个寄存器中内容不等时转移发生 BNE R1,R2
 					 */
-					if((station.Qj==0) && (station.Qk==0) && !station.done && !isExecute){
+					if((station.Qj==0) && (station.Qk==0) && !station.done){
 						float vk = station.Vk;
 						float vj = station.Vj;
 						
@@ -169,7 +173,7 @@ private static final int LATENCY = 2;
 						station.latency = station.latency+1;
 						station.done = true;
 						isExecute = true;
-						station.status = "executed";
+						station.status = "executing";
 					}
 				}else if(station.latency>=LATENCY && !station.wbDone && station.done && !isWB && Const.NB > 0){
 					//Write result. 
@@ -183,6 +187,9 @@ private static final int LATENCY = 2;
 					isWB = true;
 					station.wbDone = true;
 					Const.NB--;
+					station.status = "WB";
+					station.newWB = true;
+					
 				}
 			}
 			

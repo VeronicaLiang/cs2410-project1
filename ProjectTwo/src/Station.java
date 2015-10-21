@@ -81,5 +81,7 @@ public class Station {
 	String status = "";
 	String text = "";
 	boolean newIssued = true;
+	boolean newWB = false;
+	int afterDiv = 0;
 
 }

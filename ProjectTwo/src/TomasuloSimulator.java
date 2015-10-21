@@ -186,7 +186,7 @@ public class TomasuloSimulator {
 			printFlag = true;
 			for (int i = 1; i <= 19; i++) {
 				Station station = (Station) Const.reservationStations.get(i+"");
-				if (station.Busy == true) {
+				if (station.Busy == true || station.newWB == true) {
 					String result = "name-->"+station.name+" Instruction-->"+station.text+" Qj-->"+station.Qj+" Vj-->"+station.Vj+" Qk-->"+station.Qk+" Vk-->"+station.Vk+" destination-->"+station.Dest+" result-->"+station.result+" status-->"+station.status;
 					System.out.println(result);
 					printFlag = false;
@@ -208,7 +208,7 @@ public class TomasuloSimulator {
 			}
 			System.out.println("------------------------------");
 			System.out.println("Registers Status:");
-			for (int i = 0; i < 32; i++){
+			for (int i = 0; i < 8; i++){
 				String str = "R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value;
 				int length = str.length();
 				for (int m = 0; m < 15-length; m++) {
@@ -547,6 +547,7 @@ public class TomasuloSimulator {
     public void changeNewIssuedStatus(){
     	for(int i = 1;i<=19;i++){
 			Station station = (Station) Const.reservationStations.get(i+"");
+			station.newWB = false;
 			if (station.Busy) {
 				station.newIssued = false;
 			}
