@@ -250,4 +250,13 @@ public class Const {
 	static int branchExecuted = 0;
 	static int branchMissed = 0;
 	
+	
+	static int dump_regs = 0;
+	static int dump_mem = 0;
+	static int dump_start = 0;
+	static int dump_end = 0;
+	static int dump_branch = 0;
+	static int stepbystep = 0;
+	static int demo = 0;
+	
 }

@@ -159,103 +159,18 @@ public class TomasuloSimulator {
 //			System.out.println(clock_cycle);
 //			System.out.println("pc->"+pc+"  getInstrs->"+memory.getInstrs().size()+"  Const.lastOfROB->"+Const.lastOfROB+"  firstOfROB->"+Const.firstOfROB);
 			
-			
-			System.out.println("After Clock Cycle " + clock_cycle +":");
-			System.out.println("------------------------------");
-			System.out.println("Fetch Queue Status (NQ: "+NQ+"):");
-			boolean printFlag = true;
-			for (int i = 0; i < FQueue.size(); i++) {
-				System.out.println(((Instruction)FQueue.get(i)).text+" pc-->"+((Instruction)FQueue.get(i)).pc);
-				printFlag = false;
-			}
-			if (printFlag) {
-				System.out.println("Not fetch any instruction.");
-			}
-			System.out.println("------------------------------");
-			System.out.println("Decode Queue Status (NI: "+NI+"):");
-			printFlag = true;
-			for (int i = 0; i < DQueue.size(); i++) {
-				System.out.println(((Instruction)DQueue.get(i)).text+" pc-->"+((Instruction)DQueue.get(i)).pc);
-				printFlag = false;
-			}
-			if (printFlag) {
-				System.out.println("Not decode any instruction.");
-			}
-			System.out.println("------------------------------");
-			System.out.println("Reservation Stations (Busy) Status:");
-			printFlag = true;
-			for (int i = 1; i <= 19; i++) {
-				Station station = (Station) Const.reservationStations.get(i+"");
-				if (station.Busy == true || station.newWB == true) {
-					String result = "name-->"+station.name+" Instruction-->"+station.text+" Qj-->"+station.Qj+" Vj-->"+station.Vj+" Qk-->"+station.Qk+" Vk-->"+station.Vk+" destination-->"+station.Dest+" result-->"+station.result+" status-->"+station.status;
-					System.out.println(result);
-					printFlag = false;
-				}
-				
-			}
-			if (printFlag) {
-				System.out.println("All Reservation Stations are idle.");
-			}
-			printFlag = true;
-			System.out.println("------------------------------");
-			System.out.println("ROB Status (NR: "+Const.NR+"):");
-			for (int i = Const.firstOfROB; i < Const.lastOfROB; i++) {
-	    		System.out.println("Instruction-->"+((ROBItem)Const.ROB.get(i)).instruction.text + " pc-->"+((ROBItem)Const.ROB.get(i)).instruction.pc+" Index-->"+i+" destination-->"+((ROBItem)Const.ROB.get(i)).destination+" value-->"+((ROBItem)Const.ROB.get(i)).value+" ready-->"+((ROBItem)Const.ROB.get(i)).ready);
-	    		printFlag = false;
-			}
-			if (printFlag) {
-				System.out.println("No item in ROB.");
-			}
-			System.out.println("------------------------------");
-			System.out.println("Registers Status:");
-			for (int i = 0; i < 8; i++){
-				String str = "R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value;
-				int length = str.length();
-				for (int m = 0; m < 15-length; m++) {
-					str = str + " ";
-				}
-				str = str + "ROB#: " + ((Register)Const.integerRegistersStatus.get("R"+i)).Reorder;
-				length = str.length();
-				for (int m = 0; m < 30-length; m++) {
-					str = str + " ";
-				}
-				//str = str + str.length();
-				str = str + "|F"+i+": "+((Register)Const.floatRegistersStatus.get("F"+i)).value;
-				length = str.length();
-				for (int m = 0; m < 45-length; m++) {
-					str = str + " ";
-				}
-				str = str + "ROB#: " + ((Register)Const.floatRegistersStatus.get("F"+i)).Reorder;
-				System.out.println(str);
-			}
-			System.out.println("------------------------------");
-			System.out.println("Memory Status:");
-			//System.out.println("Mem[R2]: "+ memory.getData().get((int)((Register)Const.integerRegistersStatus.get("R2")).value));
-			printFlag = true;
-			TreeMap teMap=new TreeMap(); 
-			Iterator it = memory.getData().entrySet().iterator();  
-			while (it.hasNext()) {  
-				Map.Entry e = (Map.Entry) it.next();  
-				teMap.put(e.getKey(), e.getValue());
-			}
-			it = teMap.entrySet().iterator();  
-			while (it.hasNext()) {  
-				Map.Entry e = (Map.Entry) it.next();
-				System.out.println("Mem[" + e.getKey() + "]: "  + e.getValue());  
-				printFlag = false;
+			if(Const.demo==1){
+				printDemo(clock_cycle, FQueue, DQueue);
 			}
 			
-			if (printFlag) {
-				System.out.println("Memory is empty.");
-			}
-			System.out.println("------------------------------");
 			//pressAnyKeyToContinue();
-			System.out.println();
+			//System.out.println();
 			
 			
 			
 			if(pc >= memory.getInstrs().size() && Const.lastOfROB - Const.firstOfROB == 0 && clock_cycle > 2){
 				finishedFlag = true;
+				
 				System.out.println("Instructions executed: "+Const.instructionsExecuted);
 				System.out.println("Cycles: "+clock_cycle);
 				System.out.println("IPC: "+(Const.instructionsExecuted*1.0)/(clock_cycle*1.0));
@@ -264,6 +179,19 @@ public class TomasuloSimulator {
 				System.out.println("Stalls caused by ROB: "+Const.stallsByROB);
 				System.out.println("Branch prediction miss rate: "+((Const.branchMissed*1.0)/(Const.branchExecuted*1.0)));
 				
+				if(Const.demo!=1){
+					System.out.println("------------------------------");
+					System.out.println("At the end of simulation");
+					if (Const.dump_regs == 1) {
+						printRegs();
+					}
+					if (Const.dump_mem == 1) {
+						printMem();
+					}
+					if (Const.dump_branch == 1) {
+						printBuffer(BTBuffer);
+					}
+				}
 			}
 		}
 		
@@ -573,9 +501,175 @@ public class TomasuloSimulator {
            catch(Exception e)
            {}  
     }
+    
+    public void printRegs() {
+    	System.out.println("------------------------------");
+		System.out.println("Registers Status:");
+		System.out.println("Integer Registers:");
+		for (int i = 0; i < 32; i++){
+			String str = "INT_REG["+i+"]="+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value;
+			System.out.println(str);
+		}
+		System.out.println();
+		System.out.println("Floating Point Registers:");
+		for (int i = 0; i < 32; i++){
+			String str = "FLOAT_REG["+i+"]="+((Register)Const.floatRegistersStatus.get("F"+i)).value;
+			System.out.println(str);
+		}
+    }
+    
+    public void printMem() {
+    	System.out.println("------------------------------");
+		System.out.println("Memory Status (from "+Const.dump_start+" to "+Const.dump_end+"):");
+		boolean printFlag = true;
+		TreeMap teMap=new TreeMap(); 
+		Iterator it = memory.getData().entrySet().iterator();  
+		while (it.hasNext()) {  
+			Map.Entry e = (Map.Entry) it.next();  
+			teMap.put(e.getKey(), e.getValue());
+		}
+		it = teMap.entrySet().iterator();  
+		while (it.hasNext()) {  
+			Map.Entry e = (Map.Entry) it.next();
+			if (((int)e.getKey()) >= Const.dump_start && ((int)e.getKey()) <= Const.dump_end){
+				System.out.println("Mem[" + e.getKey() + "]: "  + e.getValue()); 
+			}
+			printFlag = false;
+		}
+		
+		if (printFlag) {
+			System.out.println("No Memory Records From "+Const.dump_start+" To "+Const.dump_end+".");
+		}
+    }
+    
+    public void printBuffer(BranchTargetBuffer BTBuffer) {
+    	System.out.println("------------------------------");
+		System.out.println("Branch Prediction Buffer Status:");
+		int [] [] buffer = BTBuffer.Getbuffer();
+		for(int row = 0; row < 32; row++){
+			System.out.println("buffer["+row+"][0]="+buffer[row][0]+"   buffer["+row+"][1]="+buffer[row][1]);
+		}
+    }
+    
+    public void printDemo(int clock_cycle, LinkedList FQueue, LinkedList DQueue) {
+    	System.out.println("After Clock Cycle " + clock_cycle +":");
+		System.out.println("------------------------------");
+		System.out.println("Fetch Queue Status (NQ: "+NQ+"):");
+		boolean printFlag = true;
+		for (int i = 0; i < FQueue.size(); i++) {
+			System.out.println(((Instruction)FQueue.get(i)).text+" pc-->"+((Instruction)FQueue.get(i)).pc);
+			printFlag = false;
+		}
+		if (printFlag) {
+			System.out.println("Not fetch any instruction.");
+		}
+		System.out.println("------------------------------");
+		System.out.println("Decode Queue Status (NI: "+NI+"):");
+		printFlag = true;
+		for (int i = 0; i < DQueue.size(); i++) {
+			System.out.println(((Instruction)DQueue.get(i)).text+" pc-->"+((Instruction)DQueue.get(i)).pc);
+			printFlag = false;
+		}
+		if (printFlag) {
+			System.out.println("Not decode any instruction.");
+		}
+		System.out.println("------------------------------");
+		System.out.println("Reservation Stations (Busy) Status:");
+		printFlag = true;
+		for (int i = 1; i <= 19; i++) {
+			Station station = (Station) Const.reservationStations.get(i+"");
+			if (station.Busy == true || station.newWB == true) {
+				String result = "name-->"+station.name+" Instruction-->"+station.text+" Qj-->"+station.Qj+" Vj-->"+station.Vj+" Qk-->"+station.Qk+" Vk-->"+station.Vk+" destination-->"+station.Dest+" result-->"+station.result+" status-->"+station.status;
+				System.out.println(result);
+				printFlag = false;
+			}
+			
+		}
+		if (printFlag) {
+			System.out.println("All Reservation Stations are idle.");
+		}
+		printFlag = true;
+		System.out.println("------------------------------");
+		System.out.println("ROB Status (NR: "+Const.NR+"):");
+		for (int i = Const.firstOfROB; i < Const.lastOfROB; i++) {
+    		System.out.println("Instruction-->"+((ROBItem)Const.ROB.get(i)).instruction.text + " pc-->"+((ROBItem)Const.ROB.get(i)).instruction.pc+" Index-->"+i+" destination-->"+((ROBItem)Const.ROB.get(i)).destination+" value-->"+((ROBItem)Const.ROB.get(i)).value+" ready-->"+((ROBItem)Const.ROB.get(i)).ready);
+    		printFlag = false;
+		}
+		if (printFlag) {
+			System.out.println("No item in ROB.");
+		}
+		System.out.println("------------------------------");
+		System.out.println("Registers Status:");
+		for (int i = 0; i < 32; i++){
+			String str = "R"+i+": "+(int)((Register)Const.integerRegistersStatus.get("R"+i)).value;
+			int length = str.length();
+			for (int m = 0; m < 15-length; m++) {
+				str = str + " ";
+			}
+			str = str + "ROB#: " + ((Register)Const.integerRegistersStatus.get("R"+i)).Reorder;
+			length = str.length();
+			for (int m = 0; m < 30-length; m++) {
+				str = str + " ";
+			}
+			//str = str + str.length();
+			str = str + "|F"+i+": "+((Register)Const.floatRegistersStatus.get("F"+i)).value;
+			length = str.length();
+			for (int m = 0; m < 45-length; m++) {
+				str = str + " ";
+			}
+			str = str + "ROB#: " + ((Register)Const.floatRegistersStatus.get("F"+i)).Reorder;
+			System.out.println(str);
+		}
+		System.out.println("------------------------------");
+		System.out.println("Memory Status:");
+		//System.out.println("Mem[R2]: "+ memory.getData().get((int)((Register)Const.integerRegistersStatus.get("R2")).value));
+		printFlag = true;
+		TreeMap teMap=new TreeMap(); 
+		Iterator it = memory.getData().entrySet().iterator();  
+		while (it.hasNext()) {  
+			Map.Entry e = (Map.Entry) it.next();  
+			teMap.put(e.getKey(), e.getValue());
+		}
+		it = teMap.entrySet().iterator();  
+		while (it.hasNext()) {  
+			Map.Entry e = (Map.Entry) it.next();
+			System.out.println("Mem[" + e.getKey() + "]: "  + e.getValue());  
+			printFlag = false;
+		}
+		
+		if (printFlag) {
+			System.out.println("Memory is empty.");
+		}
+		System.out.println("------------------------------");
+		if (Const.stepbystep == 1) {
+			pressAnyKeyToContinue();
+		}
+		System.out.println();
+    }
 
     public static void main(String args[]) throws IOException{
-		String inputFile = args[0];
+		Hashtable<String, String> arg = new Hashtable<String, String>();
+		String line = null;
+		try {
+			FileReader filereader = new FileReader (args[0]);
+			BufferedReader bufferedreader = new BufferedReader (filereader);
+			while ((line = bufferedreader.readLine()) != null){
+				if(!line.contains("=")){
+					continue;
+				}else{
+					String[] tmp = line.split("=");
+					arg.put(tmp[0].trim(), tmp[1].trim());
+				}
+			}
+		} catch (FileNotFoundException ex){
+			System.out.println("Unable to open file 'config.ini'");
+		}
+		catch (IOException ex){
+			System.out.println("Error reading file 'config.ini'");
+		}
+		
+
+		String inputFile = "/Users/Rokeer/Documents/Works/Github/cs2410-project1/benchmark2.dat";
 		int NF = 4; // The maximum number of instructions can be fetched in one cycle
 		int NQ = 8; // The length of the instruction queue
 		int ND = 4; // The maximum number of instructions can be decoded in one cycle
@@ -584,26 +678,27 @@ public class TomasuloSimulator {
 		int NR = 16; // Size of ROB
 		int NB = 4; // busses connecting execution stations to ROB
 		int NC = 4; // Size of CDB
-		for (int i = 1; i < args.length; i++){
-			String[] tmp = args[i].split("=");
-			if (tmp[0].equals("NF")) {
-				NF = Integer.parseInt(tmp[1]);
-			} else if (tmp[0].equals("NQ")) {
-				NQ = Integer.parseInt(tmp[1]);
-			} else if (tmp[0].equals("ND")) {
-				ND = Integer.parseInt(tmp[1]);
-			} else if (tmp[0].equals("NI")) {
-				NI = Integer.parseInt(tmp[1]);
-			} else if (tmp[0].equals("NW")) {
-				NW = Integer.parseInt(tmp[1]);
-			} else if (tmp[0].equals("NR")) {
-				NR = Integer.parseInt(tmp[1]);
-			} else if (tmp[0].equals("NB")) {
-				NB = Integer.parseInt(tmp[1]);
-			} else if (tmp[0].equals("NC")) {
-				NC = Integer.parseInt(tmp[1]);
-			}
-		}
+		
+		inputFile = arg.get("filename");
+		NF = Integer.parseInt(arg.get("NF"));
+		NQ = Integer.parseInt(arg.get("NQ"));
+		ND = Integer.parseInt(arg.get("ND"));
+		NI = Integer.parseInt(arg.get("NI"));
+		NW = Integer.parseInt(arg.get("NW"));
+		NR = Integer.parseInt(arg.get("NR"));
+		NB = Integer.parseInt(arg.get("NB"));
+		NC = Integer.parseInt(arg.get("NC"));
+		
+		Const.dump_regs = Integer.parseInt(arg.get("dump_regs"));
+		Const.dump_mem = Integer.parseInt(arg.get("dump_mem"));
+		Const.dump_start = Integer.parseInt(arg.get("dump_start"));
+		Const.dump_end = Integer.parseInt(arg.get("dump_end"));
+		Const.dump_branch = Integer.parseInt(arg.get("dump_branch"));
+		Const.stepbystep = Integer.parseInt(arg.get("stepbystep"));
+		Const.demo = Integer.parseInt(arg.get("demo"));
+		
+		
+
 		Const.NB = NB;
 		Const.NC = NC;
 		Const.NR = NR;
