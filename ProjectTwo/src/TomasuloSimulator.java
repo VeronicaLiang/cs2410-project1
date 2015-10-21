@@ -46,7 +46,7 @@ public class TomasuloSimulator {
 					if(line.contains("DATA")){
 						flag = true;
 					}else{
-						if (line.isEmpty() || line.trim().equals("") || line.trim().equals("\n")){
+						if (line.isEmpty() || line.trim().equals("") || line.trim().equals("\n") || line.trim().length()==1){
 							// skip the empty lines.
 						}else{
 							Instruction instr = new Instruction();

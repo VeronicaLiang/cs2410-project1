@@ -26,11 +26,12 @@ public class Memory {
 	
 	public void loadData(String line){
 		// when parse the string, hard coded... 
-		String[] records = line.split("\\t+");
-		String[] tmp = records[records.length-1].split("\\)\\s+\\=\\s+");
-		String number = tmp[tmp.length-1];
-		String[] tmp2 = tmp[0].split("\\(");
-		int index = Integer.parseInt(tmp2[tmp2.length-1]);
+		String[] records = line.split("=");
+		String number = records[1].trim();
+		//System.out.println(records[0].trim());
+		String[] tmp = records[0].trim().split("\\(");
+		String[] tmp2 = tmp[1].split("\\)");
+		int index = Integer.parseInt(tmp2[0].trim());
 		data.put(index, number);
 	}
 	

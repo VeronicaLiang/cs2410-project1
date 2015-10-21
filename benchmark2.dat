@@ -15,6 +15,7 @@ loop:		LD		R5, 0(R1)
 		DADDI		R2, R2, 8
 		DADDI		R3, R3, -1
 		BNEZ		R3, loop
+
 DATA
 		Mem(300) = 5.0
 		Mem(308) = 2.0
