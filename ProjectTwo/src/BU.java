@@ -143,7 +143,7 @@ private static final int LATENCY = 2;
 							}
 						}else if(station.Op.equals("BNEZ")){
 							if(vj!=0){
-								station.result = 1; 
+								station.result = 1;
 							}else{
 								station.result = 0; 
 							}
